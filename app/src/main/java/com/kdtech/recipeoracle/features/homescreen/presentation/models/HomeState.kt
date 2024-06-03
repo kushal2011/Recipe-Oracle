@@ -1,4 +1,6 @@
 package com.kdtech.recipeoracle.features.homescreen.presentation.models
 
-class HomeState {
-}
+data class HomeState(
+    var isLoading: Boolean = false,
+    var recipeText: String = ""
+)

@@ -36,12 +36,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            var textData by remember { mutableStateOf("") }
             val navController = rememberNavController()
-
-            LaunchedEffect(key1 = Unit) {
-                textData = getData()
-            }
             Scaffold(
                 content = {
                     Surface(
@@ -58,31 +53,5 @@ class MainActivity : ComponentActivity() {
                 },
             )
         }
-    }
-
-    private suspend fun getData() : String{
-        val generativeModel = GenerativeModel(
-            modelName = "gemini-1.5-flash",
-            apiKey = BuildConfig.GEMENI_API_KEY
-        )
-        val prompt = "Give me a recipie for Dabeli."
-        val response = generativeModel.generateContent(prompt)
-        return response.text.orEmpty()
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    RecipeOracleTheme {
-        Greeting("Android")
     }
 }
