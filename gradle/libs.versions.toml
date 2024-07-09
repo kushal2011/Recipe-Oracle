@@ -15,6 +15,10 @@ java-inject = "1"
 # Hilt
 android-hilt = "2.48"
 android-hilt-compose = "1.2.0"
+googleGmsGoogleServices = "4.4.2"
+firebaseAnalytics = "22.0.1"
+firebaseCrashlytics = "19.0.1"
+googleFirebaseCrashlytics = "3.0.1"
 
 
 [libraries]
@@ -42,7 +46,11 @@ android-hilt-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin",
 android-hilt = { module = "com.google.dagger:hilt-android", version.ref = "android-hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "android-hilt" }
 hilt-core = { module = "com.google.dagger:hilt-core", version.ref = "android-hilt" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics", version.ref = "firebaseCrashlytics" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+google-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "googleFirebaseCrashlytics" }

@@ -4,6 +4,8 @@ plugins {
     id("kotlin-kapt")
     id("dagger.hilt.android.plugin")
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.google.firebase.crashlytics)
 }
 
 android {
@@ -92,6 +94,8 @@ dependencies {
     implementation(libs.compose.hilt.navigation)
     // Hilt
     implementation(libs.android.hilt)
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
     kapt(libs.hilt.compiler)
 
     testImplementation(libs.junit)
