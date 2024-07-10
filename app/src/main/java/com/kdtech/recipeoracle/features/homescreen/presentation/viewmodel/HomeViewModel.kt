@@ -41,7 +41,7 @@ class HomeViewModel @Inject constructor(
             modelName = "gemini-1.5-flash",
             apiKey = BuildConfig.GEMENI_API_KEY
         )
-        val prompt = Prompts.getPromptForIngredients()
+        val prompt = Prompts.getPromptForRecipes()
         val response = generativeModel.generateContent(prompt)
         _state.update {
             it.copy(
