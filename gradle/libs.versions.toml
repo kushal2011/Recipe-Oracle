@@ -19,6 +19,8 @@ googleGmsGoogleServices = "4.4.2"
 firebaseAnalytics = "22.0.2"
 firebaseCrashlytics = "19.0.2"
 googleFirebaseCrashlytics = "3.0.2"
+# Gson
+gson = "2.10.1"
 
 
 [libraries]
@@ -48,6 +50,8 @@ hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "and
 hilt-core = { module = "com.google.dagger:hilt-core", version.ref = "android-hilt" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics", version.ref = "firebaseCrashlytics" }
+# Gson
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

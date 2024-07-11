@@ -4,7 +4,7 @@ object Prompts {
     fun getPromptForIngredients() : String {
         return "Please generate a list of food ingredients in JSON format. " +
                 "Each item in the list should contain the following fields: " +
-                "\"name\" (the name of the ingredient), \"image_url\" (a URL to an image of the ingredient), " +
+                "\"name\" (the name of the ingredient), \"image_url\" (It should be empty string), " +
                 "and \"calories\" (the number of calories per 100 grams of the ingredient). " +
                 "The list should include a variety of common ingredients such as potato, tomato, onion, and others. " +
                 "Here is the structure for each item:\n" +

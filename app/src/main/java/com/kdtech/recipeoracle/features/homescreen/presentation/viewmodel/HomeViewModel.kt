@@ -4,8 +4,11 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.ai.client.generativeai.GenerativeModel
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.kdtech.recipeoracle.BuildConfig
 import com.kdtech.recipeoracle.coroutines.DispatcherProvider
+import com.kdtech.recipeoracle.data.IngredientModel
 import com.kdtech.recipeoracle.features.homescreen.presentation.models.HomeState
 import com.kdtech.recipeoracle.navigations.Screen
 import com.kdtech.recipeoracle.navigations.ScreenAction
@@ -16,6 +19,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.json.JSONArray
+import org.json.JSONException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,11 +46,14 @@ class HomeViewModel @Inject constructor(
             modelName = "gemini-1.5-flash",
             apiKey = BuildConfig.GEMENI_API_KEY
         )
-        val prompt = Prompts.getPromptForRecipes()
+        val prompt = Prompts.getPromptForIngredients()
         val response = generativeModel.generateContent(prompt)
+        val gson = Gson()
+        val listType = object : TypeToken<List<IngredientModel>>() {}.type
+        val ingredientsList: List<IngredientModel> = gson.fromJson(response.text, listType)
         _state.update {
             it.copy(
-                recipeText = response.text.orEmpty()
+                recipeText = ingredientsList.size.toString()
             )
         }
         Log.e("aaa","text: ${response.text.orEmpty()}")
