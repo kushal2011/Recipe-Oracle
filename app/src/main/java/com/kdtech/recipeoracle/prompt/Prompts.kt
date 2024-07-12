@@ -27,7 +27,7 @@ object Prompts {
         return "Could you provide a list of recipes $searchData formatted as JSON?" +
                 " Each recipe should include the following details:" +
                 "\n1. **Name of the Recipe**: A descriptive title for the dish." +
-                "\n2. **Image of the Recipe**: A URL link to an image of the prepared dish." +
+                "\n2. **Image of the Recipe**: It should be empty string" +
                 "\n3. **Ingredients**: An array of objects where each object contains:" +
                 "\n   - **Name of Ingredient**: The specific name of the ingredient." +
                 "\n   - **Quantity Required**: The amount of the ingredient needed, including units." +

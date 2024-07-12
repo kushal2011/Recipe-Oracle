@@ -9,6 +9,7 @@ import com.google.gson.reflect.TypeToken
 import com.kdtech.recipeoracle.BuildConfig
 import com.kdtech.recipeoracle.coroutines.DispatcherProvider
 import com.kdtech.recipeoracle.data.IngredientModel
+import com.kdtech.recipeoracle.data.RecipeModel
 import com.kdtech.recipeoracle.features.homescreen.presentation.models.HomeState
 import com.kdtech.recipeoracle.navigations.Screen
 import com.kdtech.recipeoracle.navigations.ScreenAction
@@ -19,8 +20,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.json.JSONArray
-import org.json.JSONException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -32,7 +31,7 @@ class HomeViewModel @Inject constructor(
     val state: Flow<HomeState> get() = _state
 
     init {
-        getData()
+        getRecipesData()
     }
     fun onBackPress() {
         navigator.navigate(ScreenAction.goTo(screen = Screen.Back()))
@@ -41,7 +40,7 @@ class HomeViewModel @Inject constructor(
     fun onDetailsClick() = viewModelScope.launch(dispatcher.main) {
         navigator.navigate(ScreenAction.goTo(screen = Screen.Details()))
     }
-    private fun getData() = viewModelScope.launch(dispatcher.io) {
+    private fun getIngredientsData() = viewModelScope.launch(dispatcher.io) {
         val generativeModel = GenerativeModel(
             modelName = "gemini-1.5-flash",
             apiKey = BuildConfig.GEMENI_API_KEY
@@ -56,12 +55,22 @@ class HomeViewModel @Inject constructor(
                 recipeText = ingredientsList.size.toString()
             )
         }
-        Log.e("aaa","text: ${response.text.orEmpty()}")
-        Log.e("aaa","size ${response.candidates.size} candidates: ${response.candidates[0]}")
-        Log.e("aaa","functionCalls: ${response.functionCalls}")
-        Log.e("aaa","functionResponse: ${response.functionResponse}")
-        Log.e("aaa","promptFeedback: ${response.promptFeedback}")
-        Log.e("aaa","usageMetadata total: ${response.usageMetadata?.totalTokenCount}")
-        Log.e("aaa","usageMetadata prompt: ${response.usageMetadata?.promptTokenCount}")
+    }
+
+    private fun getRecipesData() = viewModelScope.launch(dispatcher.io) {
+        val generativeModel = GenerativeModel(
+            modelName = "gemini-1.5-flash",
+            apiKey = BuildConfig.GEMENI_API_KEY
+        )
+        val prompt = Prompts.getPromptForRecipes()
+        val response = generativeModel.generateContent(prompt)
+        val gson = Gson()
+        val listType = object : TypeToken<List<RecipeModel>>() {}.type
+        val recipesList: List<RecipeModel> = gson.fromJson(response.text, listType)
+        _state.update {
+            it.copy(
+                recipeText = recipesList.size.toString()
+            )
+        }
     }
 }
