@@ -1,6 +1,9 @@
 package com.kdtech.recipeoracle.features.homescreen.ui
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -18,16 +21,14 @@ fun HomeScreen(
     viewModel: HomeViewModel
 ) {
     val state by viewModel.state.collectAsState(HomeState())
+    val lazyColumnListState = rememberLazyListState()
 
-    Column(
-        modifier = modifier.verticalScroll(rememberScrollState())
+    LazyColumn(
+        modifier = modifier,
+        state = lazyColumnListState
     ) {
-        Text(text = state.recipeText)
-        Button(onClick = {
-            viewModel.onDetailsClick()
-        }) {
-            Text(text = "details")
+        itemsIndexed(state.recipeList) { _, item ->
+            Text(text = item.name)
         }
     }
-
 }

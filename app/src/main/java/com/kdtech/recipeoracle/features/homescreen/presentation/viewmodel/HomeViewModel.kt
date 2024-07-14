@@ -52,7 +52,7 @@ class HomeViewModel @Inject constructor(
         val ingredientsList: List<IngredientModel> = gson.fromJson(response.text, listType)
         _state.update {
             it.copy(
-                recipeText = ingredientsList.size.toString()
+                ingredientsList = ingredientsList
             )
         }
     }
@@ -69,7 +69,7 @@ class HomeViewModel @Inject constructor(
         val recipesList: List<RecipeModel> = gson.fromJson(response.text, listType)
         _state.update {
             it.copy(
-                recipeText = recipesList.size.toString()
+                recipeList = recipesList
             )
         }
     }
