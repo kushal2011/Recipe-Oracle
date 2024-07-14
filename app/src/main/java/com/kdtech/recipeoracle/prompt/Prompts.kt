@@ -1,7 +1,10 @@
 package com.kdtech.recipeoracle.prompt
 
+import com.kdtech.recipeoracle.common.Empty
+
 object Prompts {
-    fun getPromptForIngredients() : String {
+    private const val AND_OR = "and/or"
+    fun getPromptForIngredients(): String {
         return "Please generate a list of food ingredients in JSON format. " +
                 "Each item in the list should contain the following fields: " +
                 "\"name\" (the name of the ingredient), \"image_url\" (It should be empty string), " +
@@ -17,22 +20,85 @@ object Prompts {
     }
 
     fun getPromptForRecipes(
-        searchText: String = ""
-    ) : String {
-        val searchData = if (searchText.isNotEmpty()) {
+        searchText: String = String.Empty,
+        isVegetarian: Boolean? = null,
+        isNonVegetarian: Boolean? = null,
+        isEggiterian: Boolean? = null,
+        isVegan: Boolean? = null,
+        isJain: Boolean? = null
+    ): String {
+        var searchData = if (searchText.isNotEmpty()) {
             "which has $searchText in its name"
         } else {
-            ""
+            String.Empty
         }
+
+        if (
+            isVegetarian != null ||
+            isNonVegetarian != null ||
+            isEggiterian != null ||
+            isVegan != null ||
+            isJain != null
+        ) {
+            searchData += if (searchData.isNotEmpty()) {
+                " and it should be "
+            } else {
+                "which should be "
+            }
+            var additionalText = String.Empty
+            isVegetarian?.let {
+                if (it) {
+                    additionalText += " Vegetarian $AND_OR "
+                } else {
+                    String.Empty
+                }
+            }
+            isNonVegetarian?.let {
+                if (it) {
+                    additionalText += "Non-Vegetarian $AND_OR "
+                } else {
+                    String.Empty
+                }
+            }
+            isEggiterian?.let {
+                if (it) {
+                    additionalText += "Eggiterian $AND_OR "
+                } else {
+                    String.Empty
+                }
+            }
+            isVegan?.let {
+                if (it) {
+                    additionalText += "Vegan $AND_OR "
+                } else {
+                    String.Empty
+                }
+            }
+            isJain?.let {
+                if (it) {
+                    additionalText += "Jain $AND_OR "
+                } else {
+                    String.Empty
+                }
+            }
+            if (additionalText.endsWith(AND_OR, ignoreCase = true)) {
+                additionalText.dropLast(AND_OR.length).trim()
+            }
+            searchData = searchText + additionalText
+        } else {
+            String.Empty
+        }
+
         return "Could you provide a list of recipes $searchData formatted as JSON?" +
                 " Each recipe should include the following details:" +
                 "\n1. **Name of the Recipe**: A descriptive title for the dish." +
-                "\n2. **Image of the Recipe**: It should be empty string" +
-                "\n3. **Ingredients**: An array of objects where each object contains:" +
+                "\n2. **Preparation time**: The time it takes to prepare the recipe." +
+                "\n3. **Image of the Recipe**: It should be empty string" +
+                "\n4. **Ingredients**: An array of objects where each object contains:" +
                 "\n   - **Name of Ingredient**: The specific name of the ingredient." +
                 "\n   - **Quantity Required**: The amount of the ingredient needed, including units." +
-                "\n4. **Instructions for the Recipe**: An array of strings, each string detailing a step in the recipe." +
-                "\n5. **Dietary Information**: Boolean values for each of the following dietary categories:" +
+                "\n5. **Instructions for the Recipe**: An array of strings, each string detailing a step in the recipe." +
+                "\n6. **Dietary Information**: Boolean values for each of the following dietary categories:" +
                 "\n   - **isVegan**: True if the recipe is suitable for vegans, otherwise False." +
                 "\n   - **isVegetarian**: True if the recipe is suitable for vegetarians, otherwise False." +
                 "\n   - **isEggiterian**: True if the recipe includes eggs but no other animal products, otherwise False." +
@@ -43,6 +109,7 @@ object Prompts {
                 "\n    " +
                 "{\n        " +
                 "\"name\": \"Classic Tomato Spaghetti\"," +
+                "\n        \"prepTime\": \"10 minutes\"," +
                 "\n        \"image\": \"https://example.com/images/tomato-spaghetti.jpg\"," +
                 "\n        \"ingredients\": [" +
                 "\n            {\"name\": \"Spaghetti\", \"quantity\": \"200g\"}," +

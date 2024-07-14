@@ -21,7 +21,9 @@ data class RecipeModel(
     @SerializedName("isVegetarian")
     val isVegetarian: Boolean,
     @SerializedName("name")
-    val name: String
+    val name: String,
+    @SerializedName("prepTime")
+    val prepTime: String
 )
 
 

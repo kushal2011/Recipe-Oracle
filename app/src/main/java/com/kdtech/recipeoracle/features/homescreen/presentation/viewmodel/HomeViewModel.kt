@@ -61,7 +61,10 @@ class HomeViewModel @Inject constructor(
             modelName = "gemini-1.5-flash",
             apiKey = BuildConfig.GEMENI_API_KEY
         )
-        val prompt = Prompts.getPromptForRecipes()
+        val prompt = Prompts.getPromptForRecipes(
+            isEggiterian = true,
+            isNonVegetarian = true
+        )
         val response = generativeModel.generateContent(prompt)
         val gson = Gson()
         val listType = object : TypeToken<List<RecipeModel>>() {}.type
