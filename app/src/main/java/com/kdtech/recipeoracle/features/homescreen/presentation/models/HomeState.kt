@@ -1,7 +1,7 @@
 package com.kdtech.recipeoracle.features.homescreen.presentation.models
 
-import com.kdtech.recipeoracle.data.IngredientModel
-import com.kdtech.recipeoracle.data.RecipeModel
+import com.kdtech.recipeoracle.apis.data.models.IngredientModel
+import com.kdtech.recipeoracle.apis.data.models.RecipeModel
 
 data class HomeState(
     var isLoading: Boolean = false,

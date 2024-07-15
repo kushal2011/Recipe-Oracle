@@ -7,8 +7,8 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.kdtech.recipeoracle.BuildConfig
 import com.kdtech.recipeoracle.coroutines.DispatcherProvider
-import com.kdtech.recipeoracle.data.IngredientModel
-import com.kdtech.recipeoracle.data.RecipeModel
+import com.kdtech.recipeoracle.apis.data.models.IngredientModel
+import com.kdtech.recipeoracle.apis.domain.usecase.GetRecipeUseCase
 import com.kdtech.recipeoracle.features.homescreen.presentation.models.HomeState
 import com.kdtech.recipeoracle.navigations.Screen
 import com.kdtech.recipeoracle.navigations.ScreenAction
@@ -24,7 +24,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val dispatcher: DispatcherProvider,
-    private val navigator: ScreenNavigator
+    private val navigator: ScreenNavigator,
+    private val getRecipesUseCase: GetRecipeUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeState())
     val state: Flow<HomeState> get() = _state
@@ -65,14 +66,17 @@ class HomeViewModel @Inject constructor(
             isEggiterian = true,
             isNonVegetarian = true
         )
-        val response = generativeModel.generateContent(prompt)
-        val gson = Gson()
-        val listType = object : TypeToken<List<RecipeModel>>() {}.type
-        val recipesList: List<RecipeModel> = gson.fromJson(response.text, listType)
-        _state.update {
-            it.copy(
-                recipeList = recipesList
-            )
-        }
+        getRecipesUseCase(prompt).fold(
+            onSuccess = { recipes ->
+                _state.update {
+                    it.copy(
+                        recipeList = recipes
+                    )
+                }
+            },
+            onFailure = {
+                // do nothing
+            }
+        )
     }
 }
