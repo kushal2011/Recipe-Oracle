@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken
 import com.kdtech.recipeoracle.BuildConfig
 import com.kdtech.recipeoracle.coroutines.DispatcherProvider
 import com.kdtech.recipeoracle.apis.data.models.IngredientModel
+import com.kdtech.recipeoracle.apis.data.models.RecipeRequestModel
 import com.kdtech.recipeoracle.apis.domain.usecase.GetRecipeUseCase
 import com.kdtech.recipeoracle.features.homescreen.presentation.models.HomeState
 import com.kdtech.recipeoracle.navigations.Screen
@@ -58,15 +59,12 @@ class HomeViewModel @Inject constructor(
     }
 
     private fun getRecipesData() = viewModelScope.launch(dispatcher.io) {
-        val generativeModel = GenerativeModel(
-            modelName = "gemini-1.5-flash",
-            apiKey = BuildConfig.GEMENI_API_KEY
-        )
-        val prompt = Prompts.getPromptForRecipes(
-            isEggiterian = true,
-            isNonVegetarian = true
-        )
-        getRecipesUseCase(prompt).fold(
+        getRecipesUseCase(
+            param = RecipeRequestModel(
+                isEggiterian = true,
+                isNonVegetarian = true
+            )
+        ).fold(
             onSuccess = { recipes ->
                 _state.update {
                     it.copy(

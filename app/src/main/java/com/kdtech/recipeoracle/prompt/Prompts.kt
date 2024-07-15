@@ -1,5 +1,6 @@
 package com.kdtech.recipeoracle.prompt
 
+import com.kdtech.recipeoracle.apis.data.models.RecipeRequestModel
 import com.kdtech.recipeoracle.common.Empty
 
 object Prompts {
@@ -20,25 +21,20 @@ object Prompts {
     }
 
     fun getPromptForRecipes(
-        searchText: String = String.Empty,
-        isVegetarian: Boolean? = null,
-        isNonVegetarian: Boolean? = null,
-        isEggiterian: Boolean? = null,
-        isVegan: Boolean? = null,
-        isJain: Boolean? = null
+        recipeRequestModel: RecipeRequestModel
     ): String {
-        var searchData = if (searchText.isNotEmpty()) {
-            "which has $searchText in its name"
+        var searchData = if (recipeRequestModel.searchText.isNotEmpty()) {
+            "which has ${recipeRequestModel.searchText} in its name"
         } else {
             String.Empty
         }
 
         if (
-            isVegetarian != null ||
-            isNonVegetarian != null ||
-            isEggiterian != null ||
-            isVegan != null ||
-            isJain != null
+            recipeRequestModel.isVegetarian != null ||
+            recipeRequestModel.isNonVegetarian != null ||
+            recipeRequestModel.isEggiterian != null ||
+            recipeRequestModel.isVegan != null ||
+            recipeRequestModel.isJain != null
         ) {
             searchData += if (searchData.isNotEmpty()) {
                 " and it should be "
@@ -46,35 +42,35 @@ object Prompts {
                 "which should be "
             }
             var additionalText = String.Empty
-            isVegetarian?.let {
+            recipeRequestModel.isVegetarian?.let {
                 if (it) {
                     additionalText += " Vegetarian $AND_OR "
                 } else {
                     String.Empty
                 }
             }
-            isNonVegetarian?.let {
+            recipeRequestModel.isNonVegetarian?.let {
                 if (it) {
                     additionalText += "Non-Vegetarian $AND_OR "
                 } else {
                     String.Empty
                 }
             }
-            isEggiterian?.let {
+            recipeRequestModel.isEggiterian?.let {
                 if (it) {
                     additionalText += "Eggiterian $AND_OR "
                 } else {
                     String.Empty
                 }
             }
-            isVegan?.let {
+            recipeRequestModel.isVegan?.let {
                 if (it) {
                     additionalText += "Vegan $AND_OR "
                 } else {
                     String.Empty
                 }
             }
-            isJain?.let {
+            recipeRequestModel.isJain?.let {
                 if (it) {
                     additionalText += "Jain $AND_OR "
                 } else {
@@ -84,7 +80,7 @@ object Prompts {
             if (additionalText.endsWith(AND_OR, ignoreCase = true)) {
                 additionalText.dropLast(AND_OR.length).trim()
             }
-            searchData = searchText + additionalText
+            searchData = recipeRequestModel.searchText + additionalText
         } else {
             String.Empty
         }
