@@ -60,10 +60,7 @@ class HomeViewModel @Inject constructor(
 
     private fun getRecipesData() = viewModelScope.launch(dispatcher.io) {
         getRecipesUseCase(
-            param = RecipeRequestModel(
-                isEggiterian = true,
-                isNonVegetarian = true
-            )
+            param = RecipeRequestModel()
         ).fold(
             onSuccess = { recipes ->
                 _state.update {

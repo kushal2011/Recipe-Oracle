@@ -15,7 +15,11 @@ class RecipesRepositoryImpl @Inject constructor(
     override suspend fun getRecipes(
         recipeRequest: RecipeRequestModel
     ): Result<List<RecipeModel>> = withContext(dispatcherProvider.io) {
-        val prompt = Prompts.getPromptForRecipes(recipeRequest)
-        recipesDataSource.getRecipes(prompt)
+        if (recipeRequest.areAllBooleansNull() && recipeRequest.searchText.isBlank()) {
+            recipesDataSource.getLocallyStoredRecipes()
+        } else {
+            val prompt = Prompts.getPromptForRecipes(recipeRequest)
+            recipesDataSource.getRecipes(prompt)
+        }
     }
 }

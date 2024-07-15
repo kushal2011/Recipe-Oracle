@@ -30,11 +30,7 @@ object Prompts {
         }
 
         if (
-            recipeRequestModel.isVegetarian != null ||
-            recipeRequestModel.isNonVegetarian != null ||
-            recipeRequestModel.isEggiterian != null ||
-            recipeRequestModel.isVegan != null ||
-            recipeRequestModel.isJain != null
+            !recipeRequestModel.areAllBooleansNull()
         ) {
             searchData += if (searchData.isNotEmpty()) {
                 " and it should be "

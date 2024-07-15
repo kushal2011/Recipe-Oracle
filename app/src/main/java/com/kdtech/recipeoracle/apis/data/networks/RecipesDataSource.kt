@@ -4,4 +4,5 @@ import com.kdtech.recipeoracle.apis.data.models.RecipeModel
 
 interface RecipesDataSource {
     suspend fun getRecipes(prompt: String): Result<List<RecipeModel>>
+    suspend fun getLocallyStoredRecipes(): Result<List<RecipeModel>>
 }

@@ -17,10 +17,11 @@ android-hilt = "2.49"
 android-hilt-compose = "1.2.0"
 googleGmsGoogleServices = "4.4.2"
 firebaseAnalytics = "22.0.2"
-firebaseCrashlytics = "19.0.2"
+firebaseCrashlytics = "19.0.3"
 googleFirebaseCrashlytics = "3.0.2"
 # Gson
 gson = "2.10.1"
+securityCryptoKtx = "1.1.0-alpha06"
 
 
 [libraries]
@@ -52,6 +53,7 @@ firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics", version.ref = "firebaseCrashlytics" }
 # Gson
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+androidx-security-crypto-ktx = { group = "androidx.security", name = "security-crypto-ktx", version.ref = "securityCryptoKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
