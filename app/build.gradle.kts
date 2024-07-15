@@ -96,10 +96,13 @@ dependencies {
     implementation(libs.android.hilt)
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
+
     implementation(libs.androidx.security.crypto.ktx)
+
     kapt(libs.hilt.compiler)
 
     implementation(libs.gson)
+    implementation(libs.coil.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
