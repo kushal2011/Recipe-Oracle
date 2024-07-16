@@ -22,6 +22,7 @@ import com.google.ai.client.generativeai.GenerativeModel
 import com.kdtech.recipeoracle.navigations.AppNavigation
 import com.kdtech.recipeoracle.navigations.PrimaryNavigator
 import com.kdtech.recipeoracle.navigations.ScreenNavigator
+import com.kdtech.recipeoracle.resources.theme.RecipeTheme
 import com.kdtech.recipeoracle.ui.theme.RecipeOracleTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -36,22 +37,24 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val navController = rememberNavController()
-            Scaffold(
-                content = {
-                    Surface(
-                        color = MaterialTheme.colorScheme.background,
-                        modifier = Modifier.padding(it)
-                    ) {
-                        PrimaryNavigator(
-                            screenNavigator = screenNavigator,
-                            navController = navController,
-                            lifecycleOwner = this
-                        )
-                        AppNavigation(navController)
-                    }
-                },
-            )
+            RecipeTheme{
+                val navController = rememberNavController()
+                Scaffold(
+                    content = {
+                        Surface(
+                            color = MaterialTheme.colorScheme.background,
+                            modifier = Modifier.padding(it)
+                        ) {
+                            PrimaryNavigator(
+                                screenNavigator = screenNavigator,
+                                navController = navController,
+                                lifecycleOwner = this
+                            )
+                            AppNavigation(navController)
+                        }
+                    },
+                )
+            }
         }
     }
 }

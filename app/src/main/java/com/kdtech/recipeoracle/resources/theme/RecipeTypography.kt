@@ -1,5 +1,6 @@
 package com.kdtech.recipeoracle.resources.theme
 
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -13,15 +14,18 @@ private val Roboto = FontFamily(
     Font(R.font.roboto_semi_bold, FontWeight.W600),
     Font(R.font.roboto_medium, FontWeight.W500)
 )
-class RecipeTypography {
+
+data class RecipeTypography(
     val robotoBold: TextStyle = TextStyle(
         fontFamily = Roboto,
         fontWeight = FontWeight.W700,
         fontSize = 18.sp
-    )
+    ),
     val robotoMedium: TextStyle = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.W500,
         fontSize = 12.sp
     )
-}
+)
+
+internal val LocalTypography = staticCompositionLocalOf { RecipeTypography() }
