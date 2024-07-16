@@ -1,10 +1,3 @@
-/*
- * NavigationModule.kt
- * Module: COTO.common.layers.presentation.di
- * Project: COTO
- * Copyright © 2022, Eve World Platform PTE LTD. All rights reserved.
- */
-
 package com.kdtech.recipeoracle.navigations.di
 
 import com.kdtech.recipeoracle.navigations.CustomScreenNavigator
