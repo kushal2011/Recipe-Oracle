@@ -25,13 +25,6 @@ fun HomeScreen(
         state = lazyColumnListState
     ) {
         itemsIndexed(state.recipeList) { _, item ->
-//            Text(text = item.name)
-//            Text(text = item.prepTime)
-//            Text(text = "isVegan: ${item.isVegan}")
-//            Text(text = "isVegetarian: ${item.isVegetarian}")
-//            Text(text = "isNonVeg: ${item.isNonVeg}")
-//            Text(text = "isJain: ${item.isJain}")
-//            Text(text = "isEggiterian: ${item.isEggiterian}")
             RecipeCard(
                 recipeTitle = item.name,
                 recipeMakingTime = item.prepTime,

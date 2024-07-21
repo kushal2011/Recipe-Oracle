@@ -120,7 +120,7 @@ object Prompts {
                 "\n        \"isJain\": false" +
                 "\n    }" +
                 "\n]" +
-                "\n\nPlease generate a list with 3 different recipes that include the above details." +
+                "\n\nPlease generate a list with 10 different recipes that include the above details." +
                 "Response should only contain JSON and nothing else." +
                 " Thank you"
     }
