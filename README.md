@@ -5,6 +5,7 @@
 - add week planner , based on plan let user know what ingredients would be needed
 - share with all the details of recipe and link to playstore app
 - get all ingredients from image and suggest recipe that can be made using only that
+- user can request a variant of the recipe where it can be made without a particular ingridient
 
 # BUGS
 - app crash when launching without internet
