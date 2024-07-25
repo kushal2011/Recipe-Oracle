@@ -6,6 +6,23 @@
 - share with all the details of recipe and link to playstore app
 - get all ingredients from image and suggest recipe that can be made using only that
 - user can request a variant of the recipe where it can be made without a particular ingridient
+- "Cook Now" Button: For each recipe, include a prominent "Cook Now" button that starts a step-by-step guided cooking mode.
+- Ratings and Reviews: Display star ratings for each recipe and let users quickly add their own ratings.
+- Cooking Timer: Integrate a simple timer function for recipes that users can set with one tap.
+- In HomeFeed
+  - add Top Rated Recipes
+  - add Trending Recipes
+  - add Seasonal Recipes
+  - add Kid-Friendly Recipes (Recipes that are easy to make and appealing to children)
+  - add Recommended for You (based on user preferences and behavior)
+  - add Popular This Week
+  - add Healthy Recipes (Nutritionally balanced recipes for health-conscious users)
+  - add Desserts
+  - add Asian Delights (Could include Chinese, Japanese, Thai, etc.)
+  - add Quick & Easy (30-minute meals across cuisines)
+- 
+
+
 
 # BUGS
 - app crash when launching without internet
@@ -28,39 +45,11 @@
 {
 "name": "Spaghetti",
 "quantity": "200g"
-},
-{
-"name": "Tomatoes",
-"quantity": "5, diced"
-},
-{
-"name": "Olive oil",
-"quantity": "2 tbsp"
-},
-{
-"name": "Garlic",
-"quantity": "2 cloves, minced"
-},
-{
-"name": "Salt",
-"quantity": "to taste"
-},
-{
-"name": "Black pepper",
-"quantity": "to taste"
-},
-{
-"name": "Fresh basil",
-"quantity": "a handful, chopped"
 }
 ],
 "instructions": [
 "Cook the spaghetti in a large pot of boiling salted water until al dente.",
-"Heat the olive oil in a pan and sauté garlic until fragrant.",
-"Add tomatoes and cook until the sauce thickens.",
-"Season with salt and pepper.",
-"Toss the spaghetti with the sauce and serve hot.",
-"Garnish with fresh basil."
+"Heat the olive oil in a pan and sauté garlic until fragrant."
 ],
 "isVegan": true,
 "isVegetarian": true,
