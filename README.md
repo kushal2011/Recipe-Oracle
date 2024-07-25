@@ -1,6 +1,7 @@
 # TODO
 - add save recipe feature
 - handle image generation
+- optional login for personalized recommendation
 - add button to send user to youtube
 - add week planner , based on plan let user know what ingredients would be needed
 - share with all the details of recipe and link to playstore app
