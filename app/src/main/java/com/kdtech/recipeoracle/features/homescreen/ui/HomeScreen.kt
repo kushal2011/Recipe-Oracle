@@ -28,7 +28,8 @@ fun HomeScreen(
             RecipeCard(
                 recipeTitle = item.name,
                 recipeMakingTime = item.prepTime,
-                recipeImageUrl = "https://www.indianhealthyrecipes.com/wp-content/uploads/2014/11/paneer-butter-masala-recipe-2.jpg"
+                recipeImageUrl = "https://www.indianhealthyrecipes.com/wp-content/uploads/2014/11/paneer-butter-masala-recipe-2.jpg",
+                onClick = viewModel::onDetailsClick
             )
             HorizontalDivider()
         }

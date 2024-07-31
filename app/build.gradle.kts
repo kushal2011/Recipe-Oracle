@@ -94,10 +94,15 @@ dependencies {
     implementation(libs.compose.hilt.navigation)
     // Hilt
     implementation(libs.android.hilt)
-    implementation(libs.firebase.analytics)
-    implementation(libs.firebase.crashlytics)
 
     implementation(libs.androidx.security.crypto.ktx)
+
+    // firebase
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.auth.ktx)
+
+    implementation(libs.play.services.auth)
 
     kapt(libs.hilt.compiler)
 

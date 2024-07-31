@@ -5,8 +5,8 @@ coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.8.3"
-activityCompose = "1.9.0"
+lifecycleRuntimeKtx = "2.8.4"
+activityCompose = "1.9.1"
 composeBom = "2024.06.00"
 generativeai = "0.9.0"
 secretsGradlePlugin = "2.0.1"
@@ -16,13 +16,17 @@ java-inject = "1"
 android-hilt = "2.49"
 android-hilt-compose = "1.2.0"
 googleGmsGoogleServices = "4.4.2"
-firebaseAnalytics = "22.0.2"
-firebaseCrashlytics = "19.0.3"
-googleFirebaseCrashlytics = "3.0.2"
 # Gson
 gson = "2.10.1"
 securityCryptoKtx = "1.1.0-alpha06"
 coil = "2.2.2"
+# Firebase
+firebaseAnalytics = "22.0.2"
+firebaseCrashlytics = "19.0.3"
+googleFirebaseCrashlytics = "3.0.2"
+firebaseAuthKtx = "23.0.0"
+
+play-services-auth = "21.2.0"
 
 
 [libraries]
@@ -50,14 +54,18 @@ android-hilt-plugin = { module = "com.google.dagger:hilt-android-gradle-plugin",
 android-hilt = { module = "com.google.dagger:hilt-android", version.ref = "android-hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "android-hilt" }
 hilt-core = { module = "com.google.dagger:hilt-core", version.ref = "android-hilt" }
-firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
-firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics", version.ref = "firebaseCrashlytics" }
 # Gson
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 # Secured Shared Pref
 androidx-security-crypto-ktx = { group = "androidx.security", name = "security-crypto-ktx", version.ref = "securityCryptoKtx" }
 # Coil
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+# Firebase
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics", version.ref = "firebaseCrashlytics" }
+firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
+
+play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "play-services-auth" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

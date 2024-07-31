@@ -31,7 +31,8 @@ import com.kdtech.recipeoracle.resources.theme.toWidthDp
 fun RecipeCard(
     recipeTitle: String,
     recipeMakingTime: String,
-    recipeImageUrl: String = String.Empty
+    recipeImageUrl: String = String.Empty,
+    onClick:  () -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -40,7 +41,8 @@ fun RecipeCard(
             .height(150.toHeightDp()),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 10.dp
-        )
+        ),
+        onClick = onClick
     ) {
         Box {
             RemoteImage(
