@@ -83,44 +83,51 @@ object Prompts {
 
         return "Could you provide a list of recipes $searchData formatted as JSON?" +
                 " Each recipe should include the following details:" +
-                "\n1. **Name of the Recipe**: A descriptive title for the dish." +
-                "\n2. **Preparation time**: The time it takes to prepare the recipe." +
+                "\n1. **Name**: A descriptive title for the dish." +
+                "\n2. **Preparation Time**: Time required to prepare the dish in minutes (integer)" +
                 "\n3. **Image of the Recipe**: It should be empty string" +
-                "\n4. **Ingredients**: An array of objects where each object contains:" +
+                "\n4. **Cuisine Type**: The type of cuisine (string)." +
+                "\n5. **Course**: The course of the meal (e.g., starter, main course, dessert)." +
+                "\n6. **Ingredients**: An array of objects where each object contains:" +
                 "\n   - **Name of Ingredient**: The specific name of the ingredient." +
                 "\n   - **Quantity Required**: The amount of the ingredient needed, including units." +
-                "\n5. **Instructions for the Recipe**: An array of strings, each string detailing a step in the recipe." +
-                "\n6. **Dietary Information**: Boolean values for each of the following dietary categories:" +
+                "\n7. **Instructions for the Recipe**: An array of strings, each string detailing a step in the recipe." +
+                "\n8. **Dietary Information**: Boolean values for each of the following dietary categories:" +
                 "\n   - **isVegan**: True if the recipe is suitable for vegans, otherwise False." +
                 "\n   - **isVegetarian**: True if the recipe is suitable for vegetarians, otherwise False." +
                 "\n   - **isEggiterian**: True if the recipe includes eggs but no other animal products, otherwise False." +
                 "\n   - **isNonVeg**: True if the recipe includes any kind of meat, poultry, or seafood, otherwise False." +
                 "\n   - **isJain**: True if the recipe adheres to Jain dietary restrictions (no onions, garlic, root vegetables, etc.), otherwise False." +
+                "\n9. **Health Rating**: An integer from 1 to 10, with 10 being the healthiest." +
                 "\n\nHere’s an example of what I expect in the JSON output:" +
-                "\n\n[" +
-                "\n    " +
-                "{\n        " +
-                "\"name\": \"Classic Tomato Spaghetti\"," +
-                "\n        \"prepTime\": \"10 minutes\"," +
-                "\n        \"image\": \"https://example.com/images/tomato-spaghetti.jpg\"," +
-                "\n        \"ingredients\": [" +
-                "\n            {\"name\": \"Spaghetti\", \"quantity\": \"200g\"}," +
-                "\n            {\"name\": \"Tomatoes\", \"quantity\": \"5, diced\"}," +
-                "\n            {\"name\": \"Olive oil\", \"quantity\": \"2 tbsp\"}," +
-                "\n            {\"name\": \"Garlic\", \"quantity\": \"2 cloves, minced\"}" +
-                "\n        ],\n        \"instructions\": [" +
-                "\n            \"Cook the spaghetti in a large pot of boiling salted water until al dente.\"," +
-                "\n            \"Heat the olive oil in a pan and sauté garlic until fragrant.\"," +
-                "\n            \"Add tomatoes and cook until the sauce thickens.\"," +
-                "\n            \"Toss the spaghetti with the sauce and serve hot.\"\n        ]," +
-                "\n        \"isVegan\": true," +
-                "\n        \"isVegetarian\": true," +
-                "\n        \"isEggiterian\": false," +
-                "\n        \"isNonVeg\": false," +
-                "\n        \"isJain\": false" +
-                "\n    }" +
+                "\n[" +
+                "\n  {" +
+                "\n    \"name\": \"Classic Tomato Spaghetti\"," +
+                "\n    \"prepTime\": 10," +
+                "\n    \"image\": \"\"," +
+                "\n    \"cuisine_type\": \"Italian\"," +
+                "\n    \"course\": \"Main Course\"," +
+                "\n    \"ingredients\": [" +
+                "\n      {\"name\": \"Spaghetti\", \"quantity\": \"200g\"}," +
+                "\n      {\"name\": \"Tomatoes\", \"quantity\": \"5, diced\"}," +
+                "\n      {\"name\": \"Olive oil\", \"quantity\": \"2 tbsp\"}," +
+                "\n      {\"name\": \"Garlic\", \"quantity\": \"2 cloves, minced\"}" +
+                "\n    ]," +
+                "\n    \"instructions\": [" +
+                "\n      \"Cook the spaghetti in a large pot of boiling salted water until al dente.\"," +
+                "\n      \"Heat the olive oil in a pan and sauté garlic until fragrant.\"," +
+                "\n      \"Add tomatoes and cook until the sauce thickens.\"," +
+                "\n      \"Toss the spaghetti with the sauce and serve hot.\"" +
+                "\n    ]," +
+                "\n    \"isVegan\": true," +
+                "\n    \"isVegetarian\": true," +
+                "\n    \"isEggitarian\": false," +
+                "\n    \"isNonVeg\": false," +
+                "\n    \"isJain\": false," +
+                "\n    \"health_rating\": 4" +
+                "\n  }" +
                 "\n]" +
-                "\n\nPlease generate a list with 10 different recipes that include the above details." +
+                "\n\nPlease generate a list with ${recipeRequestModel.noOfItemsToShow} different recipes that include the above details." +
                 "Response should only contain JSON and nothing else." +
                 " Thank you"
     }

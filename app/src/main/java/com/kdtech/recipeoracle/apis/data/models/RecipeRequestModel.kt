@@ -8,7 +8,8 @@ data class RecipeRequestModel(
     val isNonVegetarian: Boolean? = null,
     val isEggiterian: Boolean? = null,
     val isVegan: Boolean? = null,
-    val isJain: Boolean? = null
+    val isJain: Boolean? = null,
+    val noOfItemsToShow: Int = 5
 ) {
     fun areAllBooleansNull(): Boolean {
         return listOf(isVegetarian, isNonVegetarian, isEggiterian, isVegan, isJain).all { it == null }
