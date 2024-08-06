@@ -1,4 +1,4 @@
-package com.kdtech.recipeoracle.features.authentication
+package com.kdtech.recipeoracle.features.authentication.ui
 import android.content.Context
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -23,6 +23,7 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.kdtech.recipeoracle.R
+import com.kdtech.recipeoracle.features.authentication.presentation.viewmodel.AuthViewModel
 
 @Composable
 fun AuthScreen(viewModel: AuthViewModel) {

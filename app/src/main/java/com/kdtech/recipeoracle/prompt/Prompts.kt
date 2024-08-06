@@ -91,7 +91,8 @@ object Prompts {
                 "\n6. **Ingredients**: An array of objects where each object contains:" +
                 "\n   - **Name of Ingredient**: The specific name of the ingredient." +
                 "\n   - **Quantity Required**: The amount of the ingredient needed, including units." +
-                "\n7. **Instructions for the Recipe**: An array of strings, each string detailing a step in the recipe." +
+                "\n   - **Image of Ingredient**: It should be empty string" +
+                "\n7. **Instructions for the Recipe**: An array of Objects, each object detailing a step in the recipe as string." +
                 "\n8. **Dietary Information**: Boolean values for each of the following dietary categories:" +
                 "\n   - **isVegan**: True if the recipe is suitable for vegans, otherwise False." +
                 "\n   - **isVegetarian**: True if the recipe is suitable for vegetarians, otherwise False." +
@@ -103,27 +104,27 @@ object Prompts {
                 "\n[" +
                 "\n  {" +
                 "\n    \"name\": \"Classic Tomato Spaghetti\"," +
-                "\n    \"prepTime\": 10," +
-                "\n    \"image\": \"\"," +
+                "\n    \"prep_time\": 10," +
+                "\n    \"image_url\": \"\"," +
                 "\n    \"cuisine_type\": \"Italian\"," +
                 "\n    \"course\": \"Main Course\"," +
                 "\n    \"ingredients\": [" +
-                "\n      {\"name\": \"Spaghetti\", \"quantity\": \"200g\"}," +
-                "\n      {\"name\": \"Tomatoes\", \"quantity\": \"5, diced\"}," +
-                "\n      {\"name\": \"Olive oil\", \"quantity\": \"2 tbsp\"}," +
-                "\n      {\"name\": \"Garlic\", \"quantity\": \"2 cloves, minced\"}" +
+                "\n      {\"name\": \"Spaghetti\", \"quantity\": \"200g\", \"image_url\": \"\"}," +
+                "\n      {\"name\": \"Tomatoes\", \"quantity\": \"5, diced\", \"image_url\": \"\"}," +
+                "\n      {\"name\": \"Olive oil\", \"quantity\": \"2 tbsp\", \"image_url\": \"\"}," +
+                "\n      {\"name\": \"Garlic\", \"quantity\": \"2 cloves, minced\", \"image_url\": \"\"}" +
                 "\n    ]," +
                 "\n    \"instructions\": [" +
-                "\n      \"Cook the spaghetti in a large pot of boiling salted water until al dente.\"," +
-                "\n      \"Heat the olive oil in a pan and sauté garlic until fragrant.\"," +
-                "\n      \"Add tomatoes and cook until the sauce thickens.\"," +
-                "\n      \"Toss the spaghetti with the sauce and serve hot.\"" +
+                "\n      {\"step\": \"Cook the spaghetti in a large pot of boiling salted water until al dente.\"}," +
+                "\n      {\"step\": \"Heat the olive oil in a pan and sauté garlic until fragrant.\"}," +
+                "\n      {\"step\": \"Add tomatoes and cook until the sauce thickens.\"}," +
+                "\n      {\"step\": \"Toss the spaghetti with the sauce and serve hot.\"}" +
                 "\n    ]," +
-                "\n    \"isVegan\": true," +
-                "\n    \"isVegetarian\": true," +
-                "\n    \"isEggitarian\": false," +
-                "\n    \"isNonVeg\": false," +
-                "\n    \"isJain\": false," +
+                "\n    \"is_vegan\": true," +
+                "\n    \"is_vegetarian\": true," +
+                "\n    \"is_eggiterian\": false," +
+                "\n    \"is_non_veg\": false," +
+                "\n    \"is_jain\": false," +
                 "\n    \"health_rating\": 4" +
                 "\n  }" +
                 "\n]" +

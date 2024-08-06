@@ -1,4 +1,4 @@
-package com.kdtech.recipeoracle.features.authentication
+package com.kdtech.recipeoracle.features.authentication.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth

@@ -14,8 +14,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.kdtech.recipeoracle.features.authentication.AuthScreen
+import com.kdtech.recipeoracle.features.authentication.ui.AuthScreen
 import com.kdtech.recipeoracle.features.detailsscreen.ui.DetailsScreen
 import com.kdtech.recipeoracle.features.homescreen.ui.HomeScreen
 import kotlinx.coroutines.flow.Flow
