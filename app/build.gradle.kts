@@ -109,6 +109,10 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.coil.compose)
 
+    implementation(libs.bundles.retrofit)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

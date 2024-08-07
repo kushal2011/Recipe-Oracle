@@ -4,6 +4,7 @@ import com.google.ai.client.generativeai.GenerativeModel
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.kdtech.recipeoracle.BuildConfig
 import com.kdtech.recipeoracle.apis.data.local.PrefStorageHelper
+import com.kdtech.recipeoracle.apis.data.models.HomeFeedWidgetsDto
 import com.kdtech.recipeoracle.apis.data.models.RecipeDto
 import com.kdtech.recipeoracle.apis.domain.models.RecipeRequestModel
 import com.kdtech.recipeoracle.common.ConvertToObject
@@ -11,7 +12,8 @@ import com.kdtech.recipeoracle.prompt.Prompts
 import javax.inject.Inject
 
 class RecipesDataSourceImpl @Inject constructor(
-    private val prefStorageHelper: PrefStorageHelper
+    private val prefStorageHelper: PrefStorageHelper,
+    private val recipesApi: RecipesApi
 ) : RecipesDataSource {
     override suspend fun getRecipes(prompt: String): Result<List<RecipeDto>> {
         val generativeModel = GenerativeModel(
@@ -39,6 +41,15 @@ class RecipesDataSourceImpl @Inject constructor(
                 Prompts.getPromptForRecipes(RecipeRequestModel())
             )
         }
+    }
+
+    override suspend fun getHomeFeedData(): Result<HomeFeedWidgetsDto> {
+        return safeApiCall(
+            {
+                recipesApi.getHomeFeedData()
+            },
+            ::Exception
+        )
     }
 
     companion object {

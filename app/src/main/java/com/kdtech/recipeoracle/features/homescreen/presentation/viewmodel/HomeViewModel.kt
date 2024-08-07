@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kdtech.recipeoracle.coroutines.DispatcherProvider
 import com.kdtech.recipeoracle.apis.domain.models.RecipeRequestModel
+import com.kdtech.recipeoracle.apis.domain.usecase.GetHomeFeedFromRemoteUseCase
 import com.kdtech.recipeoracle.apis.domain.usecase.GetRecipeUseCase
 import com.kdtech.recipeoracle.features.homescreen.presentation.models.HomeState
 import com.kdtech.recipeoracle.navigations.Screen
@@ -20,13 +21,14 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val dispatcher: DispatcherProvider,
     private val navigator: ScreenNavigator,
-    private val getRecipesUseCase: GetRecipeUseCase
+    private val getRecipesUseCase: GetRecipeUseCase,
+    private val getHomeFeedFromRemoteUseCase: GetHomeFeedFromRemoteUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeState())
     val state: Flow<HomeState> get() = _state
 
     init {
-        getRecipesData()
+        getHomeFeedData()
     }
     fun onBackPress() {
         navigator.navigate(ScreenAction.goTo(screen = Screen.Back()))
@@ -51,6 +53,21 @@ class HomeViewModel @Inject constructor(
 //            )
 //        }
 //    }
+
+    private fun getHomeFeedData() = viewModelScope.launch(dispatcher.io) {
+        getHomeFeedFromRemoteUseCase().fold(
+            onSuccess = { homeFeedWidgetsModel ->
+                _state.update {
+                    it.copy(
+                        homeFeedWidgets = homeFeedWidgetsModel.widgetsList
+                    )
+                }
+            },
+            onFailure = {
+                // do nothing
+            }
+        )
+    }
 
     private fun getRecipesData() = viewModelScope.launch(dispatcher.io) {
         getRecipesUseCase(
