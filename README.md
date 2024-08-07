@@ -21,6 +21,7 @@
   - add Desserts (done in BE)
   - add Asian Delights (Could include Chinese, Japanese, Thai, etc.)
   - add Quick & Easy (30-minute meals across cuisines) (done)
+  - snacks , side dish
 - Notifications
 - add ads 
 - add option to remove ads if user buys premium
