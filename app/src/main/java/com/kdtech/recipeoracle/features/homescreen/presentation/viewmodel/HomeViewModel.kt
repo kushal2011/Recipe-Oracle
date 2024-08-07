@@ -2,19 +2,13 @@ package com.kdtech.recipeoracle.features.homescreen.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.ai.client.generativeai.GenerativeModel
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.kdtech.recipeoracle.BuildConfig
 import com.kdtech.recipeoracle.coroutines.DispatcherProvider
-import com.kdtech.recipeoracle.apis.data.models.IngredientModel
-import com.kdtech.recipeoracle.apis.data.models.RecipeRequestModel
+import com.kdtech.recipeoracle.apis.domain.models.RecipeRequestModel
 import com.kdtech.recipeoracle.apis.domain.usecase.GetRecipeUseCase
 import com.kdtech.recipeoracle.features.homescreen.presentation.models.HomeState
 import com.kdtech.recipeoracle.navigations.Screen
 import com.kdtech.recipeoracle.navigations.ScreenAction
 import com.kdtech.recipeoracle.navigations.ScreenNavigator
-import com.kdtech.recipeoracle.prompt.Prompts
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,22 +35,22 @@ class HomeViewModel @Inject constructor(
     fun onDetailsClick() = viewModelScope.launch(dispatcher.main) {
         navigator.navigate(ScreenAction.goTo(screen = Screen.Details()))
     }
-    private fun getIngredientsData() = viewModelScope.launch(dispatcher.io) {
-        val generativeModel = GenerativeModel(
-            modelName = "gemini-1.5-flash",
-            apiKey = BuildConfig.GEMENI_API_KEY
-        )
-        val prompt = Prompts.getPromptForIngredients()
-        val response = generativeModel.generateContent(prompt)
-        val gson = Gson()
-        val listType = object : TypeToken<List<IngredientModel>>() {}.type
-        val ingredientsList: List<IngredientModel> = gson.fromJson(response.text, listType)
-        _state.update {
-            it.copy(
-                ingredientsList = ingredientsList
-            )
-        }
-    }
+//    private fun getIngredientsData() = viewModelScope.launch(dispatcher.io) {
+//        val generativeModel = GenerativeModel(
+//            modelName = "gemini-1.5-flash",
+//            apiKey = BuildConfig.GEMENI_API_KEY
+//        )
+//        val prompt = Prompts.getPromptForIngredients()
+//        val response = generativeModel.generateContent(prompt)
+//        val gson = Gson()
+//        val listType = object : TypeToken<List<IngredientModel>>() {}.type
+//        val ingredientsList: List<IngredientModel> = gson.fromJson(response.text, listType)
+//        _state.update {
+//            it.copy(
+//                ingredientsList = ingredientsList
+//            )
+//        }
+//    }
 
     private fun getRecipesData() = viewModelScope.launch(dispatcher.io) {
         getRecipesUseCase(

@@ -30,7 +30,7 @@ fun HomeScreen(
     ) {
         itemsIndexed(state.recipeList) { _, item ->
             RecipeCard(
-                recipeTitle = item.name,
+                recipeTitle = item.recipeName.orEmpty(),
                 recipeMakingTime = item.prepTime.toString(),
                 recipeImageUrl = "https://www.indianhealthyrecipes.com/wp-content/uploads/2014/11/paneer-butter-masala-recipe-2.jpg",
                 onClick = viewModel::onDetailsClick

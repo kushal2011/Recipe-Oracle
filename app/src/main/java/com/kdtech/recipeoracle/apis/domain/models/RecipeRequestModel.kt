@@ -1,4 +1,4 @@
-package com.kdtech.recipeoracle.apis.data.models
+package com.kdtech.recipeoracle.apis.domain.models
 
 import com.kdtech.recipeoracle.common.Empty
 

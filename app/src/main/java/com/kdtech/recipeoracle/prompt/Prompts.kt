@@ -1,6 +1,6 @@
 package com.kdtech.recipeoracle.prompt
 
-import com.kdtech.recipeoracle.apis.data.models.RecipeRequestModel
+import com.kdtech.recipeoracle.apis.domain.models.RecipeRequestModel
 import com.kdtech.recipeoracle.common.Empty
 
 object Prompts {

@@ -1,10 +1,9 @@
 package com.kdtech.recipeoracle.features.homescreen.presentation.models
 
-import com.kdtech.recipeoracle.apis.data.models.IngredientModel
-import com.kdtech.recipeoracle.apis.data.models.RecipeModel
+import com.kdtech.recipeoracle.apis.data.models.RecipeDto
 
 data class HomeState(
     var isLoading: Boolean = false,
-    var recipeList: List<RecipeModel> = emptyList(),
-    var ingredientsList: List<IngredientModel> = emptyList()
+    var recipeList: List<RecipeDto> = emptyList(),
+//    var ingredientsList: List<IngredientModel> = emptyList()
 )

@@ -1,8 +1,8 @@
 package com.kdtech.recipeoracle.apis.data.networks
 
-import com.kdtech.recipeoracle.apis.data.models.RecipeModel
+import com.kdtech.recipeoracle.apis.data.models.RecipeDto
 
 interface RecipesDataSource {
-    suspend fun getRecipes(prompt: String): Result<List<RecipeModel>>
-    suspend fun getLocallyStoredRecipes(): Result<List<RecipeModel>>
+    suspend fun getRecipes(prompt: String): Result<List<RecipeDto>>
+    suspend fun getLocallyStoredRecipes(): Result<List<RecipeDto>>
 }

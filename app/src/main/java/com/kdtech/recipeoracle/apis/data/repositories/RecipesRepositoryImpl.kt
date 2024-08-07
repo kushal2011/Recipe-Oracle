@@ -1,7 +1,7 @@
 package com.kdtech.recipeoracle.apis.data.repositories
 
-import com.kdtech.recipeoracle.apis.data.models.RecipeModel
-import com.kdtech.recipeoracle.apis.data.models.RecipeRequestModel
+import com.kdtech.recipeoracle.apis.data.models.RecipeDto
+import com.kdtech.recipeoracle.apis.domain.models.RecipeRequestModel
 import com.kdtech.recipeoracle.apis.data.networks.RecipesDataSource
 import com.kdtech.recipeoracle.coroutines.DispatcherProvider
 import com.kdtech.recipeoracle.prompt.Prompts
@@ -14,7 +14,7 @@ class RecipesRepositoryImpl @Inject constructor(
 ): RecipesRepository {
     override suspend fun getRecipes(
         recipeRequest: RecipeRequestModel
-    ): Result<List<RecipeModel>> = withContext(dispatcherProvider.io) {
+    ): Result<List<RecipeDto>> = withContext(dispatcherProvider.io) {
         if (recipeRequest.areAllBooleansNull() && recipeRequest.searchText.isBlank()) {
             recipesDataSource.getLocallyStoredRecipes()
         } else {
