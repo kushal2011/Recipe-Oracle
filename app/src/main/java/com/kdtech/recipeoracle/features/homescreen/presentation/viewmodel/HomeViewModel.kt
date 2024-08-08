@@ -2,6 +2,7 @@ package com.kdtech.recipeoracle.features.homescreen.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kdtech.recipeoracle.apis.ConfigManager
 import com.kdtech.recipeoracle.coroutines.DispatcherProvider
 import com.kdtech.recipeoracle.apis.domain.models.RecipeRequestModel
 import com.kdtech.recipeoracle.apis.domain.usecase.GetHomeFeedUseCase
@@ -22,7 +23,8 @@ class HomeViewModel @Inject constructor(
     private val dispatcher: DispatcherProvider,
     private val navigator: ScreenNavigator,
     private val getRecipesUseCase: GetRecipeUseCase,
-    private val getHomeFeedUseCase: GetHomeFeedUseCase
+    private val getHomeFeedUseCase: GetHomeFeedUseCase,
+    private val configManager: ConfigManager
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeState())
     val state: Flow<HomeState> get() = _state
@@ -55,7 +57,8 @@ class HomeViewModel @Inject constructor(
 //    }
 
     private fun getHomeFeedData() = viewModelScope.launch(dispatcher.io) {
-        getHomeFeedUseCase(0).fold(
+        val version = configManager.fetchHomeFeedVersion()
+        getHomeFeedUseCase(version).fold(
             onSuccess = { homeFeedWidgetsModel ->
                 _state.update {
                     it.copy(

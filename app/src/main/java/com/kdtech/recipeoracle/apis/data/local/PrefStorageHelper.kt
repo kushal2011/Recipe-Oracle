@@ -25,6 +25,14 @@ class PrefStorageHelper @Inject constructor(
         return gson.fromJson(jsonString, listType)
     }
 
+    fun saveLocalHomeFeedVersion(key: String, version: Long) {
+        prefs.edit().putLong(key, version).apply()
+    }
+
+    fun getLocalHomeFeedVersion(key: String): Long {
+        return prefs.getLong(key, 0L)
+    }
+
     fun saveHomeFeed(key: String, homeFeedWidgetsDto: HomeFeedWidgetsDto) {
         prefs.edit().putString(key, gson.toJson(homeFeedWidgetsDto)).apply()
     }

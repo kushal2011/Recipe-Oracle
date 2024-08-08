@@ -43,7 +43,7 @@ class RecipesDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getHomeFeedDataFromRemote(): Result<HomeFeedWidgetsDto> {
+    override suspend fun getHomeFeedDataFromRemote(configVersion: Long): Result<HomeFeedWidgetsDto> {
         val result = safeApiCall(
             {
                 recipesApi.getHomeFeedData()
@@ -55,22 +55,33 @@ class RecipesDataSourceImpl @Inject constructor(
         } else {
             result.getOrNull()?.let {
                 prefStorageHelper.saveHomeFeed(PREF_KEY_FOR_HOME_FEED, it)
+                prefStorageHelper.saveLocalHomeFeedVersion(PREF_KEY_FOR_HOME_FEED_VERSION, configVersion)
             }
             return result
         }
     }
 
-    override suspend fun getHomeFeedDataFromLocal(): Result<HomeFeedWidgetsDto> {
+    override suspend fun getHomeFeedDataFromLocal(configVersion: Long): Result<HomeFeedWidgetsDto> {
         val homeFeedWidgetsDto = prefStorageHelper.getHomeFeed(PREF_KEY_FOR_HOME_FEED)
         homeFeedWidgetsDto?.let {
             return Result.success(it)
         }?: run {
-            return getHomeFeedDataFromRemote()
+            return getHomeFeedDataFromRemote(configVersion)
+        }
+    }
+
+    override suspend fun getHomeFeedData(configVersion: Long): Result<HomeFeedWidgetsDto> {
+        val localVersion = prefStorageHelper.getLocalHomeFeedVersion(PREF_KEY_FOR_HOME_FEED_VERSION)
+        return if (configVersion > localVersion) {
+            getHomeFeedDataFromRemote(configVersion)
+        } else {
+            getHomeFeedDataFromLocal(configVersion)
         }
     }
 
     companion object {
         private const val PREF_KEY = "recipes_list"
         private const val PREF_KEY_FOR_HOME_FEED = "homefeed"
+        private const val PREF_KEY_FOR_HOME_FEED_VERSION = "homefeed_version"
     }
 }

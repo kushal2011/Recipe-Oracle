@@ -6,6 +6,5 @@ import com.kdtech.recipeoracle.apis.domain.models.RecipeRequestModel
 
 interface RecipesRepository {
     suspend fun getRecipes(recipeRequest: RecipeRequestModel): Result<List<RecipeDto>>
-    suspend fun getHomeFeedDataFromRemote(): Result<HomeFeedWidgetsModel>
-    suspend fun getHomeFeedDataFromLocal(): Result<HomeFeedWidgetsModel>
+    suspend fun getHomeFeedData(configVersion: Long): Result<HomeFeedWidgetsModel>
 }

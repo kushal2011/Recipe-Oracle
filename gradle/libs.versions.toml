@@ -1,4 +1,7 @@
 [versions]
+compile-sdk = "34"
+target-sdk = "34"
+min-sdk = "26"
 agp = "8.5.1"
 kotlin = "1.9.0"
 coreKtx = "1.13.1"
@@ -25,6 +28,7 @@ firebaseAnalytics = "22.0.2"
 firebaseCrashlytics = "19.0.3"
 googleFirebaseCrashlytics = "3.0.2"
 firebaseAuthKtx = "23.0.0"
+firebaseConfig = "22.0.0"
 
 play-services-auth = "21.2.0"
 
@@ -32,7 +36,7 @@ play-services-auth = "21.2.0"
 retrofit = "2.9.0"
 # OkHttp
 okhttp-logging = "4.10.0"
-okhttp = "4.9.1"
+okhttp = "4.12.0"
 
 
 [libraries]
@@ -70,6 +74,7 @@ coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coi
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics", version.ref = "firebaseCrashlytics" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
+firebase-config = { group = "com.google.firebase", name = "firebase-config-ktx", version.ref = "firebaseConfig" }
 
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "play-services-auth" }
 

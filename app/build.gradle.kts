@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace = "com.kdtech.recipeoracle"
-    compileSdk = 34
+    compileSdk = libs.versions.compile.sdk.get().toInt()
 
     defaultConfig {
         applicationId = "com.kdtech.recipeoracle"
-        minSdk = 26
-        targetSdk = 34
+        minSdk = libs.versions.min.sdk.get().toInt()
+        targetSdk = libs.versions.target.sdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
 
@@ -101,6 +101,7 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.config)
 
     implementation(libs.play.services.auth)
 

@@ -14,7 +14,6 @@ import com.kdtech.recipeoracle.navigations.AppNavigation
 import com.kdtech.recipeoracle.navigations.PrimaryNavigator
 import com.kdtech.recipeoracle.navigations.ScreenNavigator
 import com.kdtech.recipeoracle.resources.theme.RecipeTheme
-import com.kdtech.recipeoracle.ui.theme.RecipeOracleTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

@@ -2,7 +2,6 @@
 - add save recipe feature
 - handle image generation
 - optional login for personalized recommendation
-- get HOME_FEED_VERSION from firebase config and compare
 - premium feature (chat with recipe)
 - add button to send user to youtube
 - add week planner , based on plan let user know what ingredients would be needed
