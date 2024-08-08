@@ -2,6 +2,7 @@
 - add save recipe feature
 - handle image generation
 - optional login for personalized recommendation
+- get HOME_FEED_VERSION from firebase config and compare
 - premium feature (chat with recipe)
 - add button to send user to youtube
 - add week planner , based on plan let user know what ingredients would be needed
@@ -11,16 +12,13 @@
 - Ratings and Reviews: Display star ratings for each recipe and let users quickly add their own ratings. (Done in BE)
 - Cooking Timer: Integrate a simple timer function for recipes that users can set with one tap.
 - In HomeFeed
-  - add Top Rated Recipes (Done)
   - add Trending Recipes
   - add Seasonal Recipes
   - add Kid-Friendly Recipes (Recipes that are easy to make and appealing to children)
   - add Recommended for You (based on user preferences and behavior)
   - add Popular This Week
-  - add Healthy Recipes (Nutritionally balanced recipes for health-conscious users) (Done)
   - add Desserts (done in BE)
   - add Asian Delights (Could include Chinese, Japanese, Thai, etc.)
-  - add Quick & Easy (30-minute meals across cuisines) (done)
   - snacks , side dish
 - Notifications
 - add ads 
