@@ -3,6 +3,7 @@ package com.kdtech.recipeoracle.apis.data.local
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.kdtech.recipeoracle.apis.data.models.HomeFeedWidgetsDto
 import com.kdtech.recipeoracle.apis.data.models.RecipeDto
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -24,6 +25,14 @@ class PrefStorageHelper @Inject constructor(
         return gson.fromJson(jsonString, listType)
     }
 
+    fun saveHomeFeed(key: String, homeFeedWidgetsDto: HomeFeedWidgetsDto) {
+        prefs.edit().putString(key, gson.toJson(homeFeedWidgetsDto)).apply()
+    }
+
+    fun getHomeFeed(key: String): HomeFeedWidgetsDto? {
+        val jsonString = prefs.getString(key, null)
+        return gson.fromJson(jsonString, HomeFeedWidgetsDto::class.java)
+    }
     fun appendToList(key: String, item: RecipeDto) {
         val list = getList(key)
         list.add(item)

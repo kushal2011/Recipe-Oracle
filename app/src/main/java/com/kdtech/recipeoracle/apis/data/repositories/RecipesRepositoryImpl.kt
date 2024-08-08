@@ -28,7 +28,13 @@ class RecipesRepositoryImpl @Inject constructor(
 
     override suspend fun getHomeFeedDataFromRemote(): Result<HomeFeedWidgetsModel> {
         return withContext(dispatcherProvider.io) {
-            recipesDataSource.getHomeFeedData().map { homeFeedWidgetsMapper.map(it) }
+            recipesDataSource.getHomeFeedDataFromRemote().map { homeFeedWidgetsMapper.map(it) }
+        }
+    }
+
+    override suspend fun getHomeFeedDataFromLocal(): Result<HomeFeedWidgetsModel> {
+        return withContext(dispatcherProvider.io) {
+            recipesDataSource.getHomeFeedDataFromLocal().map { homeFeedWidgetsMapper.map(it) }
         }
     }
 }
