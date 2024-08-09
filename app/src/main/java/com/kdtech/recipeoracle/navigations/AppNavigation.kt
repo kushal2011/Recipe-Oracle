@@ -17,6 +17,7 @@ import androidx.navigation.compose.composable
 import com.kdtech.recipeoracle.features.authentication.ui.AuthScreen
 import com.kdtech.recipeoracle.features.detailsscreen.ui.DetailsScreen
 import com.kdtech.recipeoracle.features.homescreen.ui.HomeScreen
+import com.kdtech.recipeoracle.features.recipechat.ui.RecipeChatScreen
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -34,6 +35,11 @@ fun AppNavigation(
         }
         composable(Screen.Auth().route) {
             AuthScreen(
+                viewModel = hiltViewModel()
+            )
+        }
+        composable(Screen.RecipeChat().route) {
+            RecipeChatScreen(
                 viewModel = hiltViewModel()
             )
         }

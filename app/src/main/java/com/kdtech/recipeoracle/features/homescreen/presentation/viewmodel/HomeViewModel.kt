@@ -37,7 +37,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onDetailsClick() = viewModelScope.launch(dispatcher.main) {
-        navigator.navigate(ScreenAction.goTo(screen = Screen.Details()))
+        navigator.navigate(ScreenAction.goTo(screen = Screen.RecipeChat()))
     }
 //    private fun getIngredientsData() = viewModelScope.launch(dispatcher.io) {
 //        val generativeModel = GenerativeModel(

@@ -92,6 +92,8 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.java.inject)
     implementation(libs.compose.hilt.navigation)
+    implementation(libs.constraintlayout.compose)
+
     // Hilt
     implementation(libs.android.hilt)
 
