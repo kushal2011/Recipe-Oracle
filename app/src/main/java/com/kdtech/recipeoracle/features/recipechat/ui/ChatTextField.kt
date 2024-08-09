@@ -2,6 +2,7 @@
 package com.kdtech.recipeoracle.features.recipechat.ui
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,8 +11,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextField
@@ -33,32 +34,31 @@ import androidx.compose.ui.unit.dp
 import com.kdtech.recipeoracle.common.Empty
 import com.kdtech.recipeoracle.resources.DrawableResources
 import com.kdtech.recipeoracle.resources.theme.RecipeTheme
-import com.kdtech.recipeoracle.resources.theme.toWidthDp
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatTextField(
     modifier: Modifier = Modifier,
     maxLines: Int = 1,
-    border: BorderStroke? = null,
     onSendClicked: (String) -> Unit = {},
-    backgroundColor: Color = Color.LightGray
+    backgroundColor: Color = Color.White
 ) {
     val focusRequester = remember { FocusRequester() }
     var text by remember {
         mutableStateOf(
-            TextFieldValue(String.Empty)
+            TextFieldValue("")
         )
     }
     Card(
         modifier = modifier,
-        colors = CardColors(
+        colors = CardDefaults.cardColors(
             containerColor = backgroundColor,
             contentColor = Color.Unspecified,
             disabledContentColor = Color.Gray,
             disabledContainerColor = Color.Gray
         ),
         shape = RoundedCornerShape(24.dp),
-        border = border,
+        border = BorderStroke(1.dp, Color.LightGray),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 0.dp
         )
@@ -66,12 +66,12 @@ fun ChatTextField(
         Row(
             modifier = Modifier
                 .padding(start = 18.dp, end = 0.dp),
-            verticalAlignment = Alignment.Bottom,
-            horizontalArrangement = Arrangement.spacedBy(0.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(0.dp)
         ) {
             TextField(
                 modifier = Modifier
-                    .width(80F.toWidthDp())
+                    .weight(1f)
                     .focusRequester(focusRequester),
                 value = text,
                 maxLines = maxLines,
@@ -82,8 +82,11 @@ fun ChatTextField(
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Default
                 ),
-                colors = TextFieldDefaults.colors(
-                    backgroundColor
+                colors = TextFieldDefaults.textFieldColors(
+                    containerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    cursorColor = RecipeTheme.colors.primaryGreen
                 )
             )
             Spacer(Modifier.width(8.dp))

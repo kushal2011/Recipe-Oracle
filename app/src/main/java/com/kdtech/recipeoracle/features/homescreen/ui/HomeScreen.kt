@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -18,7 +17,6 @@ import com.kdtech.recipeoracle.features.homescreen.presentation.models.HomeState
 import com.kdtech.recipeoracle.features.homescreen.presentation.viewmodel.HomeViewModel
 import com.kdtech.recipeoracle.resources.compositions.RecipeCard
 import com.kdtech.recipeoracle.resources.theme.RecipeTheme
-import com.kdtech.recipeoracle.resources.theme.RecipeTypography
 import com.kdtech.recipeoracle.resources.theme.toHeightDp
 import com.kdtech.recipeoracle.resources.theme.toWidthDp
 
@@ -45,7 +43,7 @@ fun HomeScreen(
                 Text(
                     text = "See all",
                     style = RecipeTheme.typography.robotoMedium,
-                    color = RecipeTheme.colors.primaryGreen
+                    color = RecipeTheme.colors.black100
                 )
             }
             LazyRow(
