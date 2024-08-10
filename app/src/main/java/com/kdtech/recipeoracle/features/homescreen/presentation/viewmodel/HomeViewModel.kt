@@ -7,6 +7,7 @@ import com.kdtech.recipeoracle.coroutines.DispatcherProvider
 import com.kdtech.recipeoracle.apis.domain.models.RecipeRequestModel
 import com.kdtech.recipeoracle.apis.domain.usecase.GetHomeFeedUseCase
 import com.kdtech.recipeoracle.apis.domain.usecase.GetRecipeUseCase
+import com.kdtech.recipeoracle.common.BundleKeys
 import com.kdtech.recipeoracle.features.homescreen.presentation.models.HomeState
 import com.kdtech.recipeoracle.navigations.Screen
 import com.kdtech.recipeoracle.navigations.ScreenAction
@@ -36,8 +37,15 @@ class HomeViewModel @Inject constructor(
         navigator.navigate(ScreenAction.goTo(screen = Screen.Back()))
     }
 
-    fun onDetailsClick() = viewModelScope.launch(dispatcher.main) {
-        navigator.navigate(ScreenAction.goTo(screen = Screen.RecipeChat()))
+    fun onDetailsClick(recipeName: String) = viewModelScope.launch(dispatcher.main) {
+        navigator.navigate(
+            ScreenAction.goTo(
+                screen = Screen.RecipeChat(),
+                map = mapOf(
+                    BundleKeys.RECIPE_NAME to recipeName
+                )
+            )
+        )
     }
 //    private fun getIngredientsData() = viewModelScope.launch(dispatcher.io) {
 //        val generativeModel = GenerativeModel(

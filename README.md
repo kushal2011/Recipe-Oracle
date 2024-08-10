@@ -22,6 +22,8 @@
 - Notifications
 - add ads 
 - add option to remove ads if user buys premium
+- create bottom bar
+- add categories screen
 
 
 

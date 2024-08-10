@@ -32,7 +32,7 @@ fun RecipeCard(
     recipeTitle: String,
     recipeMakingTime: String,
     recipeImageUrl: String = String.Empty,
-    onClick:  () -> Unit
+    onClick:  (String) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -42,7 +42,9 @@ fun RecipeCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 10.dp
         ),
-        onClick = onClick
+        onClick = {
+            onClick(recipeTitle)
+        }
     ) {
         Box {
             RemoteImage(

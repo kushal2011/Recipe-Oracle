@@ -14,6 +14,9 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.kdtech.recipeoracle.common.BundleKeys
+import com.kdtech.recipeoracle.common.Empty
 import com.kdtech.recipeoracle.features.authentication.ui.AuthScreen
 import com.kdtech.recipeoracle.features.detailsscreen.ui.DetailsScreen
 import com.kdtech.recipeoracle.features.homescreen.ui.HomeScreen
@@ -38,7 +41,16 @@ fun AppNavigation(
                 viewModel = hiltViewModel()
             )
         }
-        composable(Screen.RecipeChat().route) {
+        composable(
+            Screen.RecipeChat().route.plus(
+                "?${BundleKeys.RECIPE_NAME}={${BundleKeys.RECIPE_NAME}}"
+            ),
+            arguments = listOf(
+                navArgument(BundleKeys.RECIPE_NAME) {
+                    defaultValue = String.Empty
+                }
+            ),
+        ) {
             RecipeChatScreen(
                 viewModel = hiltViewModel()
             )

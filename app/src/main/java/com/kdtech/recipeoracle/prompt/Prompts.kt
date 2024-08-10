@@ -20,6 +20,18 @@ object Prompts {
                 "Response should only contain JSON and nothing else."
     }
 
+    fun getPromptForChat(
+        recipeName: String
+    ) : String{
+        return "The user is currently viewing a recipe for $recipeName." +
+                " Your role is to engage the user in a friendly and informative conversation about this dish." +
+                " Begin by warmly welcoming them and acknowledging their interest in this recipe." +
+                " Offer your assistance with any questions they might have about the ingredients, cooking techniques, or possible variations." +
+                " Be proactive in providing tips on how to achieve the best results, including suggestions for dietary preferences like vegan or vegetarian options." +
+                " If the user expresses interest in nutrition or cooking tips, respond with tailored advice to enhance their cooking experience." +
+                " Your responses should be conversational, supportive, and focused on making their time in the kitchen enjoyable and successful."
+    }
+
     fun getPromptForRecipes(
         recipeRequestModel: RecipeRequestModel
     ): String {
