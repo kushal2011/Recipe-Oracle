@@ -3,7 +3,7 @@ package com.kdtech.recipeoracle.apis.data.networks.di
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.kdtech.recipeoracle.BuildConfig
-import com.kdtech.recipeoracle.apis.data.networks.RecipesApi
+import com.kdtech.recipeoracle.apis.data.networks.PrivateKeyInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.Reusable
@@ -41,7 +41,8 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideInterceptors(): Set<Interceptor> {
+    @IntoSet
+    fun provideLoggingInterceptor(): Interceptor {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = if (BuildConfig.DEBUG) {
                 HttpLoggingInterceptor.Level.BODY
@@ -49,8 +50,13 @@ object NetworkModule {
                 HttpLoggingInterceptor.Level.NONE
             }
         }
-        return setOf(loggingInterceptor)
+        return loggingInterceptor
     }
+
+    @Provides
+    @Singleton
+    @IntoSet
+    fun providePrivateKeyInterceptor(): Interceptor = PrivateKeyInterceptor()
 
     @Provides
     @Singleton

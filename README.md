@@ -1,11 +1,17 @@
 # TODO
 - add save recipe feature
 - handle image generation
-- optional login for personalized recommendation
-- premium feature (chat with recipe)
 - add button to send user to youtube
-- add week planner , based on plan let user know what ingredients would be needed
 - share with all the details of recipe and link to playstore app
+- add ads 
+- add option to remove ads if user buys premium
+- create bottom bar
+- add categories screen
+- restrict rooted devices
+
+# TODO (Long term)
+- optional login for personalized recommendation
+- add week planner , based on plan let user know what ingredients would be needed
 - get all ingredients from image and suggest recipe that can be made using only that
 - "Cook Now" Button: For each recipe, include a prominent "Cook Now" button that starts a step-by-step guided cooking mode.
 - Ratings and Reviews: Display star ratings for each recipe and let users quickly add their own ratings. (Done in BE)
@@ -19,13 +25,7 @@
   - add Desserts (done in BE)
   - add Asian Delights (Could include Chinese, Japanese, Thai, etc.)
   - snacks , side dish
-- Notifications
-- add ads 
-- add option to remove ads if user buys premium
-- create bottom bar
-- add categories screen
-
-
+  - Notifications
 
 # BUGS
 - app crash when launching without internet
