@@ -7,7 +7,6 @@
 - add option to remove ads if user buys premium
 - create bottom bar
 - add categories screen
-- restrict rooted devices
 
 # TODO (Long term)
 - optional login for personalized recommendation

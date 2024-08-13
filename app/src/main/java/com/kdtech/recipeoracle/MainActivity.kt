@@ -11,6 +11,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.rememberNavController
+import com.kdtech.recipeoracle.common.Empty
 import com.kdtech.recipeoracle.navigations.AppNavigation
 import com.kdtech.recipeoracle.navigations.PrimaryNavigator
 import com.kdtech.recipeoracle.navigations.ScreenNavigator
@@ -39,6 +40,8 @@ class MainActivity : ComponentActivity() {
                         title = stringResource(id = StringResources.rootedDeviceTitle),
                         message = stringResource(id = StringResources.rootedDeviceDesc),
                         dismissOnClickOutside = false,
+                        onRightClick = { finish() },
+                        leftText = String.Empty
                     )
                 } else {
                     val navController = rememberNavController()

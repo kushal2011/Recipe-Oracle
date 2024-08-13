@@ -22,7 +22,7 @@ fun DefaultConfirmDialog(
     modifier: Modifier = Modifier,
     dismissOnClickOutside: Boolean = true,
     leftButtonColor: Color = RecipeTheme.colors.darkCharcoal,
-    rightButtonColor: Color = RecipeTheme.colors.primaryGreen,
+    rightButtonColor: Color = RecipeTheme.colors.darkCharcoal,
     titleColor: Color = RecipeTheme.colors.darkCharcoal,
     descriptionColor: Color = RecipeTheme.colors.mediumGray,
     backgroundColor: Color = RecipeTheme.colors.lightGrey,
