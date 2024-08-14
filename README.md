@@ -7,6 +7,10 @@
 - add option to remove ads if user buys premium
 - create bottom bar
 - add categories screen
+- add recipe details screen
+- add search screen
+  - add empty/no data found
+- add placeholders for image
 
 # TODO (Long term)
 - optional login for personalized recommendation
