@@ -5,5 +5,6 @@
     <string name="cancel">Cancel</string>
     <string name="rooted_device_title">App Inaccessible on Rooted Devices</string>
     <string name="rooted_device_desc">We\'re sorry, but rooted or jailbroken devices are not supported for security reasons. Please restore your device to its original settings to continue using our app</string>
+    <string name="checking_the_recipe_book">Checking the recipe book</string>
 
 </resources>

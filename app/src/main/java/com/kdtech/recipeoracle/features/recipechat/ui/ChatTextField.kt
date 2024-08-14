@@ -38,7 +38,7 @@ import com.kdtech.recipeoracle.resources.theme.RecipeTheme
 @Composable
 fun ChatTextField(
     modifier: Modifier = Modifier,
-    maxLines: Int = 1,
+    maxLines: Int = 4,
     onSendClicked: (String) -> Unit = {},
     backgroundColor: Color = Color.White
 ) {

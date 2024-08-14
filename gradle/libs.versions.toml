@@ -46,6 +46,8 @@ okhttp = "4.12.0"
 
 # Root Beer
 root-beer = "0.1.0"
+# Markdown
+markwon = "4.6.2"
 
 
 [libraries]
@@ -98,6 +100,9 @@ constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayou
 
 # Root Beer
 root-beer = { module = "com.scottyab:rootbeer-lib", version.ref = "root-beer" }
+
+# Markdown
+markwon-core = { module = "io.noties.markwon:core", version.ref = "markwon" }
 
 [bundles]
 retrofit = [

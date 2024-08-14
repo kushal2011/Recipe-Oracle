@@ -118,6 +118,8 @@ dependencies {
 
     implementation(libs.root.beer)
 
+    implementation(libs.markwon.core)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

@@ -47,18 +47,25 @@ class RecipeChatViewModel @Inject constructor(
     ) = viewModelScope.launch(dispatcher.main) {
         _state.update {
             it.copy(
-                chatList = it.chatList.plus(MessageModel(messageText, true))
+                chatList = it.chatList.plus(MessageModel(messageText, true)),
+                typingIndicator = true
             )
         }
       val response = chat.sendMessage(messageText)
         _state.update {
             it.copy(
-                chatList = it.chatList.plus(MessageModel(response.text.toString(), false))
+                chatList = it.chatList.plus(MessageModel(response.text.toString(), false)),
+                typingIndicator = false
             )
         }
     }
 
     private fun startChat() = viewModelScope.launch(dispatcher.main) {
+        _state.update {
+            it.copy(
+                typingIndicator = true
+            )
+        }
         val generativeModel = GenerativeModel(
             // The Gemini 1.5 models are versatile and work with multi-turn conversations (like chat)
             modelName = "gemini-1.5-flash",
@@ -70,7 +77,8 @@ class RecipeChatViewModel @Inject constructor(
         val firstAiMessage = chat.sendMessage(Prompts.getPromptForChat(recipeName))
         _state.update {
             it.copy(
-                chatList = it.chatList.plus(MessageModel(firstAiMessage.text.toString(), false))
+                chatList = it.chatList.plus(MessageModel(firstAiMessage.text.toString(), false)),
+                typingIndicator = false
             )
         }
     }
