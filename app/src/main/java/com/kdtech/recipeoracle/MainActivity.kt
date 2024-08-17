@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.rememberNavController
 import com.kdtech.recipeoracle.common.Empty
 import com.kdtech.recipeoracle.navigations.AppNavigation
+import com.kdtech.recipeoracle.navigations.BottomBar
 import com.kdtech.recipeoracle.navigations.PrimaryNavigator
 import com.kdtech.recipeoracle.navigations.ScreenNavigator
 import com.kdtech.recipeoracle.resources.StringResources
@@ -46,6 +47,9 @@ class MainActivity : ComponentActivity() {
                 } else {
                     val navController = rememberNavController()
                     Scaffold(
+                        bottomBar = {
+                            BottomBar(navController)
+                        },
                         content = {
                             Surface(
                                 color = MaterialTheme.colorScheme.background,
