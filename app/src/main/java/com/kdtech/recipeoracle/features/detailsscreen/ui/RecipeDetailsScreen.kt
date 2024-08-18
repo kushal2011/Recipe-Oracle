@@ -1,5 +1,6 @@
 package com.kdtech.recipeoracle.features.detailsscreen.ui
 
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,7 +36,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.kdtech.recipeoracle.apis.domain.models.IngredientsModel
@@ -113,7 +114,9 @@ fun RecipeDetailsScreen(
                 LazyColumn(modifier = contentModifier) {
                     item {
                         RemoteImage(
-                            imageUrl = recipeData.imageUrl,
+                            imageUrl = recipeData.imageUrl.ifEmpty {
+                                "https://www.indianhealthyrecipes.com/wp-content/uploads/2014/11/paneer-butter-masala-recipe-2.jpg"
+                           },
                             contentDescription = "Recipe image",
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -130,41 +133,51 @@ fun RecipeDetailsScreen(
                         ExpandableCard(
                             title = "Ingredients",
                             isExpanded = ingredientViewExpanded.value,
-                            onClick = { ingredientViewExpanded.value = !ingredientViewExpanded.value }
-                        ) {
-                            Column {
-                                recipeData.ingredients.forEach { ingredient ->
-                                    IngredientItem(ingredient = ingredient)
+                            onClick = { ingredientViewExpanded.value = !ingredientViewExpanded.value },
+                            content = {
+                                Column {
+                                    recipeData.ingredients.forEach { ingredient ->
+                                        IngredientItem(ingredient = ingredient)
+                                    }
                                 }
                             }
-                        }
+                        )
                     }
 
                     item {
                         ExpandableCard(
                             title = "Method",
                             isExpanded = methodViewExpanded.value,
-                            onClick = { methodViewExpanded.value = !methodViewExpanded.value }
-                        ) {
-                            Column {
-                                recipeData.instructions.forEach { instruction ->
-                                    Text(
-                                        text = instruction.step,
-                                        modifier = Modifier.padding(10.dp)
-                                    )
+                            onClick = { methodViewExpanded.value = !methodViewExpanded.value },
+                            content = {
+                                Column {
+                                    recipeData.instructions.forEach { instruction ->
+                                        Text(
+                                            text = instruction.step,
+                                            color = RecipeTheme.colors.darkCharcoal,
+                                            modifier = Modifier.padding(10.dp),
+                                            style = RecipeTheme.typography.robotoMedium
+                                        )
+                                    }
                                 }
                             }
-                        }
+                        )
                     }
 
                     item {
                         Button(
                             onClick = { /* Handle AI Chat */ },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = RecipeTheme.colors.primaryGreen
+                            ),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 16.dp)
                         ) {
-                            Text(text = "Chat with AI")
+                            Text(
+                                text = "Chat with AI",
+                                color = RecipeTheme.colors.white100
+                            )
                         }
                     }
                 }
@@ -180,29 +193,32 @@ fun RecipeDetailsCardList(recipeData: RecipeModel) {
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
         CategoryCard(
             image = DrawableResources.timeBlack,
-            type = "Prep Time: ${recipeData.prepTime} mins"
+            text = "Prep Time: ${recipeData.prepTime} mins"
         )
 
         CategoryCard(
             image = DrawableResources.cuisine,
-            type = "Cuisine: ${recipeData.cuisineType}"
+            text = "Cuisine: ${recipeData.cuisineType}"
         )
 
         CategoryCard(
             image = DrawableResources.courseType,
-            type = "Course: ${recipeData.course}"
+            text = "Course: ${recipeData.course}"
         )
 
         when {
-            recipeData.isVegetarian -> CategoryCard(image = DrawableResources.veg, type = "Veg")
-            recipeData.isNonVeg -> CategoryCard(image = DrawableResources.nonVeg, type = "Non-Veg")
-            recipeData.isEggiterian -> CategoryCard(image = DrawableResources.eggitarian, type = "Eggitarian")
+            recipeData.isVegetarian -> CategoryCard(image = DrawableResources.veg, text = "Veg")
+            recipeData.isNonVeg -> CategoryCard(image = DrawableResources.nonVeg, text = "Non-Veg")
+            recipeData.isEggiterian -> CategoryCard(image = DrawableResources.eggitarian, text = "Eggitarian")
         }
     }
 }
 
 @Composable
-fun CategoryCard(image: Int, type: String) {
+fun CategoryCard(
+    @DrawableRes image: Int,
+    text: String
+) {
     Row(modifier = Modifier.padding(vertical = 5.dp)) {
         Image(
             painter = painterResource(id = image),
@@ -210,7 +226,11 @@ fun CategoryCard(image: Int, type: String) {
             modifier = Modifier.size(16.dp)
         )
         Spacer(modifier = Modifier.width(4.dp))
-        Text(text = type, color = Color.Black)
+        Text(
+            text = text,
+            color = RecipeTheme.colors.darkCharcoal,
+            style = RecipeTheme.typography.robotoMedium
+        )
     }
 }
 
@@ -225,8 +245,11 @@ fun ExpandableCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
-            .animateContentSize()
-            .clickable { onClick() },
+            .clickable { onClick() }
+            .animateContentSize(),
+        colors = CardDefaults.cardColors(
+            containerColor = RecipeTheme.colors.veryLightGray
+        ),
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -238,12 +261,23 @@ fun ExpandableCard(
             ) {
                 Text(
                     text = title,
-                    modifier = Modifier.padding(5.dp)
+                    color = RecipeTheme.colors.darkCharcoal,
+                    modifier = Modifier.padding(5.dp),
+                    style = RecipeTheme.typography.headerMedium
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Icon(
-                    painter = painterResource(id = if (isExpanded) DrawableResources.upArrow else DrawableResources.downArrow),
-                    contentDescription = if (isExpanded) "Collapse" else "Expand",
+                    painter = painterResource(
+                        id = if (isExpanded) {
+                            DrawableResources.upArrow
+                        } else {
+                            DrawableResources.downArrow
+                        }),
+                    contentDescription = if (isExpanded) {
+                        "Collapse"
+                    } else {
+                        "Expand"
+                    },
                     modifier = Modifier.size(16.dp)
                 )
             }
@@ -257,8 +291,16 @@ fun ExpandableCard(
 @Composable
 fun IngredientItem(ingredient: IngredientsModel) {
     Row(modifier = Modifier.padding(10.dp)) {
-        Text(text = ingredient.ingredientName)
+        Text(
+            text = ingredient.ingredientName,
+            color = RecipeTheme.colors.darkCharcoal,
+            style = RecipeTheme.typography.robotoMedium
+        )
         Spacer(modifier = Modifier.weight(1f))
-        Text(text = ingredient.quantity)
+        Text(
+            text = ingredient.quantity,
+            color = RecipeTheme.colors.mediumGray,
+            style = RecipeTheme.typography.robotoMedium
+        )
     }
 }
