@@ -1,5 +1,6 @@
 package com.kdtech.recipeoracle.features.detailsscreen.ui
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,10 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -25,6 +23,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
@@ -45,8 +44,6 @@ import com.kdtech.recipeoracle.features.detailsscreen.presentation.viewmodel.Rec
 import com.kdtech.recipeoracle.resources.DrawableResources
 import com.kdtech.recipeoracle.resources.components.RemoteImage
 import com.kdtech.recipeoracle.resources.theme.RecipeTheme
-import com.kdtech.recipeoracle.resources.theme.toHeightDp
-import com.kdtech.recipeoracle.resources.theme.toWidthDp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,122 +56,128 @@ fun RecipeDetailsScreen(
 
     val state by viewModel.state.collectAsState(initial = RecipeDetailsState())
 
-    state.recipeData?.let { recipeData ->
-        LazyColumn(
-            modifier = modifier.fillMaxSize()
-        ) {
-            item {
-                TopAppBar(
-                    title = {
-                        Text(
-                            text = recipeData.recipeName,
-                            style = MaterialTheme.typography.titleLarge
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = state.recipeData?.recipeName ?: "",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                },
+                colors = TopAppBarColors(
+                    containerColor = RecipeTheme.colors.lightGrey,
+                    titleContentColor = RecipeTheme.colors.darkCharcoal,
+                    navigationIconContentColor = RecipeTheme.colors.darkCharcoal,
+                    actionIconContentColor = RecipeTheme.colors.darkCharcoal,
+                    scrolledContainerColor = RecipeTheme.colors.primaryGreen
+                ),
+                navigationIcon = {
+                    IconButton(onClick = { /* Handle back navigation */ }) {
+                        Icon(
+                            painter = painterResource(id = DrawableResources.back),
+                            contentDescription = "Go Back",
+                            tint = RecipeTheme.colors.darkCharcoal,
+                            modifier = Modifier.size(24.dp)
                         )
-                    },
-                    colors = TopAppBarColors(
-                        containerColor = RecipeTheme.colors.lightGrey,
-                        titleContentColor = RecipeTheme.colors.darkCharcoal,
-                        navigationIconContentColor = RecipeTheme.colors.darkCharcoal,
-                        actionIconContentColor = RecipeTheme.colors.darkCharcoal,
-                        scrolledContainerColor = RecipeTheme.colors.primaryGreen
-                    ),
-                    navigationIcon = {
-                        IconButton(onClick = { /* Handle back navigation */ }) {
-                            Icon(
-                                painter = painterResource(id = DrawableResources.back),
-                                contentDescription = "Go Back",
-                                tint = RecipeTheme.colors.darkCharcoal,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = { /* Handle YouTube navigation */ }) {
-                            Icon(
-                                painter = painterResource(id = DrawableResources.play),
-                                contentDescription = "Go to YouTube",
-                                tint = RecipeTheme.colors.darkCharcoal,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                        IconButton(onClick = { /* Handle share action */ }) {
-                            Icon(
-                                painter = painterResource(id = DrawableResources.share),
-                                contentDescription = "Share",
-                                tint = RecipeTheme.colors.darkCharcoal,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                    },
-                    modifier = Modifier.statusBarsPadding()
-                )
-            }
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { /* Handle YouTube navigation */ }) {
+                        Icon(
+                            painter = painterResource(id = DrawableResources.play),
+                            contentDescription = "Go to YouTube",
+                            tint = RecipeTheme.colors.darkCharcoal,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                    IconButton(onClick = { /* Handle share action */ }) {
+                        Icon(
+                            painter = painterResource(id = DrawableResources.share),
+                            contentDescription = "Share",
+                            tint = RecipeTheme.colors.darkCharcoal,
+                            modifier = Modifier.size(24.dp)
+                        )
+                    }
+                },
+                modifier = Modifier.statusBarsPadding()
+            )
+        },
+        content = { innerPadding ->
+            val contentModifier = modifier
+                .padding(innerPadding)
+                .padding(horizontal = 16.dp)
+                .fillMaxSize()
 
-            item {
-                RemoteImage(
-                    imageUrl = recipeData.imageUrl,
-                    contentDescription = "Recipe image",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
-                        .padding(16.dp)
-                )
-            }
+            state.recipeData?.let { recipeData ->
+                LazyColumn(modifier = contentModifier) {
+                    item {
+                        RemoteImage(
+                            imageUrl = recipeData.imageUrl,
+                            contentDescription = "Recipe image",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp)
+                                .padding(vertical = 16.dp)
+                        )
+                    }
 
-            item {
-                RecipeDetailsCardList(recipeData = recipeData)
-            }
+                    item {
+                        RecipeDetailsCardList(recipeData = recipeData)
+                    }
 
-            item {
-                ExpandableCard(
-                    title = "Ingredients",
-                    isExpanded = ingredientViewExpanded.value,
-                    onClick = { ingredientViewExpanded.value = !ingredientViewExpanded.value }
-                ) {
-                    Column {
-                        recipeData.ingredients.forEach { ingredient ->
-                            IngredientItem(ingredient = ingredient)
+                    item {
+                        ExpandableCard(
+                            title = "Ingredients",
+                            isExpanded = ingredientViewExpanded.value,
+                            onClick = { ingredientViewExpanded.value = !ingredientViewExpanded.value }
+                        ) {
+                            Column {
+                                recipeData.ingredients.forEach { ingredient ->
+                                    IngredientItem(ingredient = ingredient)
+                                }
+                            }
+                        }
+                    }
+
+                    item {
+                        ExpandableCard(
+                            title = "Method",
+                            isExpanded = methodViewExpanded.value,
+                            onClick = { methodViewExpanded.value = !methodViewExpanded.value }
+                        ) {
+                            Column {
+                                recipeData.instructions.forEach { instruction ->
+                                    Text(
+                                        text = instruction.step,
+                                        modifier = Modifier.padding(10.dp)
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    item {
+                        Button(
+                            onClick = { /* Handle AI Chat */ },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 16.dp)
+                        ) {
+                            Text(text = "Chat with AI")
                         }
                     }
                 }
-            }
-
-            item {
-                ExpandableCard(
-                    title = "Method",
-                    isExpanded = methodViewExpanded.value,
-                    onClick = { methodViewExpanded.value = !methodViewExpanded.value }
-                ) {
-                    Column {
-                        recipeData.instructions.forEach { instruction ->
-                            Text(
-                                text = instruction.step,
-                                modifier = Modifier.padding(10.dp)
-                            )
-                        }
-                    }
-                }
-            }
-
-            item {
-                Button(
-                    onClick = { /* Handle AI Chat */ },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                ) {
-                    Text(text = "Chat with AI")
-                }
+            } ?: run {
+                // Show loading or placeholder content here
             }
         }
-    } ?: run {
-        // Show loading or placeholder content here
-    }
+    )
 }
 
 @Composable
 fun RecipeDetailsCardList(recipeData: RecipeModel) {
-    Column {
+    Column(modifier = Modifier.padding(vertical = 8.dp)) {
         CategoryCard(
             image = DrawableResources.timeBlack,
             type = "Prep Time: ${recipeData.prepTime} mins"
@@ -200,7 +203,7 @@ fun RecipeDetailsCardList(recipeData: RecipeModel) {
 
 @Composable
 fun CategoryCard(image: Int, type: String) {
-    Row(modifier = Modifier.padding(5.dp)) {
+    Row(modifier = Modifier.padding(vertical = 5.dp)) {
         Image(
             painter = painterResource(id = image),
             contentDescription = "Category Icon",
@@ -222,6 +225,7 @@ fun ExpandableCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 8.dp)
+            .animateContentSize()
             .clickable { onClick() },
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
