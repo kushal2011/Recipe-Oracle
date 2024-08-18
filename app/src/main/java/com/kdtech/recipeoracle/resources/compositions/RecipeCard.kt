@@ -30,6 +30,7 @@ import com.kdtech.recipeoracle.resources.theme.toWidthDp
 @Composable
 fun RecipeCard(
     recipeTitle: String,
+    recipeId: String,
     recipeMakingTime: String,
     recipeImageUrl: String = String.Empty,
     onClick:  (String) -> Unit
@@ -43,7 +44,7 @@ fun RecipeCard(
             defaultElevation = 10.dp
         ),
         onClick = {
-            onClick(recipeTitle)
+            onClick(recipeId)
         }
     ) {
         Box {

@@ -2,7 +2,9 @@ package com.kdtech.recipeoracle.features.homescreen.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.kdtech.recipeoracle.apis.ConfigManager
+import com.kdtech.recipeoracle.apis.domain.models.RecipeModel
 import com.kdtech.recipeoracle.coroutines.DispatcherProvider
 import com.kdtech.recipeoracle.apis.domain.models.RecipeRequestModel
 import com.kdtech.recipeoracle.apis.domain.usecase.GetHomeFeedUseCase
@@ -37,15 +39,27 @@ class HomeViewModel @Inject constructor(
         navigator.navigate(ScreenAction.goTo(screen = Screen.Back()))
     }
 
-    fun onDetailsClick(recipeName: String) = viewModelScope.launch(dispatcher.main) {
-        navigator.navigate(
-            ScreenAction.goTo(
-                screen = Screen.RecipeChat(),
-                map = mapOf(
-                    BundleKeys.RECIPE_NAME to recipeName
+    fun onDetailsClick(
+        recipeId: String,
+        widgetId: String
+    ) = viewModelScope.launch(dispatcher.main) {
+        val recipeData: RecipeModel? = _state.value.homeFeedWidgets.find {
+            it.widgetId == widgetId
+        }?.recipesList?.find {
+            it.recipeId == recipeId
+        }
+
+        if (recipeData != null) {
+            val gson = Gson()
+            navigator.navigate(
+                ScreenAction.goTo(
+                    screen = Screen.Details(),
+                    map = mapOf(
+                        BundleKeys.RECIPE_DETAILS to gson.toJson(recipeData)
+                    )
                 )
             )
-        )
+        }
     }
 //    private fun getIngredientsData() = viewModelScope.launch(dispatcher.io) {
 //        val generativeModel = GenerativeModel(

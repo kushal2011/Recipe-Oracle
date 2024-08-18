@@ -18,7 +18,7 @@ import androidx.navigation.navArgument
 import com.kdtech.recipeoracle.common.BundleKeys
 import com.kdtech.recipeoracle.common.Empty
 import com.kdtech.recipeoracle.features.authentication.ui.AuthScreen
-import com.kdtech.recipeoracle.features.detailsscreen.ui.DetailsScreen
+import com.kdtech.recipeoracle.features.detailsscreen.ui.RecipeDetailsScreen
 import com.kdtech.recipeoracle.features.homescreen.ui.HomeScreen
 import com.kdtech.recipeoracle.features.recipechat.ui.RecipeChatScreen
 import kotlinx.coroutines.flow.Flow
@@ -33,8 +33,19 @@ fun AppNavigation(
                 viewModel = hiltViewModel()
             )
         }
-        composable(Screen.Details().route) {
-            DetailsScreen()
+        composable(
+            Screen.Details().route.plus(
+                "?${BundleKeys.RECIPE_DETAILS}={${BundleKeys.RECIPE_DETAILS}}"
+            ),
+            arguments = listOf(
+                navArgument(BundleKeys.RECIPE_DETAILS) {
+                    defaultValue = String.Empty
+                }
+            )
+        ) {
+            RecipeDetailsScreen(
+                viewModel = hiltViewModel()
+            )
         }
         composable(Screen.Auth().route) {
             AuthScreen(

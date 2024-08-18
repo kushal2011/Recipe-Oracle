@@ -57,7 +57,10 @@ fun HomeScreen(
                         recipeTitle = item.recipeName,
                         recipeMakingTime = " ${item.prepTime} Minutes",
                         recipeImageUrl = "https://www.indianhealthyrecipes.com/wp-content/uploads/2014/11/paneer-butter-masala-recipe-2.jpg",
-                        onClick = viewModel::onDetailsClick
+                        onClick = {
+                            viewModel.onDetailsClick(it, widget.widgetId )
+                        },
+                        recipeId = item.recipeId
                     )
                     Spacer(modifier = Modifier.width(16.toWidthDp()))
                 }
