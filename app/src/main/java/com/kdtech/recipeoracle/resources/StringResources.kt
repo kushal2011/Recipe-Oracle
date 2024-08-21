@@ -12,4 +12,15 @@ object StringResources {
     val categories = R.string.categories
     val chat = R.string.chat
     val search = R.string.search
+    val chatWithAi = R.string.chat_with_ai
+    val ingredients = R.string.ingredients
+    val method = R.string.method
+    val prepTimesInMins = R.string.prep_time_mins
+    val cuisine = R.string.cuisine
+    val course = R.string.course
+    val vegetarian = R.string.vegetarian
+    val nonVegetarian = R.string.non_vegetarian
+    val eggitarian = R.string.eggitarian
+    val jain = R.string.jain
+    val vegan = R.string.vegan
 }

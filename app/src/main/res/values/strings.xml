@@ -10,5 +10,16 @@
     <string name="categories">Categories</string>
     <string name="search">Search</string>
     <string name="chat">Chat</string>
+    <string name="chat_with_ai">Chat with AI</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="method">Method</string>
+    <string name="prep_time_mins">⏱ Prep Time: %1$s mins</string>
+    <string name="cuisine">🍜 Cuisine: %1$s</string>
+    <string name="course">🍽 Course: %1$s</string>
+    <string name="vegetarian">🌿 Vegetarian</string>
+    <string name="non_vegetarian">🍗 Non-Vegetarian</string>
+    <string name="eggitarian">🍳 Eggitarian</string>
+    <string name="jain">✨ Jain</string>
+    <string name="vegan">🌱 Vegan</string>
 
 </resources>
