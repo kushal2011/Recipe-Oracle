@@ -18,4 +18,8 @@ object DrawableResources {
     val share = R.drawable.ic_share
     val time = R.drawable.ic_time
     val timeBlack = R.drawable.ic_time_black
+    val homeIcon = R.drawable.round_home_24
+    val categoriesIcon = R.drawable.categories_icon
+    val chatIcon = R.drawable.chat_icon
+    val searchIcon = R.drawable.search_icon
 }

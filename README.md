@@ -5,9 +5,7 @@
 - share with all the details of recipe and link to playstore app
 - add ads 
 - add option to remove ads if user buys premium
-- create bottom bar
 - add categories screen
-- add recipe details screen
 - add search screen
   - add empty/no data found
 - add placeholders for image
@@ -28,7 +26,7 @@
   - add Desserts (done in BE)
   - add Asian Delights (Could include Chinese, Japanese, Thai, etc.)
   - snacks , side dish
-  - Notifications
+- Notifications
 
 # BUGS
 - app crash when launching without internet

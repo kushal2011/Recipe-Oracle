@@ -18,11 +18,13 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.kdtech.recipeoracle.resources.DrawableResources
+import com.kdtech.recipeoracle.resources.StringResources
 import com.kdtech.recipeoracle.resources.theme.RecipeTheme
 
 @Composable
@@ -30,23 +32,23 @@ fun BottomBar(navController: NavHostController) {
     val items = listOf(
         BottomNavItem(
             route = Screen.Home().route,
-            text = "Home",
-            icon = DrawableResources.clockIcon
+            text = stringResource(StringResources.home),
+            icon = DrawableResources.homeIcon
         ),
         BottomNavItem(
             route = Screen.Details().route,
-            text = "Categories",
-            icon = DrawableResources.sendIcon
-        ),
-        BottomNavItem(
-            route = Screen.RecipeChat().route,
-            text = "Chat",
-            icon = DrawableResources.back
+            text = stringResource(StringResources.categories),
+            icon = DrawableResources.categoriesIcon
         ),
         BottomNavItem(
             route = Screen.Auth().route,
-            text = "Search",
-            icon = DrawableResources.clockIcon
+            text = stringResource(StringResources.search),
+            icon = DrawableResources.searchIcon
+        ),
+        BottomNavItem(
+            route = Screen.RecipeChat().route,
+            text = stringResource(StringResources.chat),
+            icon = DrawableResources.chatIcon
         )
     )
     NavigationBar(
