@@ -8,7 +8,8 @@ import com.kdtech.recipeoracle.common.BundleKeys
 import com.kdtech.recipeoracle.common.Empty
 import com.kdtech.recipeoracle.coroutines.DispatcherProvider
 import com.kdtech.recipeoracle.features.detailsscreen.presentation.models.RecipeDetailsState
-import com.kdtech.recipeoracle.features.recipechat.presentation.models.RecipeChatState
+import com.kdtech.recipeoracle.navigations.Screen
+import com.kdtech.recipeoracle.navigations.ScreenAction
 import com.kdtech.recipeoracle.navigations.ScreenNavigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -35,4 +36,9 @@ class RecipeDetailsViewmodel @Inject constructor(
             )
         }
     }
+
+    fun onBackPress() {
+        navigator.navigate(ScreenAction.goTo(screen = Screen.Back()))
+    }
+
 }

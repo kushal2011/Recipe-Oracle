@@ -29,6 +29,9 @@ import com.kdtech.recipeoracle.resources.theme.RecipeTheme
 
 @Composable
 fun BottomBar(navController: NavHostController) {
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry?.destination?.route
+
     val items = listOf(
         BottomNavItem(
             route = Screen.Home().route,
@@ -51,13 +54,16 @@ fun BottomBar(navController: NavHostController) {
             icon = DrawableResources.chatIcon
         )
     )
+
+    if (currentRoute !in items.map { it.route }) {
+        return
+    }
     NavigationBar(
         containerColor = RecipeTheme.colors.veryLightGray,
         modifier = Modifier
             .clip(RoundedCornerShape(16.dp))
             .background(brush = Brush.horizontalGradient(listOf(Color.Gray, Color.White)))
     ) {
-        val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
         items.forEach { screen ->
             val isSelected = currentRoute == screen.route
             val scale by animateFloatAsState(if (isSelected) 1.1f else 1.0f)
