@@ -23,4 +23,5 @@ object StringResources {
     val eggitarian = R.string.eggitarian
     val jain = R.string.jain
     val vegan = R.string.vegan
+    val youtubeQuery = R.string.youtube_query
 }

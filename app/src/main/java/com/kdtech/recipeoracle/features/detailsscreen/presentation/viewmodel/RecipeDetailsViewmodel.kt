@@ -2,6 +2,7 @@ package com.kdtech.recipeoracle.features.detailsscreen.presentation.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.kdtech.recipeoracle.apis.domain.models.RecipeModel
 import com.kdtech.recipeoracle.common.BundleKeys
@@ -15,6 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,6 +41,19 @@ class RecipeDetailsViewmodel @Inject constructor(
 
     fun onBackPress() {
         navigator.navigate(ScreenAction.goTo(screen = Screen.Back()))
+    }
+
+    fun onChatClick(
+        recipeName: String
+    ) = viewModelScope.launch(dispatcher.main) {
+            navigator.navigate(
+                ScreenAction.goTo(
+                    screen = Screen.RecipeChat(),
+                    map = mapOf(
+                        BundleKeys.RECIPE_NAME to recipeName
+                    )
+                )
+            )
     }
 
 }

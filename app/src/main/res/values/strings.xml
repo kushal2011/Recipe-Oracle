@@ -21,5 +21,6 @@
     <string name="eggitarian">🍳 Eggitarian</string>
     <string name="jain">✨ Jain</string>
     <string name="vegan">🌱 Vegan</string>
+    <string name="youtube_query">https://www.youtube.com/results?search_query=%1$s</string>
 
 </resources>

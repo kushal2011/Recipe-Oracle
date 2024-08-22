@@ -1,5 +1,7 @@
 package com.kdtech.recipeoracle.features.detailsscreen.ui
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,6 +39,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -68,6 +71,7 @@ fun RecipeDetailsScreen(
 
     val state by viewModel.state.collectAsState(initial = RecipeDetailsState())
 
+    val context = LocalContext.current
     Scaffold(
         topBar = {
             TopAppBar(
@@ -95,7 +99,20 @@ fun RecipeDetailsScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* Handle YouTube navigation */ }) {
+                    IconButton(onClick = {
+                        val searchTerm = "${state.recipeData?.recipeName} recipe"
+                        val intent = Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(
+                                context.getString(
+                                    StringResources.youtubeQuery,
+                                    searchTerm
+                                )
+                            )
+                        )
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        context.startActivity(intent)
+                    }) {
                         Icon(
                             painter = painterResource(id = DrawableResources.play),
                             contentDescription = "Go to YouTube",
@@ -146,7 +163,9 @@ fun RecipeDetailsScreen(
 
                     item {
                         Button(
-                            onClick = { /* Handle AI Chat */ },
+                            onClick = {
+                                viewModel.onChatClick(recipeData.recipeName)
+                            },
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = RecipeTheme.colors.primaryGreen
                             ),
