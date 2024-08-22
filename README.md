@@ -1,14 +1,12 @@
 # TODO
 - add save recipe feature
 - handle image generation
-- add button to send user to youtube
 - share with all the details of recipe and link to playstore app
 - add ads 
 - add option to remove ads if user buys premium
 - add categories screen
 - add search screen
   - add empty/no data found
-- add placeholders for image
 - add see all screen
 
 # TODO (Long term)
