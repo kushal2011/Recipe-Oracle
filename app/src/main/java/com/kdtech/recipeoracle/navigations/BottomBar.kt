@@ -39,7 +39,7 @@ fun BottomBar(navController: NavHostController) {
             icon = DrawableResources.homeIcon
         ),
         BottomNavItem(
-            route = Screen.Details().route,
+            route = Screen.Categories().route,
             text = stringResource(StringResources.categories),
             icon = DrawableResources.categoriesIcon
         ),

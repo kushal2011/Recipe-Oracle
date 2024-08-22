@@ -18,6 +18,7 @@ import androidx.navigation.navArgument
 import com.kdtech.recipeoracle.common.BundleKeys
 import com.kdtech.recipeoracle.common.Empty
 import com.kdtech.recipeoracle.features.authentication.ui.AuthScreen
+import com.kdtech.recipeoracle.features.categoriesscreen.ui.CategoriesScreen
 import com.kdtech.recipeoracle.features.detailsscreen.ui.RecipeDetailsScreen
 import com.kdtech.recipeoracle.features.homescreen.ui.HomeScreen
 import com.kdtech.recipeoracle.features.recipechat.ui.RecipeChatScreen
@@ -63,6 +64,11 @@ fun AppNavigation(
             ),
         ) {
             RecipeChatScreen(
+                viewModel = hiltViewModel()
+            )
+        }
+        composable(Screen.Categories().route) {
+            CategoriesScreen(
                 viewModel = hiltViewModel()
             )
         }

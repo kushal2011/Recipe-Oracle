@@ -51,7 +51,8 @@ fun RecipeCard(
             RemoteImage(
                 imageUrl = recipeImageUrl,
                 contentDescription = ContentDescriptionResources.RECIPE_IMAGE,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                placeholderRes = DrawableResources.recipeItemPlaceholder
             )
             Row(
                 modifier = Modifier

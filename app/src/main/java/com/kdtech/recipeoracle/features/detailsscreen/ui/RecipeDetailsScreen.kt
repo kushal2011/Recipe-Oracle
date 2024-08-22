@@ -130,14 +130,13 @@ fun RecipeDetailsScreen(
                 LazyColumn(modifier = contentModifier) {
                     item {
                         RemoteImage(
-                            imageUrl = recipeData.imageUrl.ifEmpty {
-                                "https://www.indianhealthyrecipes.com/wp-content/uploads/2014/11/paneer-butter-masala-recipe-2.jpg"
-                            },
+                            imageUrl = recipeData.imageUrl,
                             contentDescription = "Recipe image",
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(200.dp)
-                                .padding(vertical = 16.dp)
+                                .padding(vertical = 16.dp),
+                            placeholderRes = DrawableResources.recipeItemPlaceholder
                         )
                     }
 

@@ -9,6 +9,7 @@
 - add search screen
   - add empty/no data found
 - add placeholders for image
+- add see all screen
 
 # TODO (Long term)
 - optional login for personalized recommendation
