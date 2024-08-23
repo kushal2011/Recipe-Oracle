@@ -1,6 +1,4 @@
 # TODO
-- add save recipe feature
-- handle image generation
 - share with all the details of recipe and link to playstore app
 - add ads 
 - add option to remove ads if user buys premium
@@ -26,6 +24,7 @@
   - add Asian Delights (Could include Chinese, Japanese, Thai, etc.)
   - snacks , side dish
 - Notifications
+- add save recipe feature
 
 # BUGS
 - app crash when launching without internet
