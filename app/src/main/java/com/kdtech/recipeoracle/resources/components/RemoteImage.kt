@@ -18,6 +18,8 @@ fun RemoteImage(
     contentDescription: String,
     modifier: Modifier = Modifier,
     bitmap: Bitmap? = null,
+    width: Int,
+    height: Int,
     contentScale: ContentScale = ContentScale.FillBounds,
     @DrawableRes placeholderRes: Int = DrawableResources.recipeItemPlaceholder,
     onImageLoadSuccess: () -> Unit = {},
@@ -25,8 +27,16 @@ fun RemoteImage(
 ) {
     val context = LocalContext.current
 
+    val cloudName = "ddlqixrjj" // Replace with your actual Cloudinary cloud name
+    val transformations = "f_auto,q_auto,w_$width,h_$height,c_fill,fl_progressive"
+
+    // Construct the Cloudinary fetch URL
+    val cloudinaryBaseUrl = "https://res.cloudinary.com/$cloudName/image/fetch/"
+
+    val optimizedUrl = "$cloudinaryBaseUrl$transformations/$imageUrl"
+
     val imageRequest = ImageRequest.Builder(context)
-        .data(bitmap ?: imageUrl)
+        .data(bitmap ?: optimizedUrl)
         .allowRgb565(true) // Use a lower color depth to reduce memory usage
         .memoryCachePolicy(CachePolicy.ENABLED) // Enable memory caching for better performance
         .diskCachePolicy(CachePolicy.ENABLED) // Enable disk caching for offline support

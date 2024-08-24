@@ -52,7 +52,9 @@ fun RecipeCard(
                 imageUrl = recipeImageUrl,
                 contentDescription = ContentDescriptionResources.RECIPE_IMAGE,
                 modifier = Modifier.fillMaxSize(),
-                placeholderRes = DrawableResources.recipeItemPlaceholder
+                placeholderRes = DrawableResources.recipeItemPlaceholder,
+                height = 432,
+                width = 432
             )
             Row(
                 modifier = Modifier
