@@ -1,5 +1,6 @@
 package com.kdtech.recipeoracle.features.recipechat.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,12 +17,14 @@ import com.kdtech.recipeoracle.navigations.ScreenAction
 import com.kdtech.recipeoracle.navigations.ScreenNavigator
 import com.kdtech.recipeoracle.prompt.Prompts
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val RETRY_AFTER = 2000L
 @HiltViewModel
 class RecipeChatViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
@@ -60,26 +63,48 @@ class RecipeChatViewModel @Inject constructor(
         }
     }
 
-    private fun startChat() = viewModelScope.launch(dispatcher.main) {
+    private fun startChat(retryCount: Int = 3) = viewModelScope.launch(dispatcher.main) {
         _state.update {
             it.copy(
                 typingIndicator = true
             )
         }
-        val generativeModel = GenerativeModel(
-            // The Gemini 1.5 models are versatile and work with multi-turn conversations (like chat)
-            modelName = "gemini-1.5-flash",
-            // Access your API key as a Build Configuration variable (see "Set up your API key" above)
-            apiKey = BuildConfig.GEMENI_API_KEY
-        )
 
-        chat = generativeModel.startChat()
-        val firstAiMessage = chat.sendMessage(Prompts.getPromptForChat(recipeName))
-        _state.update {
-            it.copy(
-                chatList = it.chatList.plus(MessageModel(firstAiMessage.text.toString(), false)),
-                typingIndicator = false
-            )
+        var currentRetry = 0
+
+        while (currentRetry < retryCount) {
+            val result = runCatching {
+                val generativeModel = GenerativeModel(
+                    // The Gemini 1.5 models are versatile and work with multi-turn conversations (like chat)
+                    modelName = "gemini-1.5-flash",
+                    apiKey = BuildConfig.GEMENI_API_KEY
+                )
+
+                chat = generativeModel.startChat()
+                chat.sendMessage(Prompts.getPromptForChat(recipeName))
+            }
+
+            result.onSuccess { firstAiMessage ->
+                _state.update {
+                    it.copy(
+                        chatList = it.chatList.plus(MessageModel(firstAiMessage.text.toString(), false)),
+                        typingIndicator = false
+                    )
+                }
+                return@launch
+            }.onFailure { e ->
+                currentRetry++
+                Log.e("Chat", "Error occurred during chat initialization: ${e.message}. Retry $currentRetry/$retryCount.")
+                if (currentRetry >= retryCount) {
+                    _state.update {
+                        it.copy(typingIndicator = false)
+                    }
+                    Log.e("Chat", "All retries failed. Giving up.")
+                } else {
+                    delay(RETRY_AFTER)
+                }
+            }
         }
     }
+
 }

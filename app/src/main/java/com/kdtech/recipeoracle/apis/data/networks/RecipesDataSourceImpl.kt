@@ -16,21 +16,25 @@ class RecipesDataSourceImpl @Inject constructor(
     private val recipesApi: RecipesApi
 ) : RecipesDataSource {
     override suspend fun getRecipes(prompt: String): Result<List<RecipeDto>> {
-        val generativeModel = GenerativeModel(
-            modelName = "gemini-1.5-flash",
-            apiKey = BuildConfig.GEMENI_API_KEY
-        )
-        val response = generativeModel.generateContent(prompt)
-        val recipesList: List<RecipeDto>? = response.text?.ConvertToObject()
-        recipesList?.let {
-            prefStorageHelper.saveList(PREF_KEY, recipesList)
-            return Result.success(recipesList)
-        }?: run {
-            val throwable = Throwable(response.toString())
+        return runCatching {
+            val generativeModel = GenerativeModel(
+                modelName = "gemini-1.5-flash",
+                apiKey = BuildConfig.GEMENI_API_KEY
+            )
+
+            val response = generativeModel.generateContent(prompt)
+            val recipesList: List<RecipeDto>? = response.text?.ConvertToObject()
+
+            recipesList?.also {
+                prefStorageHelper.saveList(PREF_KEY, it)
+            } ?: throw Throwable("Failed to parse response: ${response.toString()}")
+
+            recipesList
+        }.onFailure { throwable ->
             FirebaseCrashlytics.getInstance().recordException(throwable)
-            return Result.failure(throwable)
         }
     }
+
 
     override suspend fun getLocallyStoredRecipes(): Result<List<RecipeDto>> {
         val recipesList = prefStorageHelper.getList(PREF_KEY)
