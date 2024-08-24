@@ -26,9 +26,6 @@
 - Notifications
 - add save recipe feature
 
-# BUGS
-- app crash when launching without internet
-
 # Sample Data for home screen
 
 {
