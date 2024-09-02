@@ -153,9 +153,7 @@ fun RecipeDetailsScreen(
                                 .fillMaxWidth()
                                 .height(200.dp)
                                 .padding(vertical = 16.dp),
-                            placeholderRes = DrawableResources.recipeItemPlaceholder,
-                            height = 500,
-                            width = 1080
+                            placeholderRes = DrawableResources.recipeItemPlaceholder
                         )
                     }
 

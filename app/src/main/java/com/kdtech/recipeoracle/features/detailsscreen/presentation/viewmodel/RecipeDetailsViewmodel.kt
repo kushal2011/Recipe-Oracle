@@ -24,11 +24,12 @@ class RecipeDetailsViewmodel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val dispatcher: DispatcherProvider,
     private val navigator: ScreenNavigator
-): ViewModel() {
+) : ViewModel() {
     private val _state = MutableStateFlow(RecipeDetailsState())
     val state: Flow<RecipeDetailsState> get() = _state
 
-    private val recipeDetails: String = savedStateHandle.get<String>(BundleKeys.RECIPE_DETAILS) ?: String.Empty
+    private val recipeDetails: String =
+        savedStateHandle.get<String>(BundleKeys.RECIPE_DETAILS) ?: String.Empty
 
     init {
         val gson = Gson()
@@ -46,14 +47,14 @@ class RecipeDetailsViewmodel @Inject constructor(
     fun onChatClick(
         recipeName: String
     ) = viewModelScope.launch(dispatcher.main) {
-            navigator.navigate(
-                ScreenAction.goTo(
-                    screen = Screen.RecipeChat(),
-                    map = mapOf(
-                        BundleKeys.RECIPE_NAME to recipeName
-                    )
+        navigator.navigate(
+            ScreenAction.goTo(
+                screen = Screen.RecipeChat(),
+                map = mapOf(
+                    BundleKeys.RECIPE_NAME to recipeName
                 )
             )
+        )
     }
 
 }

@@ -12,14 +12,14 @@ import coil.request.ImageRequest
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.kdtech.recipeoracle.resources.DrawableResources
 
+private const val CLOUD_NAME = "ddlqixrjj"
+private const val IMAGE_TRANSFORMATIONS = "f_auto,q_auto,c_fill,fl_progressive"
 @Composable
 fun RemoteImage(
     imageUrl: String,
     contentDescription: String,
     modifier: Modifier = Modifier,
     bitmap: Bitmap? = null,
-    width: Int,
-    height: Int,
     contentScale: ContentScale = ContentScale.FillBounds,
     @DrawableRes placeholderRes: Int = DrawableResources.recipeItemPlaceholder,
     onImageLoadSuccess: () -> Unit = {},
@@ -27,13 +27,10 @@ fun RemoteImage(
 ) {
     val context = LocalContext.current
 
-    val cloudName = "ddlqixrjj" // Replace with your actual Cloudinary cloud name
-    val transformations = "f_auto,q_auto,w_$width,h_$height,c_fill,fl_progressive"
-
     // Construct the Cloudinary fetch URL
-    val cloudinaryBaseUrl = "https://res.cloudinary.com/$cloudName/image/fetch/"
+    val cloudinaryBaseUrl = "https://res.cloudinary.com/$CLOUD_NAME/image/fetch/"
 
-    val optimizedUrl = "$cloudinaryBaseUrl$transformations/$imageUrl"
+    val optimizedUrl = "$cloudinaryBaseUrl$IMAGE_TRANSFORMATIONS/$imageUrl"
 
     val imageRequest = ImageRequest.Builder(context)
         .data(bitmap ?: optimizedUrl)

@@ -6,6 +6,7 @@
 - add search screen
   - add empty/no data found
 - add see all screen
+- add toasts
 
 # TODO (Long term)
 - optional login for personalized recommendation
