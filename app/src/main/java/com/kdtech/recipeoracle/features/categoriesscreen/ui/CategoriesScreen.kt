@@ -23,6 +23,7 @@ import com.kdtech.recipeoracle.common.Empty
 import com.kdtech.recipeoracle.features.categoriesscreen.presentation.models.CategoriesState
 import com.kdtech.recipeoracle.features.categoriesscreen.presentation.viewmodel.CategoriesViewModel
 import com.kdtech.recipeoracle.resources.components.RemoteImage
+import com.kdtech.recipeoracle.resources.theme.RecipeTheme
 import com.kdtech.recipeoracle.resources.theme.toHeightDp
 
 @Composable
@@ -39,7 +40,7 @@ fun CategoriesScreen(
         columns = GridCells.Fixed(2),
         state = lazyGridState
     ) {
-        itemsIndexed(state.categories) { index, item ->
+        itemsIndexed(state.cuisines) { index, item ->
             Card(
                 shape = RoundedCornerShape(8.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -57,8 +58,10 @@ fun CategoriesScreen(
                             .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
                     )
                     Text(
-                        text = item.name,
-                        modifier = Modifier.align(Alignment.Center)
+                        text = item.cuisineType,
+                        modifier = Modifier.align(Alignment.Center),
+                        color = RecipeTheme.colors.white100,
+                        style = RecipeTheme.typography.headerSemiBold
                     )
                 }
             }

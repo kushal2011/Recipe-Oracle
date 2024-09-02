@@ -4,6 +4,7 @@ import com.google.ai.client.generativeai.GenerativeModel
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.kdtech.recipeoracle.BuildConfig
 import com.kdtech.recipeoracle.apis.data.local.PrefStorageHelper
+import com.kdtech.recipeoracle.apis.data.models.CategoriesDto
 import com.kdtech.recipeoracle.apis.data.models.HomeFeedWidgetsDto
 import com.kdtech.recipeoracle.apis.data.models.RecipeDto
 import com.kdtech.recipeoracle.apis.domain.models.RecipeRequestModel
@@ -81,6 +82,15 @@ class RecipesDataSourceImpl @Inject constructor(
         } else {
             getHomeFeedDataFromLocal(configVersion)
         }
+    }
+
+    override suspend fun getCategories(): Result<CategoriesDto> {
+        return safeApiCall(
+            {
+                recipesApi.getCategories()
+            },
+            ::Exception
+        )
     }
 
     companion object {
