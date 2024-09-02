@@ -7,7 +7,9 @@ import com.kdtech.recipeoracle.apis.data.local.PrefStorageHelper
 import com.kdtech.recipeoracle.apis.data.models.CategoriesDto
 import com.kdtech.recipeoracle.apis.data.models.HomeFeedWidgetsDto
 import com.kdtech.recipeoracle.apis.data.models.RecipeDto
+import com.kdtech.recipeoracle.apis.data.models.RecipeListDto
 import com.kdtech.recipeoracle.apis.domain.models.RecipeRequestModel
+import com.kdtech.recipeoracle.apis.domain.models.SeeAllRecipeRequest
 import com.kdtech.recipeoracle.common.ConvertToObject
 import com.kdtech.recipeoracle.prompt.Prompts
 import javax.inject.Inject
@@ -88,6 +90,20 @@ class RecipesDataSourceImpl @Inject constructor(
         return safeApiCall(
             {
                 recipesApi.getCategories()
+            },
+            ::Exception
+        )
+    }
+
+    override suspend fun getSeeAllRecipes(seeAllRecipeRequest: SeeAllRecipeRequest): Result<RecipeListDto> {
+        return safeApiCall(
+            {
+                recipesApi.getSeeAllRecipes(
+                    cuisineType = seeAllRecipeRequest.cuisineType,
+                    prepTime = seeAllRecipeRequest.prepTime,
+                    healthRating = seeAllRecipeRequest.healthRating,
+                    topRated = seeAllRecipeRequest.topRated
+                )
             },
             ::Exception
         )

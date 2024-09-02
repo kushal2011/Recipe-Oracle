@@ -3,6 +3,7 @@ package com.kdtech.recipeoracle.features.categoriesscreen.presentation.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kdtech.recipeoracle.apis.domain.usecase.GetCategoriesUseCase
+import com.kdtech.recipeoracle.common.BundleKeys
 import com.kdtech.recipeoracle.coroutines.DispatcherProvider
 import com.kdtech.recipeoracle.features.categoriesscreen.presentation.models.CategoriesState
 import com.kdtech.recipeoracle.navigations.Screen
@@ -29,6 +30,17 @@ class CategoriesViewModel @Inject constructor(
         getCuisineData()
     }
 
+    fun onCuisineClick(cuisineType:String) = viewModelScope.launch(dispatcher.main) {
+        navigator.navigate(
+            ScreenAction.goTo(
+                screen = Screen.SeeAllRecipes(),
+                map = mapOf(
+                    BundleKeys.CUISINE_TYPE to cuisineType
+                )
+            )
+        )
+    }
+
     private fun getCuisineData() = viewModelScope.launch(dispatcher.io) {
         getCategoriesUseCase().fold(
             onSuccess = {
@@ -42,9 +54,5 @@ class CategoriesViewModel @Inject constructor(
                 // do nothing
             }
         )
-    }
-
-    fun onBackPress() {
-        navigator.navigate(ScreenAction.goTo(screen = Screen.Back()))
     }
 }

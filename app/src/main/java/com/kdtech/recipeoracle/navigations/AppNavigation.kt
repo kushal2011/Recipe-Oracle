@@ -22,6 +22,7 @@ import com.kdtech.recipeoracle.features.categoriesscreen.ui.CategoriesScreen
 import com.kdtech.recipeoracle.features.detailsscreen.ui.RecipeDetailsScreen
 import com.kdtech.recipeoracle.features.homescreen.ui.HomeScreen
 import com.kdtech.recipeoracle.features.recipechat.ui.RecipeChatScreen
+import com.kdtech.recipeoracle.features.seeallscreen.ui.SeeAllScreen
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -69,6 +70,36 @@ fun AppNavigation(
         }
         composable(Screen.Categories().route) {
             CategoriesScreen(
+                viewModel = hiltViewModel()
+            )
+        }
+        composable(
+            Screen.SeeAllRecipes().route.plus(
+                "?${BundleKeys.CUISINE_TYPE}={${BundleKeys.CUISINE_TYPE}}" +
+                "&${BundleKeys.PREP_TIME}={${BundleKeys.PREP_TIME}}" +
+                "&${BundleKeys.HEALTH_RATING}={${BundleKeys.HEALTH_RATING}}" +
+                "&${BundleKeys.TOP_RATED}={${BundleKeys.TOP_RATED}}"
+            ),
+            arguments = listOf(
+                navArgument(BundleKeys.CUISINE_TYPE) {
+                    nullable = true
+                    defaultValue = null
+                },
+                navArgument(BundleKeys.PREP_TIME) {
+                    nullable = true
+                    defaultValue = null
+                },
+                navArgument(BundleKeys.HEALTH_RATING) {
+                    nullable = true
+                    defaultValue = null
+                },
+                navArgument(BundleKeys.TOP_RATED) {
+                    nullable = true
+                    defaultValue = null
+                },
+            ),
+        ) {
+            SeeAllScreen(
                 viewModel = hiltViewModel()
             )
         }

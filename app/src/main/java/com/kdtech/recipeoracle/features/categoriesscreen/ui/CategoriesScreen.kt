@@ -50,7 +50,10 @@ fun CategoriesScreen(
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
                 modifier = Modifier
                     .padding(8.dp)
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
+                onClick = {
+                    viewModel.onCuisineClick(item.cuisineType)
+                }
             ) {
                 Box {
                     // Image with gradient overlay

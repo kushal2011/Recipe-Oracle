@@ -59,7 +59,8 @@ fun RecipeCard(
                     .align(
                         alignment = Alignment.TopEnd
                     )
-                    .padding(6.dp)
+                    .padding(6.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
                     painter = painterResource(id = DrawableResources.clockIcon),
