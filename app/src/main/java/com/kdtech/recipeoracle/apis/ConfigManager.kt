@@ -13,7 +13,7 @@ class ConfigManager @Inject constructor() {
     private val remoteConfig by lazy {
         Firebase.remoteConfig.apply {
             val configSettings = remoteConfigSettings {
-                minimumFetchIntervalInSeconds = 36000
+                minimumFetchIntervalInSeconds = 3600
             }
             setConfigSettingsAsync(configSettings)
             setDefaultsAsync(mapOf(KEY_HOME_FEED_VERSION to DEFAULT_HOME_FEED_VERSION))
@@ -28,7 +28,7 @@ class ConfigManager @Inject constructor() {
     }
 
     companion object {
-        private const val KEY_HOME_FEED_VERSION = "home_feed_version"
+        private const val KEY_HOME_FEED_VERSION = "HOME_FEED_VERSION"
         private const val DEFAULT_HOME_FEED_VERSION = 1L
     }
 }
