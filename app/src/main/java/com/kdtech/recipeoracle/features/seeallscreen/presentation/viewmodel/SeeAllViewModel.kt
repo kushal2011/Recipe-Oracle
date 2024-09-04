@@ -30,13 +30,19 @@ class SeeAllViewModel @Inject constructor(
     private val _state = MutableStateFlow(SeeAllState())
     val state: Flow<SeeAllState> get() = _state
 
+    private val screenTitle: String? = savedStateHandle.get<String>(BundleKeys.SCREEN_TITLE)
     private val cuisineType: String? = savedStateHandle.get<String>(BundleKeys.CUISINE_TYPE)
     private val prepTime: Int? = savedStateHandle.get<Int>(BundleKeys.PREP_TIME)
     private val healthRating: Int? = savedStateHandle.get<Int>(BundleKeys.HEALTH_RATING)
     private val topRated: Boolean? = savedStateHandle.get<Boolean>(BundleKeys.TOP_RATED)
 
     init {
+        _state.update { it.copy(screenTitle = screenTitle.orEmpty()) }
         getRecipes()
+    }
+
+    fun onBackPress() {
+        navigator.navigate(ScreenAction.goTo(screen = Screen.Back()))
     }
 
     private fun getRecipes() = viewModelScope.launch(dispatcher.io) {

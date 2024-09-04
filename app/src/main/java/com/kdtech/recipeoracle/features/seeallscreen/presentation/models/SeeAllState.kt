@@ -6,5 +6,7 @@ import com.kdtech.recipeoracle.common.State
 
 data class SeeAllState(
     override val id: String = String.Empty,
-    val recipes: List<RecipeModel> = emptyList()
+    val recipes: List<RecipeModel> = emptyList(),
+    val screenTitle: String = String.Empty,
+    val isLoading: Boolean = false
 ): State

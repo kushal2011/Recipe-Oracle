@@ -75,12 +75,17 @@ fun AppNavigation(
         }
         composable(
             Screen.SeeAllRecipes().route.plus(
-                "?${BundleKeys.CUISINE_TYPE}={${BundleKeys.CUISINE_TYPE}}" +
+                "?${BundleKeys.SCREEN_TITLE}={${BundleKeys.SCREEN_TITLE}}" +
+                "&${BundleKeys.CUISINE_TYPE}={${BundleKeys.CUISINE_TYPE}}" +
                 "&${BundleKeys.PREP_TIME}={${BundleKeys.PREP_TIME}}" +
                 "&${BundleKeys.HEALTH_RATING}={${BundleKeys.HEALTH_RATING}}" +
                 "&${BundleKeys.TOP_RATED}={${BundleKeys.TOP_RATED}}"
             ),
             arguments = listOf(
+                navArgument(BundleKeys.SCREEN_TITLE) {
+                    nullable = true
+                    defaultValue = String.Empty
+                },
                 navArgument(BundleKeys.CUISINE_TYPE) {
                     nullable = true
                     defaultValue = null

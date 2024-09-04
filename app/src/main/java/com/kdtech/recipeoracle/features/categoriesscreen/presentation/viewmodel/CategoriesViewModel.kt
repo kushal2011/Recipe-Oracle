@@ -35,7 +35,8 @@ class CategoriesViewModel @Inject constructor(
             ScreenAction.goTo(
                 screen = Screen.SeeAllRecipes(),
                 map = mapOf(
-                    BundleKeys.CUISINE_TYPE to cuisineType
+                    BundleKeys.CUISINE_TYPE to cuisineType,
+                    BundleKeys.SCREEN_TITLE to cuisineType
                 )
             )
         )

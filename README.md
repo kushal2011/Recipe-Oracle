@@ -2,11 +2,11 @@
 - share with all the details of recipe and link to playstore app
 - add ads 
 - add option to remove ads if user buys premium
-- add categories screen
 - add search screen
   - add empty/no data found
 - add see all screen
 - add toasts
+- add loaders
 
 # TODO (Long term)
 - optional login for personalized recommendation
