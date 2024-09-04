@@ -4,7 +4,6 @@
 - add option to remove ads if user buys premium
 - add search screen
   - add empty/no data found
-- add see all screen
 - add toasts
 - add loaders
 
