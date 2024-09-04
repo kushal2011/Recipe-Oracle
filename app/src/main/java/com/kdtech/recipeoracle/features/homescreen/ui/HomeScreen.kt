@@ -1,5 +1,6 @@
 package com.kdtech.recipeoracle.features.homescreen.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -43,6 +44,12 @@ fun HomeScreen(
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
+                    modifier = Modifier.clickable {
+                        viewModel.onSeeAllClick(
+                            widget.widgetId,
+                            widget.title
+                        )
+                    },
                     text = "See all",
                     style = RecipeTheme.typography.robotoMedium,
                     color = RecipeTheme.colors.black100

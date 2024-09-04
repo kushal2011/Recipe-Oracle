@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.kdtech.recipeoracle.apis.ConfigManager
+import com.kdtech.recipeoracle.apis.data.models.ParamsDto
 import com.kdtech.recipeoracle.apis.domain.models.RecipeModel
 import com.kdtech.recipeoracle.coroutines.DispatcherProvider
 import com.kdtech.recipeoracle.apis.domain.models.RecipeRequestModel
@@ -35,8 +36,28 @@ class HomeViewModel @Inject constructor(
     init {
         getHomeFeedData()
     }
-    fun onBackPress() {
-        navigator.navigate(ScreenAction.goTo(screen = Screen.Back()))
+    fun onSeeAllClick(
+        widgetId: String,
+        title: String
+    ) = viewModelScope.launch(dispatcher.main) {
+        val seeAllParams: ParamsDto? = _state.value.homeFeedWidgets.find {
+            it.widgetId == widgetId
+        }?.seeAll?.params
+        if (seeAllParams != null) {
+            val navigationParams = mutableMapOf<String, String>()
+
+            seeAllParams.cuisineType?.let { navigationParams[BundleKeys.CUISINE_TYPE] = it }
+            title.let { navigationParams[BundleKeys.SCREEN_TITLE] = it }
+            seeAllParams.prepTime?.let { navigationParams[BundleKeys.PREP_TIME] = it.toString() }
+            seeAllParams.healthRating?.let { navigationParams[BundleKeys.HEALTH_RATING] = it.toString() }
+            seeAllParams.topRated?.let { navigationParams[BundleKeys.TOP_RATED] = it.toString() }
+            navigator.navigate(
+                ScreenAction.goTo(
+                    screen = Screen.SeeAllRecipes(),
+                    map = navigationParams
+                )
+            )
+        }
     }
 
     fun onDetailsClick(
@@ -61,22 +82,6 @@ class HomeViewModel @Inject constructor(
             )
         }
     }
-//    private fun getIngredientsData() = viewModelScope.launch(dispatcher.io) {
-//        val generativeModel = GenerativeModel(
-//            modelName = "gemini-1.5-flash",
-//            apiKey = BuildConfig.GEMENI_API_KEY
-//        )
-//        val prompt = Prompts.getPromptForIngredients()
-//        val response = generativeModel.generateContent(prompt)
-//        val gson = Gson()
-//        val listType = object : TypeToken<List<IngredientModel>>() {}.type
-//        val ingredientsList: List<IngredientModel> = gson.fromJson(response.text, listType)
-//        _state.update {
-//            it.copy(
-//                ingredientsList = ingredientsList
-//            )
-//        }
-//    }
 
     private fun getHomeFeedData() = viewModelScope.launch(dispatcher.io) {
         val version = configManager.fetchHomeFeedVersion()

@@ -32,9 +32,9 @@ class SeeAllViewModel @Inject constructor(
 
     private val screenTitle: String? = savedStateHandle.get<String>(BundleKeys.SCREEN_TITLE)
     private val cuisineType: String? = savedStateHandle.get<String>(BundleKeys.CUISINE_TYPE)
-    private val prepTime: Int? = savedStateHandle.get<Int>(BundleKeys.PREP_TIME)
-    private val healthRating: Int? = savedStateHandle.get<Int>(BundleKeys.HEALTH_RATING)
-    private val topRated: Boolean? = savedStateHandle.get<Boolean>(BundleKeys.TOP_RATED)
+    private val prepTime: Int? = savedStateHandle.get<String>(BundleKeys.PREP_TIME)?.toIntOrNull()
+    private val healthRating: Int? = savedStateHandle.get<String>(BundleKeys.HEALTH_RATING)?.toIntOrNull()
+    private val topRated: Boolean? = savedStateHandle.get<String>(BundleKeys.TOP_RATED)?.toBoolean()
 
     init {
         _state.update { it.copy(screenTitle = screenTitle.orEmpty()) }

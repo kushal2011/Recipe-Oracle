@@ -15,7 +15,8 @@ class WidgetMapper @Inject constructor(
                 shouldShowSeeAll = shouldShowSeeAll ?: false,
                 title = title.orEmpty(),
                 widgetType = widgetType.orEmpty(),
-                recipesList = recipesList?.map { recipeMapper.map(it) } ?: emptyList()
+                recipesList = recipesList?.map { recipeMapper.map(it) } ?: emptyList(),
+                seeAll = seeAll
             )
         }
     }

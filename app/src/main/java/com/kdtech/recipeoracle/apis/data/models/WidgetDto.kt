@@ -13,5 +13,7 @@ data class WidgetDto(
     @SerializedName("title")
     val title: String?,
     @SerializedName("widget_type")
-    val widgetType: String?
+    val widgetType: String?,
+    @SerializedName("see_all")
+    val seeAll: SeeAllDto?
 )
