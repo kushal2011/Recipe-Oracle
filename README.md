@@ -5,6 +5,7 @@
 - add search screen
   - add empty/no data found
 - add pull to refresh
+- (api) add did you mean "$" if search does not give match
 
 # TODO (Long term)
 - optional login for personalized recommendation

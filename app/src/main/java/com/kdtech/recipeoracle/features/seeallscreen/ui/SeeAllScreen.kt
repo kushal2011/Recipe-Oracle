@@ -94,31 +94,30 @@ fun SeeAllScreen(
             )
         },
         content = { innerPadding ->
-        val contentModifier = modifier
-            .padding(
+        val contentModifier = modifier.padding(
                 start = innerPadding.calculateStartPadding(LocalLayoutDirection.current),
                 top = innerPadding.calculateTopPadding(),
                 end = innerPadding.calculateEndPadding(LocalLayoutDirection.current),
                 bottom = 0.dp // Ignore the bottom padding
             )
-            LazyVerticalGrid(
-                modifier =contentModifier,
-                columns = GridCells.Fixed(2),
-                state = lazyGridState
-            ) {
-                itemsIndexed(state.recipes) { index, item ->
-                    RecipeCard(
-                        recipeTitle = item.recipeName,
-                        recipeId = item.recipeId,
-                        recipeMakingTime = " ${item.prepTime} Minutes",
-                        recipeImageUrl = item.imageUrl,
-                        onClick = viewModel::onDetailsClick
-                    )
-                }
+        LazyVerticalGrid(
+            modifier =contentModifier,
+            columns = GridCells.Fixed(2),
+            state = lazyGridState
+        ) {
+            itemsIndexed(state.recipes) { index, item ->
+                RecipeCard(
+                    recipeTitle = item.recipeName,
+                    recipeId = item.recipeId,
+                    recipeMakingTime = " ${item.prepTime} Minutes",
+                    recipeImageUrl = item.imageUrl,
+                    onClick = viewModel::onDetailsClick
+                )
             }
-            if (state.isLoading) {
-                LottieLoader()
-            }
+        }
+        if (state.isLoading) {
+            LottieLoader()
+        }
         }
     )
 }

@@ -22,6 +22,7 @@ import com.kdtech.recipeoracle.features.categoriesscreen.ui.CategoriesScreen
 import com.kdtech.recipeoracle.features.detailsscreen.ui.RecipeDetailsScreen
 import com.kdtech.recipeoracle.features.homescreen.ui.HomeScreen
 import com.kdtech.recipeoracle.features.recipechat.ui.RecipeChatScreen
+import com.kdtech.recipeoracle.features.searchscreen.ui.SearchScreen
 import com.kdtech.recipeoracle.features.seeallscreen.ui.SeeAllScreen
 import kotlinx.coroutines.flow.Flow
 
@@ -105,6 +106,12 @@ fun AppNavigation(
             ),
         ) {
             SeeAllScreen(
+                viewModel = hiltViewModel()
+            )
+        }
+
+        composable(Screen.Search().route) {
+            SearchScreen(
                 viewModel = hiltViewModel()
             )
         }

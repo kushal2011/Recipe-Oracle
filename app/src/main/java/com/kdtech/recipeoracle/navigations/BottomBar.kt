@@ -44,7 +44,7 @@ fun BottomBar(navController: NavHostController) {
             icon = DrawableResources.categoriesIcon
         ),
         BottomNavItem(
-            route = Screen.Auth().route,
+            route = Screen.Search().route,
             text = stringResource(StringResources.search),
             icon = DrawableResources.searchIcon
         ),
