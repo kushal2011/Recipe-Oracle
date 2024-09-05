@@ -13,19 +13,26 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.kdtech.recipeoracle.common.ScreenEvent
+import com.kdtech.recipeoracle.common.toast
 import com.kdtech.recipeoracle.features.seeallscreen.presentation.models.SeeAllState
 import com.kdtech.recipeoracle.features.seeallscreen.presentation.viewmodel.SeeAllViewModel
 import com.kdtech.recipeoracle.resources.DrawableResources
+import com.kdtech.recipeoracle.resources.components.LottieLoader
 import com.kdtech.recipeoracle.resources.compositions.RecipeCard
 import com.kdtech.recipeoracle.resources.theme.RecipeTheme
 
@@ -38,6 +45,24 @@ fun SeeAllScreen(
     val state by viewModel.state.collectAsState(SeeAllState())
 
     val lazyGridState = rememberLazyGridState()
+
+    val context = LocalContext.current
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(state.screenEvent) {
+        val event = state.screenEvent
+        if (event is ScreenEvent.ShowToast) {
+            context.toast(message = event.message, resourceId = event.resourceId)
+            viewModel.onScreenEventsShown()
+        } else if (event is ScreenEvent.ShowSnackBar) {
+            snackBarHostState.showSnackbar(
+                message = event.message,
+                actionLabel = event.actionLabel,
+                duration = event.duration
+            )
+            viewModel.onScreenEventsShown()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -90,6 +115,9 @@ fun SeeAllScreen(
                         onClick = viewModel::onDetailsClick
                     )
                 }
+            }
+            if (state.isLoading) {
+                LottieLoader()
             }
         }
     )

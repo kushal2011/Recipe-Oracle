@@ -6,6 +6,5 @@ import com.kdtech.recipeoracle.common.State
 
 data class RecipeDetailsState(
     override val id: String = String.Empty,
-    var isLoading: Boolean = false,
     var recipeData: RecipeModel? = null
 ) : State

@@ -4,11 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kdtech.recipeoracle.apis.domain.usecase.GetCategoriesUseCase
 import com.kdtech.recipeoracle.common.BundleKeys
+import com.kdtech.recipeoracle.common.ScreenEvent
 import com.kdtech.recipeoracle.coroutines.DispatcherProvider
 import com.kdtech.recipeoracle.features.categoriesscreen.presentation.models.CategoriesState
 import com.kdtech.recipeoracle.navigations.Screen
 import com.kdtech.recipeoracle.navigations.ScreenAction
 import com.kdtech.recipeoracle.navigations.ScreenNavigator
+import com.kdtech.recipeoracle.resources.StringResources
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,17 +44,31 @@ class CategoriesViewModel @Inject constructor(
         )
     }
 
+    fun onScreenEventsShown() {
+        _state.update { it.copy(screenEvent = ScreenEvent.None) }
+    }
+
     private fun getCuisineData() = viewModelScope.launch(dispatcher.io) {
+        _state.update { it.copy(isLoading = true) }
         getCategoriesUseCase().fold(
             onSuccess = {
                 _state.update { _prev ->
                     _prev.copy(
-                        cuisines = it.cuisines
+                        cuisines = it.cuisines,
+                        isLoading = false
                     )
                 }
             },
             onFailure = {
-                // do nothing
+                _state.update { _prev ->
+                    _prev.copy(
+                        screenEvent = ScreenEvent.ShowToast(
+                            message = it.message.orEmpty(),
+                            resourceId = StringResources.somethingWentWrong
+                        ),
+                        isLoading = false
+                    )
+                }
             }
         )
     }

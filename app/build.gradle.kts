@@ -120,6 +120,8 @@ dependencies {
 
     implementation(libs.markwon.core)
 
+    implementation(libs.compose.lottie)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

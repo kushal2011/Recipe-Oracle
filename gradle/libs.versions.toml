@@ -48,7 +48,8 @@ okhttp = "4.12.0"
 root-beer = "0.1.0"
 # Markdown
 markwon = "4.6.2"
-
+# Lottie
+lottie = "6.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -103,6 +104,9 @@ root-beer = { module = "com.scottyab:rootbeer-lib", version.ref = "root-beer" }
 
 # Markdown
 markwon-core = { module = "io.noties.markwon:core", version.ref = "markwon" }
+
+# LOTTIE ANIMATION
+compose-lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 
 [bundles]
 retrofit = [

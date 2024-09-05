@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,10 +27,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.kdtech.recipeoracle.common.ScreenEvent
+import com.kdtech.recipeoracle.common.toast
 import com.kdtech.recipeoracle.features.recipechat.presentation.models.RecipeChatState
 import com.kdtech.recipeoracle.features.recipechat.presentation.viewmodel.RecipeChatViewModel
 import com.kdtech.recipeoracle.resources.DrawableResources
@@ -53,6 +57,24 @@ fun RecipeChatScreen(
     val checkingRecipeText: String = stringResource(StringResources.checkingRecipeBook)
     var typingText by remember { mutableStateOf(checkingRecipeText) }
     val typingDots = listOf("", ".", "..", "...")
+
+    val context = LocalContext.current
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(state.screenEvent) {
+        val event = state.screenEvent
+        if (event is ScreenEvent.ShowToast) {
+            context.toast(message = event.message, resourceId = event.resourceId)
+            viewModel.onScreenEventsShown()
+        } else if (event is ScreenEvent.ShowSnackBar) {
+            snackBarHostState.showSnackbar(
+                message = event.message,
+                actionLabel = event.actionLabel,
+                duration = event.duration
+            )
+            viewModel.onScreenEventsShown()
+        }
+    }
 
     LaunchedEffect(state.chatList.size) {
         if (state.chatList.isNotEmpty()) {

@@ -13,20 +13,27 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.kdtech.recipeoracle.common.Empty
+import com.kdtech.recipeoracle.common.ScreenEvent
+import com.kdtech.recipeoracle.common.toast
 import com.kdtech.recipeoracle.features.categoriesscreen.presentation.models.CategoriesState
 import com.kdtech.recipeoracle.features.categoriesscreen.presentation.viewmodel.CategoriesViewModel
+import com.kdtech.recipeoracle.resources.components.LottieLoader
 import com.kdtech.recipeoracle.resources.components.RemoteImage
 import com.kdtech.recipeoracle.resources.theme.RecipeTheme
 
@@ -38,6 +45,24 @@ fun CategoriesScreen(
     val state by viewModel.state.collectAsState(CategoriesState())
 
     val lazyGridState = rememberLazyGridState()
+
+    val context = LocalContext.current
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(state.screenEvent) {
+        val event = state.screenEvent
+        if (event is ScreenEvent.ShowToast) {
+            context.toast(message = event.message, resourceId = event.resourceId)
+            viewModel.onScreenEventsShown()
+        } else if (event is ScreenEvent.ShowSnackBar) {
+            snackBarHostState.showSnackbar(
+                message = event.message,
+                actionLabel = event.actionLabel,
+                duration = event.duration
+            )
+            viewModel.onScreenEventsShown()
+        }
+    }
 
     LazyVerticalGrid(
         modifier = modifier,
@@ -92,5 +117,9 @@ fun CategoriesScreen(
                 }
             }
         }
+    }
+
+    if (state.isLoading) {
+        LottieLoader()
     }
 }

@@ -8,11 +8,13 @@ import com.kdtech.recipeoracle.apis.domain.models.RecipeModel
 import com.kdtech.recipeoracle.apis.domain.models.SeeAllRecipeRequest
 import com.kdtech.recipeoracle.apis.domain.usecase.GetSeeAllRecipesUseCase
 import com.kdtech.recipeoracle.common.BundleKeys
+import com.kdtech.recipeoracle.common.ScreenEvent
 import com.kdtech.recipeoracle.coroutines.DispatcherProvider
 import com.kdtech.recipeoracle.features.seeallscreen.presentation.models.SeeAllState
 import com.kdtech.recipeoracle.navigations.Screen
 import com.kdtech.recipeoracle.navigations.ScreenAction
 import com.kdtech.recipeoracle.navigations.ScreenNavigator
+import com.kdtech.recipeoracle.resources.StringResources
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,7 +47,12 @@ class SeeAllViewModel @Inject constructor(
         navigator.navigate(ScreenAction.goTo(screen = Screen.Back()))
     }
 
+    fun onScreenEventsShown() {
+        _state.update { it.copy(screenEvent = ScreenEvent.None) }
+    }
+
     private fun getRecipes() = viewModelScope.launch(dispatcher.io) {
+        _state.update { it.copy(isLoading = true) }
         getSeeAllRecipesUseCase(
             SeeAllRecipeRequest(
                 cuisineType = cuisineType,
@@ -57,12 +64,21 @@ class SeeAllViewModel @Inject constructor(
             onSuccess = {
                 _state.update { prev ->
                     prev.copy(
-                        recipes = it
+                        recipes = it,
+                        isLoading = false
                     )
                 }
             },
             onFailure = {
-                // do noting
+                _state.update { _prev ->
+                    _prev.copy(
+                        screenEvent = ScreenEvent.ShowToast(
+                            message = it.message.orEmpty(),
+                            resourceId = StringResources.somethingWentWrong
+                        ),
+                        isLoading = false
+                    )
+                }
             }
         )
     }

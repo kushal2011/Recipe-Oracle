@@ -4,8 +4,7 @@
 - add option to remove ads if user buys premium
 - add search screen
   - add empty/no data found
-- add toasts
-- add loaders
+- add pull to refresh
 
 # TODO (Long term)
 - optional login for personalized recommendation
@@ -25,38 +24,3 @@
   - snacks , side dish
 - Notifications
 - add save recipe feature
-
-# Sample Data for home screen
-
-{
-"widgets": [
-{
-"id": "aaa",
-"widget_type": "type1",
-"title": "recipes",
-"shouldShowSeeAll": true,
-"data": [
-{
-"name": "Classic Tomato Spaghetti",
-"prepTime": "30 minutes",
-"image": "",
-"ingredients": [
-{
-"name": "Spaghetti",
-"quantity": "200g"
-}
-],
-"instructions": [
-"Cook the spaghetti in a large pot of boiling salted water until al dente.",
-"Heat the olive oil in a pan and sauté garlic until fragrant."
-],
-"isVegan": true,
-"isVegetarian": true,
-"isEggiterian": false,
-"isNonVeg": false,
-"isJain": false
-}
-]
-}
-]
-}

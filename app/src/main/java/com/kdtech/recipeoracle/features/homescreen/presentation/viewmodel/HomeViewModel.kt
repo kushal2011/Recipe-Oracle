@@ -11,10 +11,12 @@ import com.kdtech.recipeoracle.apis.domain.models.RecipeRequestModel
 import com.kdtech.recipeoracle.apis.domain.usecase.GetHomeFeedUseCase
 import com.kdtech.recipeoracle.apis.domain.usecase.GetRecipeUseCase
 import com.kdtech.recipeoracle.common.BundleKeys
+import com.kdtech.recipeoracle.common.ScreenEvent
 import com.kdtech.recipeoracle.features.homescreen.presentation.models.HomeState
 import com.kdtech.recipeoracle.navigations.Screen
 import com.kdtech.recipeoracle.navigations.ScreenAction
 import com.kdtech.recipeoracle.navigations.ScreenNavigator
+import com.kdtech.recipeoracle.resources.StringResources
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -57,7 +59,20 @@ class HomeViewModel @Inject constructor(
                     map = navigationParams
                 )
             )
+        } else {
+            _state.update { _prev ->
+                _prev.copy(
+                    screenEvent = ScreenEvent.ShowToast(
+                        resourceId = StringResources.somethingWentWrong
+                    ),
+                    isLoading = false
+                )
+            }
         }
+    }
+
+    fun onScreenEventsShown() {
+        _state.update { it.copy(screenEvent = ScreenEvent.None) }
     }
 
     fun onDetailsClick(
@@ -89,12 +104,21 @@ class HomeViewModel @Inject constructor(
             onSuccess = { homeFeedWidgetsModel ->
                 _state.update {
                     it.copy(
-                        homeFeedWidgets = homeFeedWidgetsModel.widgetsList
+                        homeFeedWidgets = homeFeedWidgetsModel.widgetsList,
+                        isLoading = false
                     )
                 }
             },
             onFailure = {
-                // do nothing
+                _state.update { _prev ->
+                    _prev.copy(
+                        screenEvent = ScreenEvent.ShowToast(
+                            message = it.message.orEmpty(),
+                            resourceId = StringResources.somethingWentWrong
+                        ),
+                        isLoading = false
+                    )
+                }
             }
         )
     }
