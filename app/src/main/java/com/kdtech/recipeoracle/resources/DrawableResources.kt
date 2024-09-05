@@ -15,4 +15,5 @@ object DrawableResources {
     val chatIcon = R.drawable.chat_icon
     val searchIcon = R.drawable.search_icon
     val recipeItemPlaceholder = R.drawable.recipe_item_placeholder
+    val closeIcon = R.drawable.ic_close
 }

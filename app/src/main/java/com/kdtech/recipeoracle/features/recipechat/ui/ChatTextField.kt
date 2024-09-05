@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TextField
@@ -34,7 +33,6 @@ import com.kdtech.recipeoracle.common.Empty
 import com.kdtech.recipeoracle.resources.DrawableResources
 import com.kdtech.recipeoracle.resources.theme.RecipeTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatTextField(
     modifier: Modifier = Modifier,
@@ -45,7 +43,7 @@ fun ChatTextField(
     val focusRequester = remember { FocusRequester() }
     var text by remember {
         mutableStateOf(
-            TextFieldValue("")
+            TextFieldValue(String.Empty)
         )
     }
     Card(
