@@ -81,11 +81,12 @@ fun ChatTextField(
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Default
                 ),
-                colors = TextFieldDefaults.textFieldColors(
-                    containerColor = Color.Transparent,
+                colors = TextFieldDefaults.colors(
+                    cursorColor = RecipeTheme.colors.primaryGreen,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
                     focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = RecipeTheme.colors.primaryGreen
+                    unfocusedIndicatorColor = Color.Transparent
                 )
             )
             Spacer(Modifier.width(8.dp))
