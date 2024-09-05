@@ -52,4 +52,10 @@ class RecipesRepositoryImpl @Inject constructor(
             recipesDataSource.getSeeAllRecipes(seeAllRecipeRequest).map { recipeListMapper.map(it) }
         }
     }
+
+    override suspend fun getSearchedRecipes(searchText: String): Result<List<RecipeModel>> {
+        return withContext(dispatcherProvider.io) {
+            recipesDataSource.getSearchedRecipes(searchText).map { recipeListMapper.map(it) }
+        }
+    }
 }

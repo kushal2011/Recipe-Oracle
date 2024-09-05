@@ -109,6 +109,17 @@ class RecipesDataSourceImpl @Inject constructor(
         )
     }
 
+    override suspend fun getSearchedRecipes(searchText: String): Result<RecipeListDto> {
+        return safeApiCall(
+            {
+                recipesApi.searchRecipes(
+                    searchText = searchText
+                )
+            },
+            ::Exception
+        )
+    }
+
     companion object {
         private const val PREF_KEY = "recipes_list"
         private const val PREF_KEY_FOR_HOME_FEED = "homefeed"

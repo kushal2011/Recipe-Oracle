@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.kdtech.recipeoracle.apis.domain.models.RecipeModel
+import com.kdtech.recipeoracle.apis.domain.usecase.GetSearchedRecipesUseCase
 import com.kdtech.recipeoracle.common.BundleKeys
 import com.kdtech.recipeoracle.common.Empty
 import com.kdtech.recipeoracle.common.ScreenEvent
@@ -12,6 +13,7 @@ import com.kdtech.recipeoracle.features.searchscreen.presentation.models.SearchS
 import com.kdtech.recipeoracle.navigations.Screen
 import com.kdtech.recipeoracle.navigations.ScreenAction
 import com.kdtech.recipeoracle.navigations.ScreenNavigator
+import com.kdtech.recipeoracle.resources.StringResources
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -29,6 +31,7 @@ private const val QUERY_DEBOUNCE = 500L
 class SearchViewModel @Inject constructor(
     private val dispatcher: DispatcherProvider,
     private val navigator: ScreenNavigator,
+    private val searchUseCase: GetSearchedRecipesUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(SearchState())
     val state: Flow<SearchState> get() = _state
@@ -48,6 +51,10 @@ class SearchViewModel @Inject constructor(
         _queryFlow.update { query }
     }
 
+    fun onCloseCLick() {
+        setQuery(String.Empty)
+        _state.update { it.copy(recipesList = emptyList()) }
+    }
     fun onDetailsClick(
         recipeId: String,
     ) = viewModelScope.launch(dispatcher.main) {
@@ -72,7 +79,9 @@ class SearchViewModel @Inject constructor(
     private fun observeSearchQuery() {
         viewModelScope.launch(dispatcher.main) {
             queryFlow.debounce(QUERY_DEBOUNCE).collect {
-                searchRecipes(it)
+                if (it.length > 2) {
+                    searchRecipes(it)
+                }
             }
         }
     }
@@ -80,11 +89,29 @@ class SearchViewModel @Inject constructor(
     private fun searchRecipes(
         searchText: String
     ) = viewModelScope.launch(dispatcher.io) {
-        _state.update {
-            it.copy(
-                screenEvent = ScreenEvent.ShowToast(message = searchText)
-            )
-        }
-
+        _state.update { it.copy(isLoading = true) }
+        searchUseCase(
+            searchText
+        ).fold(
+            onSuccess = {
+                _state.update { prev ->
+                    prev.copy(
+                        recipesList = it,
+                        isLoading = false
+                    )
+                }
+            },
+            onFailure = {
+                _state.update { _prev ->
+                    _prev.copy(
+                        screenEvent = ScreenEvent.ShowToast(
+                            message = it.message.orEmpty(),
+                            resourceId = StringResources.somethingWentWrong
+                        ),
+                        isLoading = false
+                    )
+                }
+            }
+        )
     }
 }

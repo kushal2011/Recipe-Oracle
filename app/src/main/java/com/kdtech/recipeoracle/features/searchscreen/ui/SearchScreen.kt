@@ -14,9 +14,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.kdtech.recipeoracle.common.ScreenEvent
@@ -36,9 +42,17 @@ fun SearchScreen(
     val lazyGridState = rememberLazyGridState()
     val query by viewModel.queryFlow.collectAsState()
 
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusRequester = remember { FocusRequester() }
+    var isFocused by remember { mutableStateOf(false) }
+    var isKeyboardOpened by remember { mutableStateOf(false) }
+
     val context = LocalContext.current
     val snackBarHostState = remember { SnackbarHostState() }
 
+    LaunchedEffect(Unit) {
+        keyboardController?.show()
+    }
     LaunchedEffect(state.screenEvent) {
         val event = state.screenEvent
         if (event is ScreenEvent.ShowToast) {
@@ -55,15 +69,30 @@ fun SearchScreen(
     }
 
     Column(
-        modifier = modifier.fillMaxSize().padding(16.dp)
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
         SearchBar(
             text = query,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
+            searchModifier = Modifier
+                .fillMaxWidth().wrapContentHeight()
+                .focusRequester(focusRequester)
+                .onFocusChanged {
+                    isFocused = it.isFocused
+                    if (isFocused.not() && isKeyboardOpened.not()) {
+                        focusRequester.requestFocus()
+                        keyboardController?.show()
+                        isKeyboardOpened = true
+                    }
+                },
             onValueChange = viewModel::setQuery,
-            placeholderText = stringResource(StringResources.search)
+            placeholderText = stringResource(StringResources.search),
+            onCloseClick = viewModel::onCloseCLick,
+            keyboardController = keyboardController
         )
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),

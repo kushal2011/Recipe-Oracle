@@ -21,4 +21,9 @@ interface RecipesApi {
         @Query("health_rating") healthRating: Int?,
         @Query("top_rated") topRated: Boolean?
     ): Response<RecipeListDto>
+
+    @GET("/search")
+    suspend fun searchRecipes(
+        @Query("search_text") searchText: String,
+    ): Response<RecipeListDto>
 }

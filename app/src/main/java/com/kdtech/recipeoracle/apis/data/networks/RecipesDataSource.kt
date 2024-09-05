@@ -14,4 +14,5 @@ interface RecipesDataSource {
     suspend fun getHomeFeedData(configVersion: Long): Result<HomeFeedWidgetsDto>
     suspend fun getCategories(): Result<CategoriesDto>
     suspend fun getSeeAllRecipes(seeAllRecipeRequest: SeeAllRecipeRequest): Result<RecipeListDto>
+    suspend fun getSearchedRecipes(searchText: String): Result<RecipeListDto>
 }
