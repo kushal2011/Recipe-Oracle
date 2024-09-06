@@ -1,10 +1,13 @@
 package com.kodedynamic.recipeoracle.apis.data.networks
 
+import com.google.gson.JsonObject
 import com.kodedynamic.recipeoracle.apis.data.models.CategoriesDto
 import com.kodedynamic.recipeoracle.apis.data.models.HomeFeedWidgetsDto
 import com.kodedynamic.recipeoracle.apis.data.models.RecipeListDto
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface RecipesApi {
@@ -26,4 +29,9 @@ interface RecipesApi {
     suspend fun searchRecipes(
         @Query("search_text") searchText: String,
     ): Response<RecipeListDto>
+
+    @POST("/recipes/bulk/")
+    suspend fun postGeneratedRecipes(
+        @Body body: JsonObject
+    ): Response<Unit>
 }

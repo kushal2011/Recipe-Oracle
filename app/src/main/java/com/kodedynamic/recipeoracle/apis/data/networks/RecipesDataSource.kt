@@ -15,4 +15,5 @@ interface RecipesDataSource {
     suspend fun getCategoriesDataFromLocal(configVersion: Long): Result<CategoriesDto>
     suspend fun getSeeAllRecipes(seeAllRecipeRequest: SeeAllRecipeRequest): Result<RecipeListDto>
     suspend fun getSearchedRecipes(searchText: String): Result<RecipeListDto>
+    suspend fun postGeneratedRecipes(json: String): Result<Unit>
 }

@@ -1,8 +1,8 @@
 package com.kodedynamic.recipeoracle.apis.data.networks
 
-import android.util.Log
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.gson.JsonParser
 import com.kodedynamic.recipeoracle.BuildConfig
 import com.kodedynamic.recipeoracle.apis.data.local.PrefStorageHelper
 import com.kodedynamic.recipeoracle.apis.data.models.CategoriesDto
@@ -24,7 +24,6 @@ class RecipesDataSourceImpl @Inject constructor(
             )
 
             val response = generativeModel.generateContent(prompt)
-            Log.e("aaa", "getRecipes: ${response.text}", )
             val recipesList: RecipeListDto? = response.text?.ConvertToObject()
             recipesList ?: throw IllegalArgumentException("No recipes found for the provided prompt.")
         }.onFailure { throwable ->
@@ -124,6 +123,19 @@ class RecipesDataSourceImpl @Inject constructor(
             {
                 recipesApi.searchRecipes(
                     searchText = searchText
+                )
+            },
+            ::Exception
+        )
+    }
+
+    override suspend fun postGeneratedRecipes(json: String): Result<Unit> {
+        val jsonElement = JsonParser.parseString(json)
+        val jsonObject = jsonElement.asJsonObject
+        return safeApiCall(
+            {
+                recipesApi.postGeneratedRecipes(
+                    body = jsonObject
                 )
             },
             ::Exception

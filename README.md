@@ -2,7 +2,6 @@
 - (Deeplink)share with all the details of recipe and link to playstore app
 - add empty/no data found
 - add analytics
-- save response gotten from gemini search to database
 
 # TODO (Long term)
 - optional login for personalized recommendation

@@ -5,9 +5,9 @@ import com.google.gson.annotations.SerializedName
 
 data class InstructionDto(
     @SerializedName("id")
-    val instructionId: String?,
+    val instructionId: String?= null,
     @SerializedName("recipe_id")
-    val recipeId: String?,
+    val recipeId: String?= null,
     @SerializedName("step")
     val step: String?
 )

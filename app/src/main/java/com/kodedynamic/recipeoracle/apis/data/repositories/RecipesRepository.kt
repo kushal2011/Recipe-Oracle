@@ -12,4 +12,5 @@ interface RecipesRepository {
     suspend fun getCategories(configVersion: Long): Result<CategoriesModel>
     suspend fun getSeeAllRecipes(seeAllRecipeRequest: SeeAllRecipeRequest): Result<List<RecipeModel>>
     suspend fun getSearchedRecipes(searchText: String): Result<List<RecipeModel>>
+    suspend fun postGeneratedRecipes(json: String): Result<Unit>
 }

@@ -2,11 +2,16 @@ package com.kodedynamic.recipeoracle.features.searchscreen.presentation.viewmode
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
+import com.kodedynamic.recipeoracle.apis.data.models.IngredientsDto
+import com.kodedynamic.recipeoracle.apis.data.models.InstructionDto
+import com.kodedynamic.recipeoracle.apis.data.models.RecipeDto
 import com.kodedynamic.recipeoracle.apis.domain.models.RecipeModel
 import com.kodedynamic.recipeoracle.apis.domain.models.RecipeRequestModel
 import com.kodedynamic.recipeoracle.apis.domain.usecase.GetRecipeUseCase
 import com.kodedynamic.recipeoracle.apis.domain.usecase.GetSearchedRecipesUseCase
+import com.kodedynamic.recipeoracle.apis.domain.usecase.PostGeneratedRecipes
 import com.kodedynamic.recipeoracle.common.BundleKeys
 import com.kodedynamic.recipeoracle.common.Empty
 import com.kodedynamic.recipeoracle.common.ScreenEvent
@@ -35,6 +40,7 @@ class SearchViewModel @Inject constructor(
     private val navigator: ScreenNavigator,
     private val searchUseCase: GetSearchedRecipesUseCase,
     private val getRecipesUseCase: GetRecipeUseCase,
+    private val postGeneratedRecipes: PostGeneratedRecipes
 ) : ViewModel() {
     private val _state = MutableStateFlow(SearchState())
     val state: Flow<SearchState> get() = _state
@@ -142,6 +148,7 @@ class SearchViewModel @Inject constructor(
                         isLoading = false
                     )
                 }
+                uploadRecipesToDb(recipes)
             },
             onFailure = {
                 _state.update { _prev ->
@@ -153,6 +160,55 @@ class SearchViewModel @Inject constructor(
                         isLoading = false
                     )
                 }
+            }
+        )
+    }
+
+
+    private fun convertRecipesToDtoList(recipeList: List<RecipeModel>): List<RecipeDto> {
+        return recipeList.map { recipeModel ->
+            RecipeDto(
+                averageRating = recipeModel.averageRating,
+                course = recipeModel.course,
+                cuisineType = recipeModel.cuisineType,
+                healthRating = recipeModel.healthRating,
+                imageUrl = recipeModel.imageUrl,
+                ingredientsDtos = recipeModel.ingredients.map { ingredient ->
+                    IngredientsDto(
+                        ingredientName = ingredient.ingredientName,
+                        quantity = ingredient.quantity,
+                        imageUrl = ingredient.imageUrl
+                    )
+                },
+                instructionDtos = recipeModel.instructions.map { instruction ->
+                    InstructionDto(step = instruction.step)
+                },
+                isEggiterian = recipeModel.isEggiterian,
+                isJain = recipeModel.isJain,
+                isNonVeg = recipeModel.isNonVeg,
+                isVegan = recipeModel.isVegan,
+                isVegetarian = recipeModel.isVegetarian,
+                recipeName = recipeModel.recipeName,
+                prepTime = recipeModel.prepTime,
+                ratingsCount = recipeModel.ratingsCount
+            )
+        }
+    }
+
+    private fun uploadRecipesToDb(
+        recipeList: List<RecipeModel>
+    ) = viewModelScope.launch(dispatcher.io) {
+        val recipeDtoList = convertRecipesToDtoList(recipeList)
+        val gson = Gson()
+        val json = gson.toJson(mapOf("recipes" to recipeDtoList))
+
+        postGeneratedRecipes(json).fold(
+            onSuccess = {
+                // do nothing
+            },
+            onFailure = {
+                FirebaseCrashlytics.getInstance().log("uploadRecipesToDb failure:")
+                FirebaseCrashlytics.getInstance().recordException(it)
             }
         )
     }

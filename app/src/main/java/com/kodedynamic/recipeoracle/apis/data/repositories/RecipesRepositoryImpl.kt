@@ -53,4 +53,10 @@ class RecipesRepositoryImpl @Inject constructor(
             recipesDataSource.getSearchedRecipes(searchText).map { recipeListMapper.map(it) }
         }
     }
+
+    override suspend fun postGeneratedRecipes(json: String): Result<Unit> {
+        return withContext(dispatcherProvider.io) {
+            recipesDataSource.postGeneratedRecipes(json)
+        }
+    }
 }

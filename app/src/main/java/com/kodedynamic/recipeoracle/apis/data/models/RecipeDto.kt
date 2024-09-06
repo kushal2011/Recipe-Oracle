@@ -13,7 +13,7 @@ data class RecipeDto(
     @SerializedName("health_rating")
     val healthRating: Int?,
     @SerializedName("id")
-    val recipeId: String?,
+    val recipeId: String?= null,
     @SerializedName("image_url")
     val imageUrl: String?,
     @SerializedName("ingredients")
