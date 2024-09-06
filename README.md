@@ -2,7 +2,8 @@
 - (Deeplink)share with all the details of recipe and link to playstore app
 - add empty/no data found
 - add analytics
-- bug , id of recipe generated from gemini is incorrect
+- add cuisines list to local caching and make it from remote config
+- save response gotten from gemini search to database
 
 # TODO (Long term)
 - optional login for personalized recommendation

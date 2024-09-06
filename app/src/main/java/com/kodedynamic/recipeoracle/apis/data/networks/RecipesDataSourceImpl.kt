@@ -1,5 +1,6 @@
 package com.kodedynamic.recipeoracle.apis.data.networks
 
+import android.util.Log
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.kodedynamic.recipeoracle.BuildConfig
@@ -23,6 +24,7 @@ class RecipesDataSourceImpl @Inject constructor(
             )
 
             val response = generativeModel.generateContent(prompt)
+            Log.e("aaa", "getRecipes: ${response.text}", )
             val recipesList: RecipeListDto? = response.text?.ConvertToObject()
             recipesList ?: throw IllegalArgumentException("No recipes found for the provided prompt.")
         }.onFailure { throwable ->

@@ -3,6 +3,7 @@ package com.kodedynamic.recipeoracle.apis.data.mappers
 import com.kodedynamic.recipeoracle.apis.data.models.RecipeDto
 import com.kodedynamic.recipeoracle.apis.domain.models.RecipeModel
 import com.kodedynamic.recipeoracle.common.Mapper
+import java.util.UUID
 import javax.inject.Inject
 
 class RecipeMapper @Inject constructor(
@@ -16,7 +17,9 @@ class RecipeMapper @Inject constructor(
                 course = course.orEmpty(),
                 cuisineType = cuisineType.orEmpty(),
                 healthRating = healthRating ?: 0,
-                recipeId = recipeId.orEmpty(),
+                recipeId = recipeId?.takeIf {
+                    it.isNotEmpty()
+                } ?: ("temp" + UUID.randomUUID().toString()),
                 imageUrl = imageUrl.orEmpty(),
                 isEggiterian = isEggiterian ?: false,
                 recipeName = recipeName.orEmpty(),
