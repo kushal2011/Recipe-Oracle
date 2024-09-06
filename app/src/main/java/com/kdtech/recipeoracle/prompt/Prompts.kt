@@ -127,33 +127,35 @@ object Prompts {
                 "\n   - **isJain**: True if the recipe adheres to Jain dietary restrictions (no onions, garlic, root vegetables, etc.), otherwise False." +
                 "\n9. **Health Rating**: An integer from 1 to 10, with 10 being the healthiest." +
                 "\n\nHere’s an example of what I expect in the JSON output:" +
-                "\n[" +
-                "\n  {" +
-                "\n    \"name\": \"Classic Tomato Spaghetti\"," +
-                "\n    \"prep_time\": 10," +
-                "\n    \"image_url\": \"\"," +
-                "\n    \"cuisine_type\": \"Italian\"," +
-                "\n    \"course\": \"Main Course\"," +
-                "\n    \"ingredients\": [" +
-                "\n      {\"name\": \"Spaghetti\", \"quantity\": \"200g\", \"image_url\": \"\"}," +
-                "\n      {\"name\": \"Tomatoes\", \"quantity\": \"5, diced\", \"image_url\": \"\"}," +
-                "\n      {\"name\": \"Olive oil\", \"quantity\": \"2 tbsp\", \"image_url\": \"\"}," +
-                "\n      {\"name\": \"Garlic\", \"quantity\": \"2 cloves, minced\", \"image_url\": \"\"}" +
-                "\n    ]," +
-                "\n    \"instructions\": [" +
-                "\n      {\"step\": \"Cook the spaghetti in a large pot of boiling salted water until al dente.\"}," +
-                "\n      {\"step\": \"Heat the olive oil in a pan and sauté garlic until fragrant.\"}," +
-                "\n      {\"step\": \"Add tomatoes and cook until the sauce thickens.\"}," +
-                "\n      {\"step\": \"Toss the spaghetti with the sauce and serve hot.\"}" +
-                "\n    ]," +
-                "\n    \"is_vegan\": true," +
-                "\n    \"is_vegetarian\": true," +
-                "\n    \"is_eggiterian\": false," +
-                "\n    \"is_non_veg\": false," +
-                "\n    \"is_jain\": false," +
-                "\n    \"health_rating\": 4" +
-                "\n  }" +
-                "\n]" +
+                "\n{" +
+                "\n  \"data\": [" +
+                "\n    {" +
+                "\n      \"name\": \"Classic Tomato Spaghetti\"," +
+                "\n      \"prep_time\": 10," +
+                "\n      \"image_url\": \"\"," +
+                "\n      \"cuisine_type\": \"Italian\"," +
+                "\n      \"course\": \"Main Course\"," +
+                "\n      \"ingredients\": [" +
+                "\n        {\"name\": \"Spaghetti\", \"quantity\": \"200g\", \"image_url\": \"\"}," +
+                "\n        {\"name\": \"Tomatoes\", \"quantity\": \"5, diced\", \"image_url\": \"\"}," +
+                "\n        {\"name\": \"Olive oil\", \"quantity\": \"2 tbsp\", \"image_url\": \"\"}," +
+                "\n        {\"name\": \"Garlic\", \"quantity\": \"2 cloves, minced\", \"image_url\": \"\"}" +
+                "\n      ]," +
+                "\n      \"instructions\": [" +
+                "\n        {\"step\": \"Cook the spaghetti in a large pot of boiling salted water until al dente.\"}," +
+                "\n        {\"step\": \"Heat the olive oil in a pan and sauté garlic until fragrant.\"}," +
+                "\n        {\"step\": \"Add tomatoes and cook until the sauce thickens.\"}," +
+                "\n        {\"step\": \"Toss the spaghetti with the sauce and serve hot.\"}" +
+                "\n      ]," +
+                "\n      \"is_vegan\": true," +
+                "\n      \"is_vegetarian\": true," +
+                "\n      \"is_eggiterian\": false," +
+                "\n      \"is_non_veg\": false," +
+                "\n      \"is_jain\": false," +
+                "\n      \"health_rating\": 4" +
+                "\n    }" +
+                "\n  ]" +
+                "\n}" +
                 "\n\nPlease generate a list with ${recipeRequestModel.noOfItemsToShow} different recipes that include the above details." +
                 "Response should only contain JSON and nothing else." +
                 " Thank you"

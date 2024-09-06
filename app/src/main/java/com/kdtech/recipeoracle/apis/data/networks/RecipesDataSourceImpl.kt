@@ -6,19 +6,16 @@ import com.kdtech.recipeoracle.BuildConfig
 import com.kdtech.recipeoracle.apis.data.local.PrefStorageHelper
 import com.kdtech.recipeoracle.apis.data.models.CategoriesDto
 import com.kdtech.recipeoracle.apis.data.models.HomeFeedWidgetsDto
-import com.kdtech.recipeoracle.apis.data.models.RecipeDto
 import com.kdtech.recipeoracle.apis.data.models.RecipeListDto
-import com.kdtech.recipeoracle.apis.domain.models.RecipeRequestModel
 import com.kdtech.recipeoracle.apis.domain.models.SeeAllRecipeRequest
 import com.kdtech.recipeoracle.common.ConvertToObject
-import com.kdtech.recipeoracle.prompt.Prompts
 import javax.inject.Inject
 
 class RecipesDataSourceImpl @Inject constructor(
     private val prefStorageHelper: PrefStorageHelper,
     private val recipesApi: RecipesApi
 ) : RecipesDataSource {
-    override suspend fun getRecipes(prompt: String): Result<List<RecipeDto>> {
+    override suspend fun getRecipes(prompt: String): Result<RecipeListDto> {
         return runCatching {
             val generativeModel = GenerativeModel(
                 modelName = "gemini-1.5-flash",
@@ -26,27 +23,11 @@ class RecipesDataSourceImpl @Inject constructor(
             )
 
             val response = generativeModel.generateContent(prompt)
-            val recipesList: List<RecipeDto>? = response.text?.ConvertToObject()
-
-            recipesList?.also {
-                prefStorageHelper.saveList(PREF_KEY, it)
-            } ?: throw Throwable("Failed to parse response: ${response.toString()}")
-
-            recipesList
+            val recipesList: RecipeListDto? = response.text?.ConvertToObject()
+            recipesList ?: throw IllegalArgumentException("No recipes found for the provided prompt.")
         }.onFailure { throwable ->
             FirebaseCrashlytics.getInstance().recordException(throwable)
-        }
-    }
-
-
-    override suspend fun getLocallyStoredRecipes(): Result<List<RecipeDto>> {
-        val recipesList = prefStorageHelper.getList(PREF_KEY)
-        return if (recipesList.isNotEmpty()) {
-            Result.success(recipesList)
-        } else {
-            getRecipes(
-                Prompts.getPromptForRecipes(RecipeRequestModel())
-            )
+            Result.failure<Throwable>(throwable)
         }
     }
 
@@ -121,7 +102,6 @@ class RecipesDataSourceImpl @Inject constructor(
     }
 
     companion object {
-        private const val PREF_KEY = "recipes_list"
         private const val PREF_KEY_FOR_HOME_FEED = "homefeed"
         private const val PREF_KEY_FOR_HOME_FEED_VERSION = "homefeed_version"
     }

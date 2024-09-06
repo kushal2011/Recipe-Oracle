@@ -7,9 +7,7 @@ import com.kdtech.recipeoracle.apis.ConfigManager
 import com.kdtech.recipeoracle.apis.data.models.ParamsDto
 import com.kdtech.recipeoracle.apis.domain.models.RecipeModel
 import com.kdtech.recipeoracle.coroutines.DispatcherProvider
-import com.kdtech.recipeoracle.apis.domain.models.RecipeRequestModel
 import com.kdtech.recipeoracle.apis.domain.usecase.GetHomeFeedUseCase
-import com.kdtech.recipeoracle.apis.domain.usecase.GetRecipeUseCase
 import com.kdtech.recipeoracle.common.BundleKeys
 import com.kdtech.recipeoracle.common.ScreenEvent
 import com.kdtech.recipeoracle.features.homescreen.presentation.models.HomeState
@@ -28,7 +26,6 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val dispatcher: DispatcherProvider,
     private val navigator: ScreenNavigator,
-    private val getRecipesUseCase: GetRecipeUseCase,
     private val getHomeFeedUseCase: GetHomeFeedUseCase,
     private val configManager: ConfigManager
 ) : ViewModel() {
@@ -119,23 +116,6 @@ class HomeViewModel @Inject constructor(
                         isLoading = false
                     )
                 }
-            }
-        )
-    }
-
-    private fun getRecipesData() = viewModelScope.launch(dispatcher.io) {
-        getRecipesUseCase(
-            param = RecipeRequestModel()
-        ).fold(
-            onSuccess = { recipes ->
-                _state.update {
-                    it.copy(
-                        recipeList = recipes
-                    )
-                }
-            },
-            onFailure = {
-                // do nothing
             }
         )
     }

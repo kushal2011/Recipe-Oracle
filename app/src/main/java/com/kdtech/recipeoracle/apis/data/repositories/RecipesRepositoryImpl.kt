@@ -3,7 +3,6 @@ package com.kdtech.recipeoracle.apis.data.repositories
 import com.kdtech.recipeoracle.apis.data.mappers.CategoriesMapper
 import com.kdtech.recipeoracle.apis.data.mappers.HomeFeedWidgetsMapper
 import com.kdtech.recipeoracle.apis.data.mappers.RecipeListMapper
-import com.kdtech.recipeoracle.apis.data.models.RecipeDto
 import com.kdtech.recipeoracle.apis.domain.models.RecipeRequestModel
 import com.kdtech.recipeoracle.apis.data.networks.RecipesDataSource
 import com.kdtech.recipeoracle.apis.domain.models.CategoriesModel
@@ -24,13 +23,9 @@ class RecipesRepositoryImpl @Inject constructor(
 ): RecipesRepository {
     override suspend fun getRecipes(
         recipeRequest: RecipeRequestModel
-    ): Result<List<RecipeDto>> = withContext(dispatcherProvider.io) {
-        if (recipeRequest.areAllBooleansNull() && recipeRequest.searchText.isBlank()) {
-            recipesDataSource.getLocallyStoredRecipes()
-        } else {
-            val prompt = Prompts.getPromptForRecipes(recipeRequest)
-            recipesDataSource.getRecipes(prompt)
-        }
+    ): Result<List<RecipeModel>> = withContext(dispatcherProvider.io) {
+        val prompt = Prompts.getPromptForRecipes(recipeRequest)
+        recipesDataSource.getRecipes(prompt).map { recipeListMapper.map(it) }
     }
 
     override suspend fun getHomeFeedData(configVersion: Long): Result<HomeFeedWidgetsModel> {

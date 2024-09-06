@@ -5,7 +5,7 @@
 - add search screen
   - add empty/no data found
 - add pull to refresh
-- (api) add did you mean "$" if search does not give match
+UI Bug - in details screen , if name is big the ui is breaking
 
 # TODO (Long term)
 - optional login for personalized recommendation
@@ -25,3 +25,4 @@
   - snacks , side dish
 - Notifications
 - add save recipe feature
+- In details add a component that shows fun fact about that item
