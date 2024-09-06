@@ -7,8 +7,10 @@ import javax.inject.Inject
 
 class GetCategoriesUseCase @Inject constructor(
     private val recipeRepository: RecipesRepository
-) : UseCase.Suspending<Result<CategoriesModel>> {
-    override suspend fun invoke() : Result<CategoriesModel>{
-        return recipeRepository.getCategories()
+) : UseCase.SuspendingParameterized<Long, Result<CategoriesModel>> {
+    override suspend fun invoke(
+        param: Long
+    ) : Result<CategoriesModel>{
+        return recipeRepository.getCategories(param)
     }
 }

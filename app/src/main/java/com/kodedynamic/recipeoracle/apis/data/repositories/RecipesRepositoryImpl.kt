@@ -34,9 +34,9 @@ class RecipesRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCategories(): Result<CategoriesModel> {
+    override suspend fun getCategories(configVersion: Long): Result<CategoriesModel> {
         return withContext(dispatcherProvider.io) {
-            recipesDataSource.getCategories().map { categoriesMapper.map(it) }
+            recipesDataSource.getCategoriesData(configVersion).map { categoriesMapper.map(it) }
         }
     }
 

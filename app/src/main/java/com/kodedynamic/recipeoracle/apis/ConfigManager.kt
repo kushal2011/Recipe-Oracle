@@ -16,7 +16,12 @@ class ConfigManager @Inject constructor() {
                 minimumFetchIntervalInSeconds = 3600
             }
             setConfigSettingsAsync(configSettings)
-            setDefaultsAsync(mapOf(KEY_HOME_FEED_VERSION to DEFAULT_HOME_FEED_VERSION))
+            setDefaultsAsync(
+                mapOf(
+                    KEY_HOME_FEED_VERSION to DEFAULT_HOME_FEED_VERSION,
+                    KEY_CATEGORIES_VERSION to DEFAULT_CATEGORIES_VERSION
+                )
+            )
         }
     }
 
@@ -27,8 +32,17 @@ class ConfigManager @Inject constructor() {
         }.getOrElse { DEFAULT_HOME_FEED_VERSION }
     }
 
+    suspend fun fetchCategoriesVersion(): Long {
+        return runCatching {
+            remoteConfig.fetchAndActivate().await()
+            remoteConfig.getLong(KEY_CATEGORIES_VERSION)
+        }.getOrElse { DEFAULT_CATEGORIES_VERSION }
+    }
+
     companion object {
         private const val KEY_HOME_FEED_VERSION = "HOME_FEED_VERSION"
+        private const val KEY_CATEGORIES_VERSION = "CATEGORIES_VERSION"
         private const val DEFAULT_HOME_FEED_VERSION = 1L
+        private const val DEFAULT_CATEGORIES_VERSION = 1L
     }
 }

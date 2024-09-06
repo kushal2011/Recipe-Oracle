@@ -45,7 +45,7 @@ class RecipesDataSourceImpl @Inject constructor(
         } else {
             result.getOrNull()?.let {
                 prefStorageHelper.saveHomeFeed(PREF_KEY_FOR_HOME_FEED, it)
-                prefStorageHelper.saveLocalHomeFeedVersion(PREF_KEY_FOR_HOME_FEED_VERSION, configVersion)
+                prefStorageHelper.saveLocalVersion(PREF_KEY_FOR_HOME_FEED_VERSION, configVersion)
             }
             return result
         }
@@ -61,7 +61,7 @@ class RecipesDataSourceImpl @Inject constructor(
     }
 
     override suspend fun getHomeFeedData(configVersion: Long): Result<HomeFeedWidgetsDto> {
-        val localVersion = prefStorageHelper.getLocalHomeFeedVersion(PREF_KEY_FOR_HOME_FEED_VERSION)
+        val localVersion = prefStorageHelper.getLocalVersion(PREF_KEY_FOR_HOME_FEED_VERSION)
         return if (configVersion > localVersion) {
             getHomeFeedDataFromRemote(configVersion)
         } else {
@@ -69,13 +69,40 @@ class RecipesDataSourceImpl @Inject constructor(
         }
     }
 
-    override suspend fun getCategories(): Result<CategoriesDto> {
-        return safeApiCall(
+    override suspend fun getCategoriesData(configVersion: Long): Result<CategoriesDto> {
+        val localVersion = prefStorageHelper.getLocalVersion(PREF_KEY_FOR_CATEGORIES_VERSION)
+        return if (configVersion > localVersion) {
+            getCategoriesFromRemote(configVersion)
+        } else {
+            getCategoriesDataFromLocal(configVersion)
+        }
+    }
+
+    override suspend fun getCategoriesFromRemote(configVersion: Long): Result<CategoriesDto> {
+        val result = safeApiCall(
             {
                 recipesApi.getCategories()
             },
             ::Exception
         )
+        if (result.isFailure) {
+            return result
+        } else {
+            result.getOrNull()?.let {
+                prefStorageHelper.saveCategories(PREF_KEY_FOR_CATEGORIES, it)
+                prefStorageHelper.saveLocalVersion(PREF_KEY_FOR_CATEGORIES_VERSION, configVersion)
+            }
+            return result
+        }
+    }
+
+    override suspend fun getCategoriesDataFromLocal(configVersion: Long): Result<CategoriesDto> {
+        val categoriesDto = prefStorageHelper.getCategories(PREF_KEY_FOR_CATEGORIES)
+        categoriesDto?.let {
+            return Result.success(it)
+        }?: run {
+            return getCategoriesFromRemote(configVersion)
+        }
     }
 
     override suspend fun getSeeAllRecipes(seeAllRecipeRequest: SeeAllRecipeRequest): Result<RecipeListDto> {
@@ -105,6 +132,8 @@ class RecipesDataSourceImpl @Inject constructor(
 
     companion object {
         private const val PREF_KEY_FOR_HOME_FEED = "homefeed"
+        private const val PREF_KEY_FOR_CATEGORIES = "categories"
         private const val PREF_KEY_FOR_HOME_FEED_VERSION = "homefeed_version"
+        private const val PREF_KEY_FOR_CATEGORIES_VERSION = "categories_version"
     }
 }

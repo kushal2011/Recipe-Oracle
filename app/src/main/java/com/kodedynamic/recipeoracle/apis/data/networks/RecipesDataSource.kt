@@ -10,7 +10,9 @@ interface RecipesDataSource {
     suspend fun getHomeFeedDataFromRemote(configVersion: Long): Result<HomeFeedWidgetsDto>
     suspend fun getHomeFeedDataFromLocal(configVersion: Long): Result<HomeFeedWidgetsDto>
     suspend fun getHomeFeedData(configVersion: Long): Result<HomeFeedWidgetsDto>
-    suspend fun getCategories(): Result<CategoriesDto>
+    suspend fun getCategoriesData(configVersion: Long): Result<CategoriesDto>
+    suspend fun getCategoriesFromRemote(configVersion: Long): Result<CategoriesDto>
+    suspend fun getCategoriesDataFromLocal(configVersion: Long): Result<CategoriesDto>
     suspend fun getSeeAllRecipes(seeAllRecipeRequest: SeeAllRecipeRequest): Result<RecipeListDto>
     suspend fun getSearchedRecipes(searchText: String): Result<RecipeListDto>
 }

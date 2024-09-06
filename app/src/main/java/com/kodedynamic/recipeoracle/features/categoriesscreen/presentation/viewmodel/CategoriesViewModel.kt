@@ -2,6 +2,7 @@ package com.kodedynamic.recipeoracle.features.categoriesscreen.presentation.view
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kodedynamic.recipeoracle.apis.ConfigManager
 import com.kodedynamic.recipeoracle.apis.domain.usecase.GetCategoriesUseCase
 import com.kodedynamic.recipeoracle.common.BundleKeys
 import com.kodedynamic.recipeoracle.common.ScreenEvent
@@ -22,7 +23,8 @@ import javax.inject.Inject
 class CategoriesViewModel @Inject constructor(
     private val dispatcher: DispatcherProvider,
     private val navigator: ScreenNavigator,
-    private val getCategoriesUseCase: GetCategoriesUseCase
+    private val getCategoriesUseCase: GetCategoriesUseCase,
+    private val configManager: ConfigManager
 ): ViewModel() {
 
     private val _state = MutableStateFlow(CategoriesState())
@@ -50,7 +52,8 @@ class CategoriesViewModel @Inject constructor(
 
     private fun getCuisineData() = viewModelScope.launch(dispatcher.io) {
         _state.update { it.copy(isLoading = true) }
-        getCategoriesUseCase().fold(
+        val version = configManager.fetchCategoriesVersion()
+        getCategoriesUseCase(version).fold(
             onSuccess = {
                 _state.update { _prev ->
                     _prev.copy(
