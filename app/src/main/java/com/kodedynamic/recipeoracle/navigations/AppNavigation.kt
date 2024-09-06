@@ -1,7 +1,6 @@
 package com.kodedynamic.recipeoracle.navigations
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -34,16 +33,14 @@ fun AppNavigation(
 ) {
 
     LaunchedEffect(recipeId) {
-        Log.e("aaa", "recipeId: ${recipeId}")
         if (recipeId.isNotEmpty()) {
-            Log.e("aaa", "recipeId:isNotEmpty: ${recipeId}")
             navController.navigate(
                 ScreenAction.goTo(
                     screen = Screen.Details(),
                     map = mapOf(
                         BundleKeys.RECIPE_ID to recipeId
                     )
-                )
+                ).buildRoute()
             )
         }
     }

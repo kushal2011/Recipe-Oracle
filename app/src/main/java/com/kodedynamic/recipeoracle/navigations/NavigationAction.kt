@@ -1,5 +1,6 @@
 package com.kodedynamic.recipeoracle.navigations
 
+import android.net.Uri
 import android.os.Parcelable
 import androidx.navigation.NavOptions
 
@@ -11,6 +12,20 @@ interface NavigationAction {
         get() = emptyMap()
     val navOptions: NavOptions
         get() = NavOptions.Builder().build() // No NavOptions as default
+
+    fun buildRoute(): String {
+        var route = screen.route
+
+        // Append query parameters if they exist
+        if (stringArguments.isNotEmpty()) {
+            val queryString = stringArguments.entries.joinToString("&") {
+                "${it.key}=${Uri.encode(it.value)}"
+            }
+            route += "?$queryString"
+        }
+
+        return route
+    }
 }
 
 object ScreenAction {

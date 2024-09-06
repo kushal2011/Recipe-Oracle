@@ -58,6 +58,7 @@ import com.kodedynamic.recipeoracle.features.detailsscreen.presentation.models.R
 import com.kodedynamic.recipeoracle.features.detailsscreen.presentation.viewmodel.RecipeDetailsViewmodel
 import com.kodedynamic.recipeoracle.resources.DrawableResources
 import com.kodedynamic.recipeoracle.resources.StringResources
+import com.kodedynamic.recipeoracle.resources.components.LottieLoader
 import com.kodedynamic.recipeoracle.resources.components.RemoteImage
 import com.kodedynamic.recipeoracle.resources.theme.RecipeTheme
 
@@ -226,7 +227,7 @@ fun RecipeDetailsScreen(
                     }
                 }
             } ?: run {
-                // Show loading or placeholder content here
+                LottieLoader()
             }
         }
     )

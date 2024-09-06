@@ -74,7 +74,6 @@ private fun firebaseAuthWithGoogle(firebaseAuth: FirebaseAuth, acct: GoogleSignI
                 Log.e("aaa", "AuthScreen: success: $task")
             } else {
                 Log.e("aaa", "AuthScreen: fail: $task")
-
             }
         }
 }

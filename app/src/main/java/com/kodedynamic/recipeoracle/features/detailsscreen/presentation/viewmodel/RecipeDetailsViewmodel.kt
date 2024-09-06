@@ -1,6 +1,5 @@
 package com.kodedynamic.recipeoracle.features.detailsscreen.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -40,7 +39,6 @@ class RecipeDetailsViewmodel @Inject constructor(
         savedStateHandle.get<String>(BundleKeys.RECIPE_ID) ?: String.Empty
 
     init {
-        Log.e("aaa", "in recipeDetails:", )
         if (recipeDetails.isNotEmpty()) {
             val gson = Gson()
             _state.update {
@@ -49,7 +47,6 @@ class RecipeDetailsViewmodel @Inject constructor(
                 )
             }
         } else if (recipeId.isNotEmpty()) {
-            Log.e("aaa", "recipeId: ${recipeId}", )
             getRecipeDetails(recipeId)
         }
     }
@@ -77,7 +74,6 @@ class RecipeDetailsViewmodel @Inject constructor(
         _state.update { it.copy(isLoading = true) }
         getRecipeByIdUseCase(recipeId).fold(
             onSuccess = {
-                Log.e("aaa", "success:", )
                 _state.update { prev ->
                     prev.copy(
                         recipeData = it,
@@ -86,7 +82,6 @@ class RecipeDetailsViewmodel @Inject constructor(
                 }
             },
             onFailure = {
-                Log.e("aaa", "Failure: ${it.message}", )
                 _state.update { _prev ->
                     _prev.copy(
                         screenEvent = ScreenEvent.ShowToast(
