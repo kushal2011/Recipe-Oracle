@@ -46,6 +46,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextIndent
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -78,7 +79,9 @@ fun RecipeDetailsScreen(
                 title = {
                     Text(
                         text = state.recipeData?.recipeName ?: String.Empty,
-                        style = RecipeTheme.typography.headerMedium
+                        style = RecipeTheme.typography.headerMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 },
                 colors = TopAppBarColors(
@@ -154,6 +157,14 @@ fun RecipeDetailsScreen(
                                 .height(200.dp)
                                 .padding(vertical = 16.dp),
                             placeholderRes = DrawableResources.recipeItemPlaceholder
+                        )
+                    }
+                    item {
+                        Text(
+                            text = recipeData.recipeName,
+                            color = RecipeTheme.colors.darkCharcoal,
+                            style = RecipeTheme.typography.headerMedium,
+                            modifier = Modifier.padding(16.dp)
                         )
                     }
 

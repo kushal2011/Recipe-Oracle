@@ -1,11 +1,7 @@
 # TODO
 - share with all the details of recipe and link to playstore app
-- add ads 
-- add option to remove ads if user buys premium
-- add search screen
-  - add empty/no data found
+- add empty/no data found
 - add pull to refresh
-UI Bug - in details screen , if name is big the ui is breaking
 
 # TODO (Long term)
 - optional login for personalized recommendation
@@ -26,3 +22,5 @@ UI Bug - in details screen , if name is big the ui is breaking
 - Notifications
 - add save recipe feature
 - In details add a component that shows fun fact about that item
+- add ads
+- add option to remove ads if user buys premium
