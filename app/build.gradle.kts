@@ -9,11 +9,11 @@ plugins {
 }
 
 android {
-    namespace = "com.kdtech.recipeoracle"
+    namespace = "com.kodedynamic.recipeoracle"
     compileSdk = libs.versions.compile.sdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.kdtech.recipeoracle"
+        applicationId = "com.kodedynamic.recipeoracle"
         minSdk = libs.versions.min.sdk.get().toInt()
         targetSdk = libs.versions.target.sdk.get().toInt()
         versionCode = 1

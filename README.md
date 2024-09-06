@@ -1,8 +1,8 @@
 # TODO
 - (Deeplink)share with all the details of recipe and link to playstore app
 - add empty/no data found
-- update package name (update firebase)
 - add analytics
+- bug , id of recipe generated from gemini is incorrect
 
 # TODO (Long term)
 - optional login for personalized recommendation
