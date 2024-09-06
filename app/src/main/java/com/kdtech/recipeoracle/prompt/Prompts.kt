@@ -157,7 +157,7 @@ object Prompts {
                 "\n  ]" +
                 "\n}" +
                 "\n\nPlease generate a list with ${recipeRequestModel.noOfItemsToShow} different recipes that include the above details." +
-                "Response should only contain JSON and nothing else." +
+                "Response should strictly contain only JSON formatted data, without any additional characters or formatting." +
                 " Thank you"
     }
 }
