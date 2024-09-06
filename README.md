@@ -1,7 +1,8 @@
 # TODO
-- share with all the details of recipe and link to playstore app
+- (Deeplink)share with all the details of recipe and link to playstore app
 - add empty/no data found
-- add pull to refresh
+- update package name (update firebase)
+- add analytics
 
 # TODO (Long term)
 - optional login for personalized recommendation
