@@ -1,17 +1,21 @@
 package com.kodedynamic.recipeoracle.features.detailsscreen.presentation.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.kodedynamic.recipeoracle.apis.domain.models.RecipeModel
+import com.kodedynamic.recipeoracle.apis.domain.usecase.GetRecipeByIdUseCase
 import com.kodedynamic.recipeoracle.common.BundleKeys
 import com.kodedynamic.recipeoracle.common.Empty
+import com.kodedynamic.recipeoracle.common.ScreenEvent
 import com.kodedynamic.recipeoracle.coroutines.DispatcherProvider
 import com.kodedynamic.recipeoracle.features.detailsscreen.presentation.models.RecipeDetailsState
 import com.kodedynamic.recipeoracle.navigations.Screen
 import com.kodedynamic.recipeoracle.navigations.ScreenAction
 import com.kodedynamic.recipeoracle.navigations.ScreenNavigator
+import com.kodedynamic.recipeoracle.resources.StringResources
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +27,8 @@ import javax.inject.Inject
 class RecipeDetailsViewmodel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val dispatcher: DispatcherProvider,
-    private val navigator: ScreenNavigator
+    private val navigator: ScreenNavigator,
+    private val getRecipeByIdUseCase: GetRecipeByIdUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(RecipeDetailsState())
     val state: Flow<RecipeDetailsState> get() = _state
@@ -31,12 +36,21 @@ class RecipeDetailsViewmodel @Inject constructor(
     private val recipeDetails: String =
         savedStateHandle.get<String>(BundleKeys.RECIPE_DETAILS) ?: String.Empty
 
+    private val recipeId: String =
+        savedStateHandle.get<String>(BundleKeys.RECIPE_ID) ?: String.Empty
+
     init {
-        val gson = Gson()
-        _state.update {
-            it.copy(
-                recipeData = gson.fromJson(recipeDetails, RecipeModel::class.java)
-            )
+        Log.e("aaa", "in recipeDetails:", )
+        if (recipeDetails.isNotEmpty()) {
+            val gson = Gson()
+            _state.update {
+                it.copy(
+                    recipeData = gson.fromJson(recipeDetails, RecipeModel::class.java)
+                )
+            }
+        } else if (recipeId.isNotEmpty()) {
+            Log.e("aaa", "recipeId: ${recipeId}", )
+            getRecipeDetails(recipeId)
         }
     }
 
@@ -54,6 +68,35 @@ class RecipeDetailsViewmodel @Inject constructor(
                     BundleKeys.RECIPE_NAME to recipeName
                 )
             )
+        )
+    }
+
+    private fun getRecipeDetails(
+        recipeId: String
+    ) = viewModelScope.launch(dispatcher.main) {
+        _state.update { it.copy(isLoading = true) }
+        getRecipeByIdUseCase(recipeId).fold(
+            onSuccess = {
+                Log.e("aaa", "success:", )
+                _state.update { prev ->
+                    prev.copy(
+                        recipeData = it,
+                        isLoading = false
+                    )
+                }
+            },
+            onFailure = {
+                Log.e("aaa", "Failure: ${it.message}", )
+                _state.update { _prev ->
+                    _prev.copy(
+                        screenEvent = ScreenEvent.ShowToast(
+                            message = it.message.orEmpty(),
+                            resourceId = StringResources.somethingWentWrong
+                        ),
+                        isLoading = false
+                    )
+                }
+            }
         )
     }
 }

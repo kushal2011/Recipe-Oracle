@@ -1,6 +1,7 @@
 package com.kodedynamic.recipeoracle.navigations
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
@@ -29,7 +30,23 @@ import kotlinx.coroutines.flow.Flow
 @Composable
 fun AppNavigation(
     navController: NavHostController,
+    recipeId: String,
 ) {
+
+    LaunchedEffect(recipeId) {
+        Log.e("aaa", "recipeId: ${recipeId}")
+        if (recipeId.isNotEmpty()) {
+            Log.e("aaa", "recipeId:isNotEmpty: ${recipeId}")
+            navController.navigate(
+                ScreenAction.goTo(
+                    screen = Screen.Details(),
+                    map = mapOf(
+                        BundleKeys.RECIPE_ID to recipeId
+                    )
+                )
+            )
+        }
+    }
     NavHost(navController = navController, startDestination = Screen.Home().route) {
         composable(Screen.Home().route) {
             HomeScreen(
@@ -38,10 +55,14 @@ fun AppNavigation(
         }
         composable(
             Screen.Details().route.plus(
-                "?${BundleKeys.RECIPE_DETAILS}={${BundleKeys.RECIPE_DETAILS}}"
+                "?${BundleKeys.RECIPE_DETAILS}={${BundleKeys.RECIPE_DETAILS}}" +
+                        "&${BundleKeys.RECIPE_ID}={${BundleKeys.RECIPE_ID}}"
             ),
             arguments = listOf(
                 navArgument(BundleKeys.RECIPE_DETAILS) {
+                    defaultValue = String.Empty
+                },
+                navArgument(BundleKeys.RECIPE_ID) {
                     defaultValue = String.Empty
                 }
             )
@@ -77,10 +98,10 @@ fun AppNavigation(
         composable(
             Screen.SeeAllRecipes().route.plus(
                 "?${BundleKeys.SCREEN_TITLE}={${BundleKeys.SCREEN_TITLE}}" +
-                "&${BundleKeys.CUISINE_TYPE}={${BundleKeys.CUISINE_TYPE}}" +
-                "&${BundleKeys.PREP_TIME}={${BundleKeys.PREP_TIME}}" +
-                "&${BundleKeys.HEALTH_RATING}={${BundleKeys.HEALTH_RATING}}" +
-                "&${BundleKeys.TOP_RATED}={${BundleKeys.TOP_RATED}}"
+                        "&${BundleKeys.CUISINE_TYPE}={${BundleKeys.CUISINE_TYPE}}" +
+                        "&${BundleKeys.PREP_TIME}={${BundleKeys.PREP_TIME}}" +
+                        "&${BundleKeys.HEALTH_RATING}={${BundleKeys.HEALTH_RATING}}" +
+                        "&${BundleKeys.TOP_RATED}={${BundleKeys.TOP_RATED}}"
             ),
             arguments = listOf(
                 navArgument(BundleKeys.SCREEN_TITLE) {

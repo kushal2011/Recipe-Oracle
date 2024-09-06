@@ -3,6 +3,7 @@ package com.kodedynamic.recipeoracle.apis.data.repositories
 import com.kodedynamic.recipeoracle.apis.data.mappers.CategoriesMapper
 import com.kodedynamic.recipeoracle.apis.data.mappers.HomeFeedWidgetsMapper
 import com.kodedynamic.recipeoracle.apis.data.mappers.RecipeListMapper
+import com.kodedynamic.recipeoracle.apis.data.mappers.RecipeMapper
 import com.kodedynamic.recipeoracle.apis.domain.models.RecipeRequestModel
 import com.kodedynamic.recipeoracle.apis.data.networks.RecipesDataSource
 import com.kodedynamic.recipeoracle.apis.domain.models.CategoriesModel
@@ -19,13 +20,20 @@ class RecipesRepositoryImpl @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val homeFeedWidgetsMapper: HomeFeedWidgetsMapper,
     private val categoriesMapper: CategoriesMapper,
-    private val recipeListMapper: RecipeListMapper
+    private val recipeListMapper: RecipeListMapper,
+    private val recipeMapper: RecipeMapper
 ): RecipesRepository {
     override suspend fun getRecipes(
         recipeRequest: RecipeRequestModel
     ): Result<List<RecipeModel>> = withContext(dispatcherProvider.io) {
         val prompt = Prompts.getPromptForRecipes(recipeRequest)
         recipesDataSource.getRecipes(prompt).map { recipeListMapper.map(it) }
+    }
+
+    override suspend fun getRecipeById(recipeId: String): Result<RecipeModel> {
+        return withContext(dispatcherProvider.io) {
+            recipesDataSource.getRecipeById(recipeId).map { recipeMapper.map(it) }
+        }
     }
 
     override suspend fun getHomeFeedData(configVersion: Long): Result<HomeFeedWidgetsModel> {

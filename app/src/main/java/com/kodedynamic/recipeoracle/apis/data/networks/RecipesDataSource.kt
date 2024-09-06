@@ -2,11 +2,13 @@ package com.kodedynamic.recipeoracle.apis.data.networks
 
 import com.kodedynamic.recipeoracle.apis.data.models.CategoriesDto
 import com.kodedynamic.recipeoracle.apis.data.models.HomeFeedWidgetsDto
+import com.kodedynamic.recipeoracle.apis.data.models.RecipeDto
 import com.kodedynamic.recipeoracle.apis.data.models.RecipeListDto
 import com.kodedynamic.recipeoracle.apis.domain.models.SeeAllRecipeRequest
 
 interface RecipesDataSource {
     suspend fun getRecipes(prompt: String): Result<RecipeListDto>
+    suspend fun getRecipeById(recipeId: String): Result<RecipeDto>
     suspend fun getHomeFeedDataFromRemote(configVersion: Long): Result<HomeFeedWidgetsDto>
     suspend fun getHomeFeedDataFromLocal(configVersion: Long): Result<HomeFeedWidgetsDto>
     suspend fun getHomeFeedData(configVersion: Long): Result<HomeFeedWidgetsDto>

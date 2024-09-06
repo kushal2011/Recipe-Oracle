@@ -7,6 +7,7 @@ import com.kodedynamic.recipeoracle.BuildConfig
 import com.kodedynamic.recipeoracle.apis.data.local.PrefStorageHelper
 import com.kodedynamic.recipeoracle.apis.data.models.CategoriesDto
 import com.kodedynamic.recipeoracle.apis.data.models.HomeFeedWidgetsDto
+import com.kodedynamic.recipeoracle.apis.data.models.RecipeDto
 import com.kodedynamic.recipeoracle.apis.data.models.RecipeListDto
 import com.kodedynamic.recipeoracle.apis.domain.models.SeeAllRecipeRequest
 import com.kodedynamic.recipeoracle.common.ConvertToObject
@@ -30,6 +31,15 @@ class RecipesDataSourceImpl @Inject constructor(
             FirebaseCrashlytics.getInstance().recordException(throwable)
             Result.failure<Throwable>(throwable)
         }
+    }
+
+    override suspend fun getRecipeById(recipeId: String): Result<RecipeDto> {
+        return safeApiCall(
+            {
+                recipesApi.getRecipeById(recipeId)
+            },
+            ::Exception
+        )
     }
 
     override suspend fun getHomeFeedDataFromRemote(configVersion: Long): Result<HomeFeedWidgetsDto> {

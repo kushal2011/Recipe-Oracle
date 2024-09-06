@@ -1,6 +1,7 @@
 package com.kodedynamic.recipeoracle
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -46,6 +47,7 @@ class MainActivity : ComponentActivity() {
                     )
                 } else {
                     val navController = rememberNavController()
+                    val recipeId = getRecipeIdIfDeepLink()
                     Scaffold(
                         bottomBar = {
                             BottomBar(navController)
@@ -60,12 +62,32 @@ class MainActivity : ComponentActivity() {
                                     navController = navController,
                                     lifecycleOwner = this
                                 )
-                                AppNavigation(navController)
+                                AppNavigation(
+                                    navController,
+                                    recipeId
+                                )
                             }
-                        },
+                        }
                     )
                 }
             }
         }
     }
+
+    private fun getRecipeIdIfDeepLink(): String {
+        // Check if the intent contains a deep link
+        intent?.data?.let { uri ->
+            // Extract the recipeId from the path segments
+            Log.e("aaa", "intent data: $uri", )
+            Log.e("aaa", "intent pathSegments: ${uri.pathSegments}")
+            val pathSegments = uri.pathSegments
+            if (pathSegments.size > 1 && pathSegments[0] == "recipe") {
+                val recipeId = pathSegments[1] // Extract the recipe ID from the deep link
+                return recipeId
+            } else {
+                return String.Empty
+            }
+        } ?: return String.Empty
+    }
 }
+
