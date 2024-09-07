@@ -1,14 +1,21 @@
 package com.kodedynamic.recipeoracle.features.recipechat.presentation.viewmodel
 
+import android.os.Bundle
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.ai.client.generativeai.Chat
 import com.google.ai.client.generativeai.GenerativeModel
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.kodedynamic.recipeoracle.BuildConfig
 import com.kodedynamic.recipeoracle.common.BundleKeys
 import com.kodedynamic.recipeoracle.common.Empty
+import com.kodedynamic.recipeoracle.common.EventParams
+import com.kodedynamic.recipeoracle.common.EventValues
+import com.kodedynamic.recipeoracle.common.FirebaseEvents
 import com.kodedynamic.recipeoracle.common.ScreenEvent
+import com.kodedynamic.recipeoracle.common.ScreenNames
 import com.kodedynamic.recipeoracle.coroutines.DispatcherProvider
 import com.kodedynamic.recipeoracle.features.recipechat.presentation.models.MessageModel
 import com.kodedynamic.recipeoracle.features.recipechat.presentation.models.RecipeChatState
@@ -31,7 +38,9 @@ private const val RETRY_AFTER = 2000L
 class RecipeChatViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val dispatcher: DispatcherProvider,
-    private val navigator: ScreenNavigator
+    private val navigator: ScreenNavigator,
+    private val firebaseAnalytics: FirebaseAnalytics,
+    private val crashlytics: FirebaseCrashlytics
 ) : ViewModel() {
     private val _state = MutableStateFlow(RecipeChatState())
     val state: Flow<RecipeChatState> get() = _state
@@ -40,7 +49,23 @@ class RecipeChatViewModel @Inject constructor(
         savedStateHandle.get<String>(BundleKeys.RECIPE_NAME) ?: String.Empty
     private lateinit var chat: Chat
 
+    private var userMessageCount: Int = 1
+    private var entryFrom: String = String.Empty
+
     init {
+        entryFrom = if (recipeName.isNotEmpty()) {
+            EventValues.ENTRY_FROM_DETAILS
+        } else {
+            EventValues.ENTRY_FROM_BOTTOM_BAR
+        }
+        logEvent(
+            eventName = FirebaseEvents.CHAT_STARTED,
+            params = Bundle().apply {
+                putString(EventParams.SCREEN_NAME, ScreenNames.CHAT_SCREEN)
+                putString(EventParams.RECIPE_NAME, recipeName)
+                putString(EventParams.ENTRY_FROM, entryFrom)
+            }
+        )
         startChat()
     }
 
@@ -51,6 +76,16 @@ class RecipeChatViewModel @Inject constructor(
     fun sendMessage(
         messageText: String
     ) = viewModelScope.launch(dispatcher.main) {
+        logEvent(
+            eventName = FirebaseEvents.MESSAGE_SENT_BY_USER,
+            params = Bundle().apply {
+                putString(EventParams.SCREEN_NAME, ScreenNames.CHAT_SCREEN)
+                putString(EventParams.RECIPE_NAME, recipeName)
+                putString(EventParams.ENTRY_FROM, entryFrom)
+                putInt(EventParams.MESSAGE_COUNT, userMessageCount)
+            }
+        )
+        userMessageCount +=1
         _state.update {
             it.copy(
                 chatList = it.chatList.plus(MessageModel(messageText, true)),
@@ -107,6 +142,7 @@ class RecipeChatViewModel @Inject constructor(
             }.onFailure { e ->
                 currentRetry++
                 if (currentRetry >= retryCount) {
+                    logCrashlyticsEvent("${ScreenNames.CHAT_SCREEN} startChat api failed with ${e.message} and exhausted reties")
                     _state.update {
                         it.copy(
                             typingIndicator = false,
@@ -117,10 +153,18 @@ class RecipeChatViewModel @Inject constructor(
                         )
                     }
                 } else {
+                    logCrashlyticsEvent("${ScreenNames.CHAT_SCREEN} startChat api failed with ${e.message} in retry count: $currentRetry")
                     delay(RETRY_AFTER)
                 }
             }
         }
     }
 
+    private fun logEvent(eventName: String, params: Bundle) {
+        firebaseAnalytics.logEvent(eventName, params)
+    }
+
+    private fun logCrashlyticsEvent(crashlyticsEvent: String) {
+        crashlytics.recordException(Exception(crashlyticsEvent))
+    }
 }

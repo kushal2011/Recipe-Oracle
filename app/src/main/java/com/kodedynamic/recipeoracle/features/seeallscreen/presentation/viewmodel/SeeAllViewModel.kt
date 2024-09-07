@@ -1,14 +1,20 @@
 package com.kodedynamic.recipeoracle.features.seeallscreen.presentation.viewmodel
 
+import android.os.Bundle
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.kodedynamic.recipeoracle.apis.domain.models.RecipeModel
 import com.kodedynamic.recipeoracle.apis.domain.models.SeeAllRecipeRequest
 import com.kodedynamic.recipeoracle.apis.domain.usecase.GetSeeAllRecipesUseCase
 import com.kodedynamic.recipeoracle.common.BundleKeys
+import com.kodedynamic.recipeoracle.common.EventParams
+import com.kodedynamic.recipeoracle.common.FirebaseEvents
 import com.kodedynamic.recipeoracle.common.ScreenEvent
+import com.kodedynamic.recipeoracle.common.ScreenNames
 import com.kodedynamic.recipeoracle.coroutines.DispatcherProvider
 import com.kodedynamic.recipeoracle.features.seeallscreen.presentation.models.SeeAllState
 import com.kodedynamic.recipeoracle.navigations.Screen
@@ -27,7 +33,9 @@ class SeeAllViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val dispatcher: DispatcherProvider,
     private val navigator: ScreenNavigator,
-    private val getSeeAllRecipesUseCase: GetSeeAllRecipesUseCase
+    private val getSeeAllRecipesUseCase: GetSeeAllRecipesUseCase,
+    private val firebaseAnalytics: FirebaseAnalytics,
+    private val crashlytics: FirebaseCrashlytics
 ): ViewModel() {
     private val _state = MutableStateFlow(SeeAllState())
     val state: Flow<SeeAllState> get() = _state
@@ -51,6 +59,37 @@ class SeeAllViewModel @Inject constructor(
         _state.update { it.copy(screenEvent = ScreenEvent.None) }
     }
 
+    fun onDetailsClick(
+        recipeId: String,
+    ) = viewModelScope.launch(dispatcher.main) {
+        val recipeData: RecipeModel? = _state.value.recipes.find {
+            it.recipeId == recipeId
+        }
+
+        if (recipeData != null) {
+            logEvent(
+                eventName = FirebaseEvents.ON_DETAILS_CLICKED,
+                params = Bundle().apply {
+                    putString(EventParams.SCREEN_NAME, ScreenNames.SEE_ALL_SCREEN)
+                    putString(EventParams.RECIPE_NAME, recipeData.recipeName)
+                    putString(EventParams.CUISINE_TYPE, recipeData.cuisineType)
+                    putString(EventParams.RECIPE_ID, recipeData.recipeId)
+                }
+            )
+            val gson = Gson()
+            navigator.navigate(
+                ScreenAction.goTo(
+                    screen = Screen.Details(),
+                    map = mapOf(
+                        BundleKeys.RECIPE_DETAILS to gson.toJson(recipeData)
+                    )
+                )
+            )
+        } else {
+            logCrashlyticsEvent("${ScreenNames.SEE_ALL_SCREEN} onDetailsClick else condition reached for recipeId: $recipeId")
+        }
+    }
+
     private fun getRecipes() = viewModelScope.launch(dispatcher.io) {
         _state.update { it.copy(isLoading = true) }
         getSeeAllRecipesUseCase(
@@ -70,6 +109,7 @@ class SeeAllViewModel @Inject constructor(
                 }
             },
             onFailure = {
+                logCrashlyticsEvent("${ScreenNames.SEE_ALL_SCREEN} getRecipes api failed with ${it.message}")
                 _state.update { _prev ->
                     _prev.copy(
                         screenEvent = ScreenEvent.ShowToast(
@@ -83,23 +123,11 @@ class SeeAllViewModel @Inject constructor(
         )
     }
 
-    fun onDetailsClick(
-        recipeId: String,
-    ) = viewModelScope.launch(dispatcher.main) {
-        val recipeData: RecipeModel? = _state.value.recipes.find {
-            it.recipeId == recipeId
-        }
+    private fun logEvent(eventName: String, params: Bundle) {
+        firebaseAnalytics.logEvent(eventName, params)
+    }
 
-        if (recipeData != null) {
-            val gson = Gson()
-            navigator.navigate(
-                ScreenAction.goTo(
-                    screen = Screen.Details(),
-                    map = mapOf(
-                        BundleKeys.RECIPE_DETAILS to gson.toJson(recipeData)
-                    )
-                )
-            )
-        }
+    private fun logCrashlyticsEvent(crashlyticsEvent: String) {
+        crashlytics.recordException(Exception(crashlyticsEvent))
     }
 }

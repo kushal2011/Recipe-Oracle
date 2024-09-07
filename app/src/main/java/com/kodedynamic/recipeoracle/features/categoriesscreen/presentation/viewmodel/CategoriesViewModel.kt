@@ -1,11 +1,17 @@
 package com.kodedynamic.recipeoracle.features.categoriesscreen.presentation.viewmodel
 
+import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.kodedynamic.recipeoracle.apis.ConfigManager
 import com.kodedynamic.recipeoracle.apis.domain.usecase.GetCategoriesUseCase
 import com.kodedynamic.recipeoracle.common.BundleKeys
+import com.kodedynamic.recipeoracle.common.EventParams
+import com.kodedynamic.recipeoracle.common.FirebaseEvents
 import com.kodedynamic.recipeoracle.common.ScreenEvent
+import com.kodedynamic.recipeoracle.common.ScreenNames
 import com.kodedynamic.recipeoracle.coroutines.DispatcherProvider
 import com.kodedynamic.recipeoracle.features.categoriesscreen.presentation.models.CategoriesState
 import com.kodedynamic.recipeoracle.navigations.Screen
@@ -24,7 +30,9 @@ class CategoriesViewModel @Inject constructor(
     private val dispatcher: DispatcherProvider,
     private val navigator: ScreenNavigator,
     private val getCategoriesUseCase: GetCategoriesUseCase,
-    private val configManager: ConfigManager
+    private val configManager: ConfigManager,
+    private val firebaseAnalytics: FirebaseAnalytics,
+    private val crashlytics: FirebaseCrashlytics
 ): ViewModel() {
 
     private val _state = MutableStateFlow(CategoriesState())
@@ -35,6 +43,13 @@ class CategoriesViewModel @Inject constructor(
     }
 
     fun onCuisineClick(cuisineType:String) = viewModelScope.launch(dispatcher.main) {
+        logEvent(
+            eventName = FirebaseEvents.ON_CUISINE_CLICKED,
+            params = Bundle().apply {
+                putString(EventParams.SCREEN_NAME, ScreenNames.CATEGORIES_SCREEN)
+                putString(EventParams.CUISINE_TYPE, cuisineType)
+            }
+        )
         navigator.navigate(
             ScreenAction.goTo(
                 screen = Screen.SeeAllRecipes(),
@@ -63,6 +78,7 @@ class CategoriesViewModel @Inject constructor(
                 }
             },
             onFailure = {
+                logCrashlyticsEvent("${ScreenNames.CATEGORIES_SCREEN} getCuisineData api failed with ${it.message}")
                 _state.update { _prev ->
                     _prev.copy(
                         screenEvent = ScreenEvent.ShowToast(
@@ -74,5 +90,12 @@ class CategoriesViewModel @Inject constructor(
                 }
             }
         )
+    }
+
+    private fun logEvent(eventName: String, params: Bundle) {
+        firebaseAnalytics.logEvent(eventName, params)
+    }
+    private fun logCrashlyticsEvent(crashlyticsEvent: String) {
+        crashlytics.recordException(Exception(crashlyticsEvent))
     }
 }

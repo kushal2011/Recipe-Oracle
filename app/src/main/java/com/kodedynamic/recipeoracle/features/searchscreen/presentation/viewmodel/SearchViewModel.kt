@@ -1,7 +1,9 @@
 package com.kodedynamic.recipeoracle.features.searchscreen.presentation.viewmodel
 
+import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.kodedynamic.recipeoracle.apis.data.models.IngredientsDto
@@ -14,7 +16,10 @@ import com.kodedynamic.recipeoracle.apis.domain.usecase.GetSearchedRecipesUseCas
 import com.kodedynamic.recipeoracle.apis.domain.usecase.PostGeneratedRecipes
 import com.kodedynamic.recipeoracle.common.BundleKeys
 import com.kodedynamic.recipeoracle.common.Empty
+import com.kodedynamic.recipeoracle.common.EventParams
+import com.kodedynamic.recipeoracle.common.FirebaseEvents
 import com.kodedynamic.recipeoracle.common.ScreenEvent
+import com.kodedynamic.recipeoracle.common.ScreenNames
 import com.kodedynamic.recipeoracle.coroutines.DispatcherProvider
 import com.kodedynamic.recipeoracle.features.searchscreen.presentation.models.SearchState
 import com.kodedynamic.recipeoracle.navigations.Screen
@@ -32,15 +37,17 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-private const val QUERY_DEBOUNCE = 500L
-
+private const val QUERY_DEBOUNCE = 700L
+private const val RECIPES_TEXT = "recipes"
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val dispatcher: DispatcherProvider,
     private val navigator: ScreenNavigator,
     private val searchUseCase: GetSearchedRecipesUseCase,
     private val getRecipesUseCase: GetRecipeUseCase,
-    private val postGeneratedRecipes: PostGeneratedRecipes
+    private val postGeneratedRecipes: PostGeneratedRecipes,
+    private val firebaseAnalytics: FirebaseAnalytics,
+    private val crashlytics: FirebaseCrashlytics
 ) : ViewModel() {
     private val _state = MutableStateFlow(SearchState())
     val state: Flow<SearchState> get() = _state
@@ -72,6 +79,15 @@ class SearchViewModel @Inject constructor(
         }
 
         if (recipeData != null) {
+            logEvent(
+                eventName = FirebaseEvents.ON_DETAILS_CLICKED,
+                params = Bundle().apply {
+                    putString(EventParams.SCREEN_NAME, ScreenNames.SEARCH_SCREEN)
+                    putString(EventParams.RECIPE_NAME, recipeData.recipeName)
+                    putString(EventParams.CUISINE_TYPE, recipeData.cuisineType)
+                    putString(EventParams.RECIPE_ID, recipeData.recipeId)
+                }
+            )
             val gson = Gson()
             navigator.navigate(
                 ScreenAction.goTo(
@@ -81,6 +97,8 @@ class SearchViewModel @Inject constructor(
                     )
                 )
             )
+        } else {
+            logCrashlyticsEvent("${ScreenNames.SEARCH_SCREEN} onDetailsClick else condition reached for recipeId: $recipeId")
         }
     }
 
@@ -113,6 +131,14 @@ class SearchViewModel @Inject constructor(
                     }
                     getRecipesData(searchText)
                 } else {
+                    logEvent(
+                        eventName = FirebaseEvents.SEARCH_RECIPE_API_RETURNED_RESPONSE,
+                        params = Bundle().apply {
+                            putString(EventParams.SCREEN_NAME, ScreenNames.SEARCH_SCREEN)
+                            putString(EventParams.SEARCH_TERM, searchText)
+                            putInt(EventParams.ITEMS_RETURNED, it.size)
+                        }
+                    )
                     _state.update { prev ->
                         prev.copy(
                             recipesList = it,
@@ -122,6 +148,7 @@ class SearchViewModel @Inject constructor(
                 }
             },
             onFailure = {
+                logCrashlyticsEvent("${ScreenNames.SEARCH_SCREEN} searchRecipes api failed with ${it.message}")
                 _state.update { _prev ->
                     _prev.copy(
                         screenEvent = ScreenEvent.ShowToast(
@@ -136,6 +163,13 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun getRecipesData(searchText: String) = viewModelScope.launch(dispatcher.io) {
+        logEvent(
+            eventName = FirebaseEvents.REQUESTED_RECIPES_FROM_AI,
+            params = Bundle().apply {
+                putString(EventParams.SCREEN_NAME, ScreenNames.SEARCH_SCREEN)
+                putString(EventParams.SEARCH_TERM, searchText)
+            }
+        )
         getRecipesUseCase(
             param = RecipeRequestModel(
                 searchText = searchText
@@ -151,6 +185,7 @@ class SearchViewModel @Inject constructor(
                 uploadRecipesToDb(recipes)
             },
             onFailure = {
+                logCrashlyticsEvent("${ScreenNames.SEARCH_SCREEN} getRecipesData from AI api failed with ${it.message}")
                 _state.update { _prev ->
                     _prev.copy(
                         screenEvent = ScreenEvent.ShowToast(
@@ -200,16 +235,29 @@ class SearchViewModel @Inject constructor(
     ) = viewModelScope.launch(dispatcher.io) {
         val recipeDtoList = convertRecipesToDtoList(recipeList)
         val gson = Gson()
-        val json = gson.toJson(mapOf("recipes" to recipeDtoList))
+        val json = gson.toJson(mapOf(RECIPES_TEXT to recipeDtoList))
 
         postGeneratedRecipes(json).fold(
             onSuccess = {
-                // do nothing
+                logEvent(
+                    eventName = FirebaseEvents.GENERATED_RECIPE_UPLOADED,
+                    params = Bundle().apply {
+                        putString(EventParams.SCREEN_NAME, ScreenNames.SEARCH_SCREEN)
+                        putInt(EventParams.UPLOADED_NO_OF_RECIPES, recipeDtoList.size)
+                    }
+                )
             },
             onFailure = {
-                FirebaseCrashlytics.getInstance().log("uploadRecipesToDb failure:")
-                FirebaseCrashlytics.getInstance().recordException(it)
+                logCrashlyticsEvent("${ScreenNames.SEARCH_SCREEN} uploadRecipesToDb api failed with ${it.message}")
             }
         )
+    }
+
+    private fun logEvent(eventName: String, params: Bundle) {
+        firebaseAnalytics.logEvent(eventName, params)
+    }
+
+    private fun logCrashlyticsEvent(crashlyticsEvent: String) {
+        crashlytics.recordException(Exception(crashlyticsEvent))
     }
 }

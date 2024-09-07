@@ -1,7 +1,10 @@
 package com.kodedynamic.recipeoracle.features.homescreen.presentation.viewmodel
 
+import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
 import com.kodedynamic.recipeoracle.apis.ConfigManager
 import com.kodedynamic.recipeoracle.apis.data.models.ParamsDto
@@ -9,7 +12,10 @@ import com.kodedynamic.recipeoracle.apis.domain.models.RecipeModel
 import com.kodedynamic.recipeoracle.coroutines.DispatcherProvider
 import com.kodedynamic.recipeoracle.apis.domain.usecase.GetHomeFeedUseCase
 import com.kodedynamic.recipeoracle.common.BundleKeys
+import com.kodedynamic.recipeoracle.common.EventParams
+import com.kodedynamic.recipeoracle.common.FirebaseEvents
 import com.kodedynamic.recipeoracle.common.ScreenEvent
+import com.kodedynamic.recipeoracle.common.ScreenNames
 import com.kodedynamic.recipeoracle.features.homescreen.presentation.models.HomeState
 import com.kodedynamic.recipeoracle.navigations.Screen
 import com.kodedynamic.recipeoracle.navigations.ScreenAction
@@ -27,7 +33,9 @@ class HomeViewModel @Inject constructor(
     private val dispatcher: DispatcherProvider,
     private val navigator: ScreenNavigator,
     private val getHomeFeedUseCase: GetHomeFeedUseCase,
-    private val configManager: ConfigManager
+    private val configManager: ConfigManager,
+    private val firebaseAnalytics: FirebaseAnalytics,
+    private val crashlytics: FirebaseCrashlytics
 ) : ViewModel() {
     private val _state = MutableStateFlow(HomeState())
     val state: Flow<HomeState> get() = _state
@@ -43,6 +51,14 @@ class HomeViewModel @Inject constructor(
             it.widgetId == widgetId
         }?.seeAll?.params
         if (seeAllParams != null) {
+            logEvent(
+                eventName = FirebaseEvents.ON_SEE_ALL_CLICKED,
+                params = Bundle().apply {
+                    putString(EventParams.SCREEN_NAME, ScreenNames.HOME_SCREEN)
+                    putString(EventParams.WIDGET_ID, widgetId)
+                    putString(EventParams.TITLE, title)
+                }
+            )
             val navigationParams = mutableMapOf<String, String>()
 
             seeAllParams.cuisineType?.let { navigationParams[BundleKeys.CUISINE_TYPE] = it }
@@ -57,6 +73,7 @@ class HomeViewModel @Inject constructor(
                 )
             )
         } else {
+            logCrashlyticsEvent("${ScreenNames.HOME_SCREEN} onSeeAllClick else condition reached for widgetId: $widgetId")
             _state.update { _prev ->
                 _prev.copy(
                     screenEvent = ScreenEvent.ShowToast(
@@ -83,6 +100,15 @@ class HomeViewModel @Inject constructor(
         }
 
         if (recipeData != null) {
+            logEvent(
+                eventName = FirebaseEvents.ON_DETAILS_CLICKED,
+                params = Bundle().apply {
+                    putString(EventParams.SCREEN_NAME, ScreenNames.HOME_SCREEN)
+                    putString(EventParams.RECIPE_NAME, recipeData.recipeName)
+                    putString(EventParams.CUISINE_TYPE, recipeData.cuisineType)
+                    putString(EventParams.RECIPE_ID, recipeData.recipeId)
+                }
+            )
             val gson = Gson()
             navigator.navigate(
                 ScreenAction.goTo(
@@ -92,10 +118,13 @@ class HomeViewModel @Inject constructor(
                     )
                 )
             )
+        } else {
+            logCrashlyticsEvent("${ScreenNames.HOME_SCREEN} onDetailsClick else condition reached for recipeId: $recipeId & widgetId: $widgetId")
         }
     }
 
     private fun getHomeFeedData() = viewModelScope.launch(dispatcher.io) {
+        _state.update { it.copy(isLoading = true) }
         val version = configManager.fetchHomeFeedVersion()
         getHomeFeedUseCase(version).fold(
             onSuccess = { homeFeedWidgetsModel ->
@@ -107,6 +136,7 @@ class HomeViewModel @Inject constructor(
                 }
             },
             onFailure = {
+                logCrashlyticsEvent("${ScreenNames.HOME_SCREEN} getHomeFeedData api failed with ${it.message}")
                 _state.update { _prev ->
                     _prev.copy(
                         screenEvent = ScreenEvent.ShowToast(
@@ -118,5 +148,13 @@ class HomeViewModel @Inject constructor(
                 }
             }
         )
+    }
+
+    private fun logEvent(eventName: String, params: Bundle) {
+        firebaseAnalytics.logEvent(eventName, params)
+    }
+
+    private fun logCrashlyticsEvent(crashlyticsEvent: String) {
+        crashlytics.recordException(Exception(crashlyticsEvent))
     }
 }

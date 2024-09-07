@@ -1,6 +1,5 @@
 # TODO
 - add empty/no data found
-- add analytics
 
 # TODO (Long term)
 - optional login for personalized recommendation
