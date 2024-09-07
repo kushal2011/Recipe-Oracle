@@ -1,6 +1,7 @@
 package com.kodedynamic.recipeoracle.features.recipechat.ui
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -105,6 +107,21 @@ fun RecipeChatScreen(
                 // Only auto-scroll if the user was already near the bottom
                 coroutineScope.launch {
                     lazyColumnListState.animateScrollToItem(state.chatList.size - 1)
+                    // Wait for a frame to ensure scroll completes
+                    delay(100)
+
+                    // Get the last item visible info
+                    val lastItem = lazyColumnListState.layoutInfo.visibleItemsInfo.lastOrNull()
+
+                    lastItem?.let {
+                        // Check if the last item is fully visible
+                        val remainingSpace = lazyColumnListState.layoutInfo.viewportEndOffset - lastItem.offset - lastItem.size
+
+                        // If the last item is not fully visible, scroll further by the remaining space
+                        if (remainingSpace < 0) {
+                            lazyColumnListState.animateScrollBy(-remainingSpace.toFloat())
+                        }
+                    }
                 }
             }
         }
@@ -113,7 +130,8 @@ fun RecipeChatScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp)
+            .imePadding()
     ) {
         Row(
             modifier = Modifier
@@ -130,7 +148,7 @@ fun RecipeChatScreen(
                 )
             }
             Text(
-                text = "Chat With Ai",
+                text = stringResource(id = StringResources.chatWithAi),
                 style = RecipeTheme.typography.headerMedium,
                 color = RecipeTheme.colors.black100
             )
