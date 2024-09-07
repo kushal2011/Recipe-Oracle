@@ -1,5 +1,6 @@
 # TODO
 - add empty/no data found
+- add optional open ai and gemini chat
 
 # TODO (Long term)
 - optional login for personalized recommendation
