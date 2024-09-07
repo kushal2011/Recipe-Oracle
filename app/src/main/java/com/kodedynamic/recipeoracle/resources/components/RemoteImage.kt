@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
@@ -40,6 +41,7 @@ fun RemoteImage(
         .networkCachePolicy(CachePolicy.ENABLED) // Cache on the network level to avoid unnecessary requests
         .crossfade(true) // Smooth transition between placeholder and image
         .placeholder(placeholderRes)
+        .fallback(placeholderRes)
         .build()
 
     AsyncImage(
@@ -47,6 +49,7 @@ fun RemoteImage(
         contentDescription = contentDescription,
         modifier = modifier,
         contentScale = contentScale,
+        error = painterResource(placeholderRes),
         onSuccess = { onImageLoadSuccess() },
         onError = {
             onImageLoadFailure()

@@ -1,6 +1,7 @@
 package com.kodedynamic.recipeoracle
 
 import android.os.Bundle
+import android.view.Window
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -9,7 +10,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.navigation.compose.rememberNavController
 import com.kodedynamic.recipeoracle.common.Empty
 import com.kodedynamic.recipeoracle.navigations.AppNavigation
@@ -36,6 +40,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             RecipeTheme{
+                setStatusBarWhite(MaterialTheme.colorScheme.background.toArgb())
+
                 if (rootBeer.isRooted && BuildConfig.DEBUG.not()) {
                     DefaultConfirmDialog(
                         title = stringResource(id = StringResources.rootedDeviceTitle),
@@ -85,6 +91,19 @@ class MainActivity : ComponentActivity() {
                 return String.Empty
             }
         } ?: return String.Empty
+    }
+
+    private fun setStatusBarWhite(toArgb: Int) {
+        val window: Window = this.window
+
+        // Set the status bar color to white
+        window.statusBarColor = toArgb
+
+        // Ensure that the status bar icons are dark for API < 30 using WindowInsetsControllerCompat
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        val windowInsetsController = WindowInsetsControllerCompat(window, window.decorView)
+        windowInsetsController.isAppearanceLightStatusBars = true // Makes status bar icons dark
     }
 }
 

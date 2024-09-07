@@ -23,5 +23,6 @@
     <string name="vegan">🌱 Vegan</string>
     <string name="youtube_query">https://www.youtube.com/results?search_query=%1$s</string>
     <string name="something_went_wrong">Oops! Something didn’t work as expected. Please try again.</string>
+    <string name="type_a_message">Type a message…</string>
 
 </resources>

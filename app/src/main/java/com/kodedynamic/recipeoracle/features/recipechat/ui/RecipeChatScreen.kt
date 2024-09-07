@@ -95,8 +95,13 @@ fun RecipeChatScreen(
 
     LaunchedEffect(imeBottom, state.chatList.size) {
         if (imeBottom > 0) {
-            val lastVisibleItemIndex = lazyColumnListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
-            if (lastVisibleItemIndex != null && lastVisibleItemIndex >= state.chatList.size - 2) {
+            val lastVisibleItemIndex =
+                lazyColumnListState.layoutInfo.visibleItemsInfo.lastOrNull()?.index
+            if (
+                lastVisibleItemIndex != null &&
+                lastVisibleItemIndex >= state.chatList.size - 2 &&
+                state.chatList.size > 1
+            ) {
                 // Only auto-scroll if the user was already near the bottom
                 coroutineScope.launch {
                     lazyColumnListState.animateScrollToItem(state.chatList.size - 1)

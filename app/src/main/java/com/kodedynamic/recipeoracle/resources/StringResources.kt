@@ -25,4 +25,5 @@ object StringResources {
     val vegan = R.string.vegan
     val youtubeQuery = R.string.youtube_query
     val somethingWentWrong = R.string.something_went_wrong
+    val typeAMessage = R.string.type_a_message
 }

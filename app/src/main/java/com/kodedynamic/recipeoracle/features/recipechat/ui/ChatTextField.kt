@@ -13,6 +13,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -26,11 +27,13 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.kodedynamic.recipeoracle.common.Empty
 import com.kodedynamic.recipeoracle.resources.DrawableResources
+import com.kodedynamic.recipeoracle.resources.StringResources
 import com.kodedynamic.recipeoracle.resources.theme.RecipeTheme
 
 @Composable
@@ -85,7 +88,14 @@ fun ChatTextField(
                     unfocusedContainerColor = Color.Transparent,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent
-                )
+                ),
+                placeholder = {
+                    Text(
+                        text = stringResource(StringResources.typeAMessage),
+                        style = RecipeTheme.typography.robotoMedium,
+                        color = RecipeTheme.colors.mediumGray
+                    )
+                }
             )
             Spacer(Modifier.width(8.dp))
             IconButton(
