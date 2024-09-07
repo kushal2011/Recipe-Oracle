@@ -124,7 +124,13 @@ fun RecipeDetailsScreen(
                             modifier = Modifier.size(24.dp)
                         )
                     }
-                    IconButton(onClick = { /* Handle share action */ }) {
+                    IconButton(onClick = {
+                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_TEXT, viewModel.getRecipeShareText())
+                        }
+                        context.startActivity(Intent.createChooser(shareIntent, "Share via"))
+                    }) {
                         Icon(
                             painter = painterResource(id = DrawableResources.share),
                             contentDescription = "Share",

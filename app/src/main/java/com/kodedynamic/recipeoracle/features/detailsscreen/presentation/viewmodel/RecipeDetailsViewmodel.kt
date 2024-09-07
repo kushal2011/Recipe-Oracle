@@ -68,6 +68,19 @@ class RecipeDetailsViewmodel @Inject constructor(
         )
     }
 
+    fun getRecipeShareText(): String {
+        val recipe = _state.value.recipeData
+        return """
+        🍽️ Recipe Name: ${recipe?.recipeName}
+        🍴 Cuisine: ${recipe?.cuisineType}
+        ⏳ Prep Time: ${recipe?.prepTime} minutes
+        🥗 Health Rating: ${recipe?.healthRating}
+        
+        Discover the full recipe with ingredients and instructions here:
+        https://recipeoracle.kodedynamic.com/recipe/${recipe?.recipeId}
+    """.trimIndent()
+    }
+
     private fun getRecipeDetails(
         recipeId: String
     ) = viewModelScope.launch(dispatcher.main) {

@@ -1,5 +1,4 @@
 # TODO
-- (Deeplink)share with all the details of recipe and link to playstore app
 - add empty/no data found
 - add analytics
 
