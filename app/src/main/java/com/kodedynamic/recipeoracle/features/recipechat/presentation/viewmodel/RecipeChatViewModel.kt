@@ -1,6 +1,7 @@
 package com.kodedynamic.recipeoracle.features.recipechat.presentation.viewmodel
 
 import android.os.Bundle
+import android.util.Log
 import androidx.compose.material3.SnackbarDuration
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,7 @@ import com.google.ai.client.generativeai.GenerativeModel
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.kodedynamic.recipeoracle.BuildConfig
+import com.kodedynamic.recipeoracle.apis.ConfigManager
 import com.kodedynamic.recipeoracle.apis.data.repositories.NetworkRepository
 import com.kodedynamic.recipeoracle.common.BundleKeys
 import com.kodedynamic.recipeoracle.common.ConnectivityStatus
@@ -38,6 +40,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val RETRY_AFTER = 2000L
+private const val GEMINI_1_5_FLASH_MODEL_NAME = "gemini-1.5-flash"
 
 @HiltViewModel
 class RecipeChatViewModel @Inject constructor(
@@ -46,6 +49,7 @@ class RecipeChatViewModel @Inject constructor(
     private val navigator: ScreenNavigator,
     private val networkRepository: NetworkRepository,
     private val resourcesProvider: ResourceProvider,
+    private val configManager: ConfigManager,
     private val firebaseAnalytics: FirebaseAnalytics,
     private val crashlytics: FirebaseCrashlytics
 ) : ViewModel() {
@@ -59,9 +63,14 @@ class RecipeChatViewModel @Inject constructor(
     private var userMessageCount: Int = 1
     private var hasConnectionBeenLost: Boolean = false
     private var isChatInitFailed: Boolean = false
+    private var isChatFromGemini: Boolean = true
     private var entryFrom: String = String.Empty
 
     init {
+        viewModelScope.launch(dispatcher.main) {
+            isChatFromGemini = configManager.fetchShouldUseGemini()
+        }
+        Log.e("aaa", "isChatFromGemini: $isChatFromGemini", )
         entryFrom = if (recipeName.isNotEmpty()) {
             EventValues.ENTRY_FROM_DETAILS
         } else {
@@ -76,7 +85,7 @@ class RecipeChatViewModel @Inject constructor(
             }
         )
         monitorNetworkConnection()
-        startChatWithGemini()
+        startChat()
     }
 
     fun onBackPress() {
@@ -103,10 +112,17 @@ class RecipeChatViewModel @Inject constructor(
                     typingIndicator = true
                 )
             }
-            val response = chat.sendMessage(messageText)
+            val response = if (isChatFromGemini) {
+                chat.sendMessage(messageText).text
+                Log.e("aaa", "in gemini send message:" , )
+            } else {
+                // add code to send message to openai
+                Log.e("aaa", "in openai send message:" , )
+                String.Empty
+            }
             _state.update {
                 it.copy(
-                    chatList = it.chatList.plus(MessageModel(response.text.toString(), false)),
+                    chatList = it.chatList.plus(MessageModel(response.toString(), false)),
                     typingIndicator = false
                 )
             }
@@ -125,7 +141,7 @@ class RecipeChatViewModel @Inject constructor(
         _state.update { it.copy(screenEvent = ScreenEvent.None) }
     }
 
-    private fun startChatWithGemini(retryCount: Int = 3) = viewModelScope.launch(dispatcher.main) {
+    private fun startChat(retryCount: Int = 3) = viewModelScope.launch(dispatcher.main) {
         _state.update {
             it.copy(
                 typingIndicator = true
@@ -135,52 +151,70 @@ class RecipeChatViewModel @Inject constructor(
         var currentRetry = 0
 
         while (currentRetry < retryCount) {
-            val result = runCatching {
-                val generativeModel = GenerativeModel(
-                    // The Gemini 1.5 models are versatile and work with multi-turn conversations (like chat)
-                    modelName = "gemini-1.5-flash",
-                    apiKey = BuildConfig.GEMENI_API_KEY
-                )
-
-                chat = generativeModel.startChat()
-                chat.sendMessage(Prompts.getPromptForChat(recipeName))
-            }
-
-            result.onSuccess { firstAiMessage ->
-                _state.update {
-                    it.copy(
-                        chatList = it.chatList.plus(
-                            MessageModel(
-                                firstAiMessage.text.toString(),
-                                false
-                            )
-                        ),
-                        typingIndicator = false,
-                        shouldEnableChat = true
+            val prompt = Prompts.getPromptForChat(recipeName)
+            if (isChatFromGemini) {
+                Log.e("aaa", "in isChatFromGemini: $isChatFromGemini", )
+                val result = runCatching {
+                    val generativeModel = GenerativeModel(
+                        modelName = GEMINI_1_5_FLASH_MODEL_NAME,
+                        apiKey = BuildConfig.GEMENI_API_KEY
                     )
+
+                    chat = generativeModel.startChat()
+                    chat.sendMessage(prompt)
                 }
-                isChatInitFailed = false
-                return@launch
-            }.onFailure { e ->
-                currentRetry++
-                if (currentRetry >= retryCount) {
-                    logCrashlyticsEvent("${ScreenNames.CHAT_SCREEN} startChat api failed with ${e.message} and exhausted reties")
-                    _state.update {
-                        it.copy(
-                            typingIndicator = false,
-                            screenEvent = ScreenEvent.ShowToast(
-                                message = e.message.orEmpty(),
-                                resourceId = StringResources.somethingWentWrong
-                            )
-                        )
+                result.onSuccess {  firstAiMessage ->
+                    Log.e("aaa", "in isChatFromGemini success: $isChatFromGemini", )
+                    startOnSuccessChatInit(firstAiMessage.text.toString())
+                    return@launch
+                }.onFailure { e ->
+                    Log.e("aaa", "in isChatFromGemini failure: $isChatFromGemini", )
+                    currentRetry++
+                    if (currentRetry >= retryCount) {
+                        startOnFailureChatInit(e.message.orEmpty())
+                    } else {
+                        logCrashlyticsEvent("${ScreenNames.CHAT_SCREEN} startChat api failed with ${e.message} in retry count: $currentRetry")
+                        delay(RETRY_AFTER)
                     }
-                    isChatInitFailed = true
-                } else {
-                    logCrashlyticsEvent("${ScreenNames.CHAT_SCREEN} startChat api failed with ${e.message} in retry count: $currentRetry")
-                    delay(RETRY_AFTER)
                 }
+            } else {
+                Log.e("aaa", "in isChatFromOpenAi:", )
             }
         }
+    }
+
+    private fun startOnFailureChatInit(
+        errorMessage: String
+    ) {
+        logCrashlyticsEvent("${ScreenNames.CHAT_SCREEN} startChat api failed with $errorMessage and exhausted reties")
+        _state.update {
+            it.copy(
+                typingIndicator = false,
+                screenEvent = ScreenEvent.ShowToast(
+                    message = errorMessage,
+                    resourceId = StringResources.somethingWentWrong
+                )
+            )
+        }
+        isChatInitFailed = true
+    }
+
+    private fun startOnSuccessChatInit(
+        text: String
+    ) {
+        _state.update {
+            it.copy(
+                chatList = it.chatList.plus(
+                    MessageModel(
+                        text,
+                        false
+                    )
+                ),
+                typingIndicator = false,
+                shouldEnableChat = true
+            )
+        }
+        isChatInitFailed = false
     }
 
     private fun monitorNetworkConnection() {
@@ -197,7 +231,7 @@ class RecipeChatViewModel @Inject constructor(
                     }
                     ConnectivityStatus.Available -> {
                         if (_state.value.chatList.isEmpty() && isChatInitFailed) {
-                            startChatWithGemini()
+                            startChat()
                         }
                         if (hasConnectionBeenLost) {
                             hasConnectionBeenLost = false

@@ -39,9 +39,18 @@ class ConfigManager @Inject constructor() {
         }.getOrElse { DEFAULT_CATEGORIES_VERSION }
     }
 
+    suspend fun fetchShouldUseGemini(): Boolean {
+        return runCatching {
+            remoteConfig.fetchAndActivate().await()
+            remoteConfig.getBoolean(KEY_SHOULD_USE_GEMINI)
+        }.getOrElse { DEFAULT_SHOULD_USE_GEMINI }
+    }
+
     companion object {
         private const val KEY_HOME_FEED_VERSION = "HOME_FEED_VERSION"
         private const val KEY_CATEGORIES_VERSION = "CATEGORIES_VERSION"
+        private const val KEY_SHOULD_USE_GEMINI = "KEY_SHOULD_USE_GEMINI"
+        private const val DEFAULT_SHOULD_USE_GEMINI = true
         private const val DEFAULT_HOME_FEED_VERSION = 1L
         private const val DEFAULT_CATEGORIES_VERSION = 1L
     }
