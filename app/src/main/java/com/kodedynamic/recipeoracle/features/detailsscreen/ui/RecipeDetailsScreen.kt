@@ -13,9 +13,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -54,7 +54,6 @@ import com.kodedynamic.recipeoracle.resources.StringResources
 import com.kodedynamic.recipeoracle.resources.components.LottieLoader
 import com.kodedynamic.recipeoracle.resources.components.RemoteImage
 import com.kodedynamic.recipeoracle.resources.theme.RecipeTheme
-import com.kodedynamic.recipeoracle.resources.theme.toHeightDp
 
 @Composable
 fun RecipeDetailsScreen(
@@ -72,7 +71,7 @@ fun RecipeDetailsScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 56.toHeightDp())
+                .wrapContentHeight()
                 .background(RecipeTheme.colors.lightGrey),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -92,56 +91,51 @@ fun RecipeDetailsScreen(
                 style = RecipeTheme.typography.headerMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                color = RecipeTheme.colors.darkCharcoal
+                color = RecipeTheme.colors.darkCharcoal,
+                modifier = Modifier
+                    .weight(1f)
             )
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier.weight(1f)
-            ) {
-                IconButton(
-                    onClick = {
-                        val searchTerm = "${state.recipeData?.recipeName} recipe"
-                        val intent = Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse(
-                                context.getString(
-                                    StringResources.youtubeQuery,
-                                    searchTerm
-                                )
+            IconButton(
+                onClick = {
+                    val searchTerm = "${state.recipeData?.recipeName} recipe"
+                    val intent = Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse(
+                            context.getString(
+                                StringResources.youtubeQuery,
+                                searchTerm
                             )
                         )
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        context.startActivity(intent)
-                    },
-                    modifier = Modifier.padding(8.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(id = DrawableResources.play),
-                        contentDescription = "Go to YouTube",
-                        tint = RecipeTheme.colors.darkCharcoal,
-                        modifier = Modifier.size(24.dp)
                     )
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    context.startActivity(intent)
                 }
-                IconButton(
-                    onClick = {
-                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                            type = "text/plain"
-                            putExtra(Intent.EXTRA_TEXT, viewModel.getRecipeShareText())
-                        }
-                        context.startActivity(Intent.createChooser(shareIntent, "Share via"))
-                    },
-                    modifier = Modifier.padding(8.dp)
-                ) {
-                    Icon(
-                        painter = painterResource(id = DrawableResources.share),
-                        contentDescription = "Share",
-                        tint = RecipeTheme.colors.darkCharcoal,
-                        modifier = Modifier.size(24.dp)
-                    )
+            ) {
+                Icon(
+                    painter = painterResource(id = DrawableResources.play),
+                    contentDescription = "Go to YouTube",
+                    tint = RecipeTheme.colors.darkCharcoal,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+            IconButton(
+                onClick = {
+                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TEXT, viewModel.getRecipeShareText())
+                    }
+                    context.startActivity(Intent.createChooser(shareIntent, "Share via"))
                 }
+            ) {
+                Icon(
+                    painter = painterResource(id = DrawableResources.share),
+                    contentDescription = "Share",
+                    tint = RecipeTheme.colors.darkCharcoal,
+                    modifier = Modifier.size(24.dp)
+                )
             }
         }
+
         state.recipeData?.let { recipeData ->
             LazyColumn(modifier = Modifier.padding(horizontal = 16.dp)) {
                 item {
