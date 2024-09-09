@@ -188,6 +188,7 @@ fun RecipeChatScreen(
             modifier = Modifier
                 .fillMaxWidth(),
             onSendClicked = viewModel::sendMessage,
+            shouldEnableSend = state.shouldEnableChat
         )
     }
 }

@@ -8,5 +8,6 @@ data class RecipeChatState(
     override val id: String = String.Empty,
     var chatList: List<MessageModel> = emptyList(),
     val typingIndicator: Boolean = false,
+    val shouldEnableChat: Boolean = false,
     val screenEvent: ScreenEvent = ScreenEvent.None
 ) : State

@@ -85,28 +85,38 @@ class RecipeChatViewModel @Inject constructor(
     fun sendMessage(
         messageText: String
     ) = viewModelScope.launch(dispatcher.main) {
-        logEvent(
-            eventName = FirebaseEvents.MESSAGE_SENT_BY_USER,
-            params = Bundle().apply {
-                putString(EventParams.SCREEN_NAME, ScreenNames.CHAT_SCREEN)
-                putString(EventParams.RECIPE_NAME, recipeName)
-                putString(EventParams.ENTRY_FROM, entryFrom)
-                putInt(EventParams.MESSAGE_COUNT, userMessageCount)
+        if (_state.value.chatList.isNotEmpty()) {
+            logEvent(
+                eventName = FirebaseEvents.MESSAGE_SENT_BY_USER,
+                params = Bundle().apply {
+                    putString(EventParams.SCREEN_NAME, ScreenNames.CHAT_SCREEN)
+                    putString(EventParams.RECIPE_NAME, recipeName)
+                    putString(EventParams.ENTRY_FROM, entryFrom)
+                    putInt(EventParams.MESSAGE_COUNT, userMessageCount)
+                }
+            )
+            userMessageCount +=1
+            _state.update {
+                it.copy(
+                    chatList = it.chatList.plus(MessageModel(messageText, true)),
+                    typingIndicator = true
+                )
             }
-        )
-        userMessageCount +=1
-        _state.update {
-            it.copy(
-                chatList = it.chatList.plus(MessageModel(messageText, true)),
-                typingIndicator = true
-            )
-        }
-        val response = chat.sendMessage(messageText)
-        _state.update {
-            it.copy(
-                chatList = it.chatList.plus(MessageModel(response.text.toString(), false)),
-                typingIndicator = false
-            )
+            val response = chat.sendMessage(messageText)
+            _state.update {
+                it.copy(
+                    chatList = it.chatList.plus(MessageModel(response.text.toString(), false)),
+                    typingIndicator = false
+                )
+            }
+        } else {
+            _state.update {
+                it.copy(
+                    screenEvent = ScreenEvent.ShowToast(
+                        resourceId = StringResources.somethingWentWrong
+                    )
+                )
+            }
         }
     }
 
@@ -144,7 +154,8 @@ class RecipeChatViewModel @Inject constructor(
                                 false
                             )
                         ),
-                        typingIndicator = false
+                        typingIndicator = false,
+                        shouldEnableChat = true
                     )
                 }
                 return@launch

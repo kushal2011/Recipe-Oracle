@@ -40,6 +40,7 @@ import com.kodedynamic.recipeoracle.resources.theme.RecipeTheme
 fun ChatTextField(
     modifier: Modifier = Modifier,
     maxLines: Int = 4,
+    shouldEnableSend: Boolean,
     onSendClicked: (String) -> Unit = {},
     backgroundColor: Color = Color.White
 ) {
@@ -102,12 +103,17 @@ fun ChatTextField(
                 onClick = {
                     onSendClicked(text.text)
                     text = TextFieldValue(String.Empty)
-                }
+                },
+                enabled = shouldEnableSend && text.text.isNotEmpty()
             ) {
                 Icon(
                     painter = painterResource(id = DrawableResources.sendIcon),
                     contentDescription = "Send Message",
-                    tint = RecipeTheme.colors.primaryGreen
+                    tint = if (shouldEnableSend && text.text.isNotEmpty()) {
+                        RecipeTheme.colors.primaryGreen
+                    } else {
+                        RecipeTheme.colors.mediumGray
+                    }
                 )
             }
         }
