@@ -186,7 +186,8 @@ fun RecipeChatScreen(
         )
         ChatTextField(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
             onSendClicked = viewModel::sendMessage,
             shouldEnableSend = state.shouldEnableChat
         )
