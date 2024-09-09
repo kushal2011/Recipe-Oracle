@@ -58,6 +58,7 @@ class RecipeChatViewModel @Inject constructor(
 
     private var userMessageCount: Int = 1
     private var hasConnectionBeenLost: Boolean = false
+    private var isChatInitFailed: Boolean = false
     private var entryFrom: String = String.Empty
 
     init {
@@ -75,7 +76,7 @@ class RecipeChatViewModel @Inject constructor(
             }
         )
         monitorNetworkConnection()
-        startChat()
+        startChatWithGemini()
     }
 
     fun onBackPress() {
@@ -124,7 +125,7 @@ class RecipeChatViewModel @Inject constructor(
         _state.update { it.copy(screenEvent = ScreenEvent.None) }
     }
 
-    private fun startChat(retryCount: Int = 1) = viewModelScope.launch(dispatcher.main) {
+    private fun startChatWithGemini(retryCount: Int = 3) = viewModelScope.launch(dispatcher.main) {
         _state.update {
             it.copy(
                 typingIndicator = true
@@ -158,6 +159,7 @@ class RecipeChatViewModel @Inject constructor(
                         shouldEnableChat = true
                     )
                 }
+                isChatInitFailed = false
                 return@launch
             }.onFailure { e ->
                 currentRetry++
@@ -172,6 +174,7 @@ class RecipeChatViewModel @Inject constructor(
                             )
                         )
                     }
+                    isChatInitFailed = true
                 } else {
                     logCrashlyticsEvent("${ScreenNames.CHAT_SCREEN} startChat api failed with ${e.message} in retry count: $currentRetry")
                     delay(RETRY_AFTER)
@@ -193,6 +196,9 @@ class RecipeChatViewModel @Inject constructor(
                         StringResources.connectionUnstable to SnackbarDuration.Long
                     }
                     ConnectivityStatus.Available -> {
+                        if (_state.value.chatList.isEmpty() && isChatInitFailed) {
+                            startChatWithGemini()
+                        }
                         if (hasConnectionBeenLost) {
                             hasConnectionBeenLost = false
                             StringResources.connectionRestored to SnackbarDuration.Short
