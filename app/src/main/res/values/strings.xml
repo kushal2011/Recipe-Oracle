@@ -24,5 +24,8 @@
     <string name="youtube_query">https://www.youtube.com/results?search_query=%1$s</string>
     <string name="something_went_wrong">Oops! Something didn’t work as expected. Please try again.</string>
     <string name="type_a_message">Type a message…</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="connection_unstable">Connection Unstable</string>
+    <string name="connection_restored">Connection Restored</string>
 
 </resources>

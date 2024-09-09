@@ -26,4 +26,7 @@ object StringResources {
     val youtubeQuery = R.string.youtube_query
     val somethingWentWrong = R.string.something_went_wrong
     val typeAMessage = R.string.type_a_message
+    val noInternetConnection = R.string.no_internet_connection
+    val connectionUnstable = R.string.connection_unstable
+    val connectionRestored = R.string.connection_restored
 }

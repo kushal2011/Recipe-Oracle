@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -179,6 +180,10 @@ fun RecipeChatScreen(
             }
         }
         Spacer(modifier = Modifier.height(8.toHeightDp()))
+        SnackbarHost(
+            hostState = snackBarHostState,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
         ChatTextField(
             modifier = Modifier
                 .fillMaxWidth(),

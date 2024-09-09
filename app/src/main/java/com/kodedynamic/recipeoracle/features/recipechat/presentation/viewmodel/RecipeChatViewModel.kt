@@ -1,7 +1,6 @@
 package com.kodedynamic.recipeoracle.features.recipechat.presentation.viewmodel
 
 import android.os.Bundle
-import android.util.Log
 import androidx.compose.material3.SnackbarDuration
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -18,6 +17,7 @@ import com.kodedynamic.recipeoracle.common.Empty
 import com.kodedynamic.recipeoracle.common.EventParams
 import com.kodedynamic.recipeoracle.common.EventValues
 import com.kodedynamic.recipeoracle.common.FirebaseEvents
+import com.kodedynamic.recipeoracle.common.ResourceProvider
 import com.kodedynamic.recipeoracle.common.ScreenEvent
 import com.kodedynamic.recipeoracle.common.ScreenNames
 import com.kodedynamic.recipeoracle.coroutines.DispatcherProvider
@@ -45,6 +45,7 @@ class RecipeChatViewModel @Inject constructor(
     private val dispatcher: DispatcherProvider,
     private val navigator: ScreenNavigator,
     private val networkRepository: NetworkRepository,
+    private val resourcesProvider: ResourceProvider,
     private val firebaseAnalytics: FirebaseAnalytics,
     private val crashlytics: FirebaseCrashlytics
 ) : ViewModel() {
@@ -56,6 +57,7 @@ class RecipeChatViewModel @Inject constructor(
     private lateinit var chat: Chat
 
     private var userMessageCount: Int = 1
+    private var hasConnectionBeenLost: Boolean = false
     private var entryFrom: String = String.Empty
 
     init {
@@ -170,24 +172,30 @@ class RecipeChatViewModel @Inject constructor(
     private fun monitorNetworkConnection() {
         viewModelScope.launch {
             networkRepository.getNetworkStatus().collectLatest { status ->
-                Log.e("aaa", "monitorNetworkConnection: $status", )
                 val snackBarMessage = when (status) {
                     ConnectivityStatus.Lost, ConnectivityStatus.Unavailable -> {
-                        "No internet connection" to SnackbarDuration.Long
+                        hasConnectionBeenLost = true
+                        StringResources.noInternetConnection to SnackbarDuration.Long
                     }
                     ConnectivityStatus.Losing -> {
-                        "Connection Unstable" to SnackbarDuration.Long
+                        hasConnectionBeenLost = true
+                        StringResources.connectionUnstable to SnackbarDuration.Long
                     }
                     ConnectivityStatus.Available -> {
-                        "Connection Restored" to SnackbarDuration.Short
+                        if (hasConnectionBeenLost) {
+                            hasConnectionBeenLost = false
+                            StringResources.connectionRestored to SnackbarDuration.Short
+                        } else {
+                            null
+                        }
                     }
                 }
 
-                snackBarMessage.let { (message, duration) ->
+                snackBarMessage?.let { (message, duration) ->
                     _state.update {
                         it.copy(
                             screenEvent = ScreenEvent.ShowSnackBar(
-                                message = message,
+                                message = resourcesProvider.getString(message),
                                 duration = duration
                             )
                         )
