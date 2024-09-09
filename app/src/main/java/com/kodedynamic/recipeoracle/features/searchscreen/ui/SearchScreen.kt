@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.kodedynamic.recipeoracle.R
 import com.kodedynamic.recipeoracle.common.ScreenEvent
 import com.kodedynamic.recipeoracle.common.toast
 import com.kodedynamic.recipeoracle.features.searchscreen.presentation.models.SearchState
@@ -79,7 +80,8 @@ fun SearchScreen(
                 .fillMaxWidth()
                 .wrapContentHeight(),
             searchModifier = Modifier
-                .fillMaxWidth().wrapContentHeight()
+                .fillMaxWidth()
+                .wrapContentHeight()
                 .focusRequester(focusRequester)
                 .onFocusChanged {
                     isFocused = it.isFocused
@@ -110,6 +112,13 @@ fun SearchScreen(
         }
         if (state.isLoading) {
             LottieLoader()
+        }
+        if (!state.isLoading && state.recipesList.isEmpty()) {
+            LottieLoader(
+                modifier = Modifier.fillMaxSize(),
+                loaderSize = 250.dp,
+                loaderJson = R.raw.search_not_found
+            )
         }
     }
 }

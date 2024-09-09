@@ -22,9 +22,9 @@ import com.kodedynamic.recipeoracle.R
 @Composable
 fun LottieLoader(
     modifier: Modifier = Modifier,
-    loaderSize: Dp = 150.dp
+    loaderSize: Dp = 150.dp,
+    loaderJson: Int = R.raw.loader
 ) {
-    val loaderJson = R.raw.loader
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(loaderJson))
 
     Column(
