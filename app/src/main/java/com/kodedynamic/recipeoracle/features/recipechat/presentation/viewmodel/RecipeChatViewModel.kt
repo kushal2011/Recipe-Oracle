@@ -1,6 +1,8 @@
 package com.kodedynamic.recipeoracle.features.recipechat.presentation.viewmodel
 
 import android.os.Bundle
+import android.util.Log
+import androidx.compose.material3.SnackbarDuration
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,7 +11,9 @@ import com.google.ai.client.generativeai.GenerativeModel
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.kodedynamic.recipeoracle.BuildConfig
+import com.kodedynamic.recipeoracle.apis.data.repositories.NetworkRepository
 import com.kodedynamic.recipeoracle.common.BundleKeys
+import com.kodedynamic.recipeoracle.common.ConnectivityStatus
 import com.kodedynamic.recipeoracle.common.Empty
 import com.kodedynamic.recipeoracle.common.EventParams
 import com.kodedynamic.recipeoracle.common.EventValues
@@ -28,6 +32,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -39,6 +44,7 @@ class RecipeChatViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val dispatcher: DispatcherProvider,
     private val navigator: ScreenNavigator,
+    private val networkRepository: NetworkRepository,
     private val firebaseAnalytics: FirebaseAnalytics,
     private val crashlytics: FirebaseCrashlytics
 ) : ViewModel() {
@@ -66,6 +72,7 @@ class RecipeChatViewModel @Inject constructor(
                 putString(EventParams.ENTRY_FROM, entryFrom)
             }
         )
+        monitorNetworkConnection()
         startChat()
     }
 
@@ -155,6 +162,36 @@ class RecipeChatViewModel @Inject constructor(
                 } else {
                     logCrashlyticsEvent("${ScreenNames.CHAT_SCREEN} startChat api failed with ${e.message} in retry count: $currentRetry")
                     delay(RETRY_AFTER)
+                }
+            }
+        }
+    }
+
+    private fun monitorNetworkConnection() {
+        viewModelScope.launch {
+            networkRepository.getNetworkStatus().collectLatest { status ->
+                Log.e("aaa", "monitorNetworkConnection: $status", )
+                val snackBarMessage = when (status) {
+                    ConnectivityStatus.Lost, ConnectivityStatus.Unavailable -> {
+                        "No internet connection" to SnackbarDuration.Long
+                    }
+                    ConnectivityStatus.Losing -> {
+                        "Connection Unstable" to SnackbarDuration.Long
+                    }
+                    ConnectivityStatus.Available -> {
+                        "Connection Restored" to SnackbarDuration.Short
+                    }
+                }
+
+                snackBarMessage.let { (message, duration) ->
+                    _state.update {
+                        it.copy(
+                            screenEvent = ScreenEvent.ShowSnackBar(
+                                message = message,
+                                duration = duration
+                            )
+                        )
+                    }
                 }
             }
         }
