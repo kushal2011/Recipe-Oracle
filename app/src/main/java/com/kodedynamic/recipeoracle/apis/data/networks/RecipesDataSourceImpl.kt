@@ -13,6 +13,8 @@ import com.kodedynamic.recipeoracle.apis.domain.models.SeeAllRecipeRequest
 import com.kodedynamic.recipeoracle.common.ConvertToObject
 import javax.inject.Inject
 
+private const val GEMINI_1_5_FLASH_MODEL_NAME = "gemini-1.5-flash"
+
 class RecipesDataSourceImpl @Inject constructor(
     private val prefStorageHelper: PrefStorageHelper,
     private val recipesApi: RecipesApi
@@ -20,7 +22,7 @@ class RecipesDataSourceImpl @Inject constructor(
     override suspend fun getRecipes(prompt: String): Result<RecipeListDto> {
         return runCatching {
             val generativeModel = GenerativeModel(
-                modelName = "gemini-1.5-flash",
+                modelName = GEMINI_1_5_FLASH_MODEL_NAME,
                 apiKey = BuildConfig.GEMENI_API_KEY
             )
 
