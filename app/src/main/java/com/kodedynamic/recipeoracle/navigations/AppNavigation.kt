@@ -20,6 +20,7 @@ import com.kodedynamic.recipeoracle.common.Empty
 import com.kodedynamic.recipeoracle.features.authentication.ui.AuthScreen
 import com.kodedynamic.recipeoracle.features.categoriesscreen.ui.CategoriesScreen
 import com.kodedynamic.recipeoracle.features.detailsscreen.ui.RecipeDetailsScreen
+import com.kodedynamic.recipeoracle.features.forceupdate.ui.ForceUpdateScreen
 import com.kodedynamic.recipeoracle.features.homescreen.ui.HomeScreen
 import com.kodedynamic.recipeoracle.features.recipechat.ui.RecipeChatScreen
 import com.kodedynamic.recipeoracle.features.searchscreen.ui.SearchScreen
@@ -131,6 +132,23 @@ fun AppNavigation(
         composable(Screen.Search().route) {
             SearchScreen(
                 viewModel = hiltViewModel()
+            )
+        }
+
+        composable(
+            Screen.ForceUpdate().route.plus(
+                "?${BundleKeys.SCREEN_TITLE}={${BundleKeys.SCREEN_TITLE}}"
+            ),
+            arguments = listOf(
+                navArgument(BundleKeys.SCREEN_TITLE) {
+                    nullable = true
+                    defaultValue = String.Empty
+                }
+            ),
+        ) { backStackEntry ->
+            val title = backStackEntry.arguments?.getString(BundleKeys.SCREEN_TITLE)
+            ForceUpdateScreen(
+                title = title.orEmpty()
             )
         }
     }

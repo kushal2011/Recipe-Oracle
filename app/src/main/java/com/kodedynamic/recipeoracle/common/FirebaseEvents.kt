@@ -12,6 +12,7 @@ object FirebaseEvents {
     const val REQUESTED_RECIPES_FROM_AI = "requested_recipes_from_ai"
     const val GENERATED_RECIPE_UPLOADED = "generated_recipe_uploaded"
     const val SEARCH_RECIPE_API_RETURNED_RESPONSE = "search_recipe_api_returned_response"
+    const val FORCE_UPDATE_REQUIRED = "force_update_required"
 }
 
 object ScreenNames {
@@ -35,6 +36,7 @@ object EventParams {
     const val UPLOADED_NO_OF_RECIPES = "uploaded_no_of_recipes"
     const val SEARCH_TERM = "search_term"
     const val ITEMS_RETURNED = "items_returned"
+    const val VERSION_NO = "version_no"
 }
 
 object EventValues {

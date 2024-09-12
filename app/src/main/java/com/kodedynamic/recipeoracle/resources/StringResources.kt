@@ -29,4 +29,5 @@ object StringResources {
     val noInternetConnection = R.string.no_internet_connection
     val connectionUnstable = R.string.connection_unstable
     val connectionRestored = R.string.connection_restored
+    val updateApp = R.string.update_app
 }

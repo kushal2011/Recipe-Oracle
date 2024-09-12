@@ -1,5 +1,4 @@
 # TODO
-- force update
 - move the secret key from static to retriving it from secret manager
 
 # TODO (Long term)

@@ -2,6 +2,8 @@ package com.kodedynamic.recipeoracle.apis.data.networks
 
 import com.google.gson.JsonObject
 import com.kodedynamic.recipeoracle.apis.data.models.CategoriesDto
+import com.kodedynamic.recipeoracle.apis.data.models.ForceUpdateDto
+import com.kodedynamic.recipeoracle.apis.data.models.ForceUpdateRequestDto
 import com.kodedynamic.recipeoracle.apis.data.models.HomeFeedWidgetsDto
 import com.kodedynamic.recipeoracle.apis.data.models.OpenAiChatDto
 import com.kodedynamic.recipeoracle.apis.data.models.OpenAiChatRequestDto
@@ -50,4 +52,9 @@ interface RecipesApi {
         @Url url: String,
         @Body body: OpenAiChatRequestDto
     ): Response<OpenAiChatDto>
+
+    @POST("/check_update")
+    suspend fun getIfForceUpdate(
+        @Body body: ForceUpdateRequestDto
+    ) : Response<ForceUpdateDto>
 }

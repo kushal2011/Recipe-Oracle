@@ -6,9 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.Gson
+import com.kodedynamic.recipeoracle.BuildConfig
 import com.kodedynamic.recipeoracle.apis.ConfigManager
 import com.kodedynamic.recipeoracle.apis.data.models.ParamsDto
 import com.kodedynamic.recipeoracle.apis.domain.models.RecipeModel
+import com.kodedynamic.recipeoracle.apis.domain.usecase.ForceUpdateUseCase
 import com.kodedynamic.recipeoracle.coroutines.DispatcherProvider
 import com.kodedynamic.recipeoracle.apis.domain.usecase.GetHomeFeedUseCase
 import com.kodedynamic.recipeoracle.common.BundleKeys
@@ -34,6 +36,7 @@ class HomeViewModel @Inject constructor(
     private val navigator: ScreenNavigator,
     private val getHomeFeedUseCase: GetHomeFeedUseCase,
     private val configManager: ConfigManager,
+    private val forceUpdateUseCase: ForceUpdateUseCase,
     private val firebaseAnalytics: FirebaseAnalytics,
     private val crashlytics: FirebaseCrashlytics
 ) : ViewModel() {
@@ -41,8 +44,37 @@ class HomeViewModel @Inject constructor(
     val state: Flow<HomeState> get() = _state
 
     init {
+        checkIfForceUpdateRequired()
         getHomeFeedData()
     }
+
+    private fun checkIfForceUpdateRequired() = viewModelScope.launch(dispatcher.io) {
+        forceUpdateUseCase(BuildConfig.VERSION_CODE).fold(
+            onSuccess = {
+                if (it.shouldForceUpdate) {
+                    logEvent(
+                        eventName = FirebaseEvents.FORCE_UPDATE_REQUIRED,
+                        params = Bundle().apply {
+                            putString(EventParams.SCREEN_NAME, ScreenNames.HOME_SCREEN)
+                            putInt(EventParams.VERSION_NO, BuildConfig.VERSION_CODE)
+                        }
+                    )
+                    navigator.navigate(
+                        ScreenAction.goToByClearStack(
+                            Screen.ForceUpdate(),
+                            map = mapOf(
+                                BundleKeys.SCREEN_TITLE to it.updateMessage
+                            )
+                        )
+                    )
+                }
+            },
+            onFailure = {
+                logCrashlyticsEvent("${ScreenNames.HOME_SCREEN} checkIfForceUpdateRequired api failed with ${it}")
+            }
+        )
+    }
+
     fun onSeeAllClick(
         widgetId: String,
         title: String

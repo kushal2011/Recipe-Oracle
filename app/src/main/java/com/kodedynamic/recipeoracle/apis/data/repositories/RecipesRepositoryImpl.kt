@@ -1,6 +1,7 @@
 package com.kodedynamic.recipeoracle.apis.data.repositories
 
 import com.kodedynamic.recipeoracle.apis.data.mappers.CategoriesMapper
+import com.kodedynamic.recipeoracle.apis.data.mappers.ForceUpdateMapper
 import com.kodedynamic.recipeoracle.apis.data.mappers.HomeFeedWidgetsMapper
 import com.kodedynamic.recipeoracle.apis.data.mappers.OpenAiChatMapper
 import com.kodedynamic.recipeoracle.apis.data.mappers.RecipeListMapper
@@ -9,6 +10,7 @@ import com.kodedynamic.recipeoracle.apis.data.models.OpenAiChatRequestDto
 import com.kodedynamic.recipeoracle.apis.domain.models.RecipeRequestModel
 import com.kodedynamic.recipeoracle.apis.data.networks.RecipesDataSource
 import com.kodedynamic.recipeoracle.apis.domain.models.CategoriesModel
+import com.kodedynamic.recipeoracle.apis.domain.models.ForceUpdateModel
 import com.kodedynamic.recipeoracle.apis.domain.models.HomeFeedWidgetsModel
 import com.kodedynamic.recipeoracle.apis.domain.models.OpenAiChatModel
 import com.kodedynamic.recipeoracle.apis.domain.models.RecipeModel
@@ -25,7 +27,8 @@ class RecipesRepositoryImpl @Inject constructor(
     private val categoriesMapper: CategoriesMapper,
     private val recipeListMapper: RecipeListMapper,
     private val recipeMapper: RecipeMapper,
-    private val openAiChatMapper: OpenAiChatMapper
+    private val openAiChatMapper: OpenAiChatMapper,
+    private val forceUpdateMapper: ForceUpdateMapper
 ): RecipesRepository {
     override suspend fun getRecipes(
         recipeRequest: RecipeRequestModel
@@ -75,6 +78,14 @@ class RecipesRepositoryImpl @Inject constructor(
     override suspend fun chatWithOpenAi(chatRequestDto: OpenAiChatRequestDto): Result<OpenAiChatModel> {
         return withContext(dispatcherProvider.io) {
             recipesDataSource.chatWithOpenAi(chatRequestDto).map { openAiChatMapper.map(it) }
+        }
+    }
+
+    override suspend fun getIfForceUpdate(versionNo: Int): Result<ForceUpdateModel> {
+        return withContext(dispatcherProvider.io) {
+            recipesDataSource.getIfForceUpdate(versionNo).map {
+                forceUpdateMapper.map(it)
+            }
         }
     }
 }

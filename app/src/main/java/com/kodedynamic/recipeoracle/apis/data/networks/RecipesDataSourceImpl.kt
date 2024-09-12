@@ -6,6 +6,8 @@ import com.google.gson.JsonParser
 import com.kodedynamic.recipeoracle.BuildConfig
 import com.kodedynamic.recipeoracle.apis.data.local.PrefStorageHelper
 import com.kodedynamic.recipeoracle.apis.data.models.CategoriesDto
+import com.kodedynamic.recipeoracle.apis.data.models.ForceUpdateDto
+import com.kodedynamic.recipeoracle.apis.data.models.ForceUpdateRequestDto
 import com.kodedynamic.recipeoracle.apis.data.models.HomeFeedWidgetsDto
 import com.kodedynamic.recipeoracle.apis.data.models.OpenAiChatDto
 import com.kodedynamic.recipeoracle.apis.data.models.OpenAiChatRequestDto
@@ -162,6 +164,19 @@ class RecipesDataSourceImpl @Inject constructor(
                 recipesApi.openAiChatApi(
                     url = OPEN_AI_CHAT_URL,
                     body = chatRequestDto
+                )
+            },
+            ::Exception
+        )
+    }
+
+    override suspend fun getIfForceUpdate(versionNo: Int): Result<ForceUpdateDto> {
+        return safeApiCall(
+            {
+                recipesApi.getIfForceUpdate(
+                    body = ForceUpdateRequestDto(
+                        versionNo = versionNo
+                    )
                 )
             },
             ::Exception
