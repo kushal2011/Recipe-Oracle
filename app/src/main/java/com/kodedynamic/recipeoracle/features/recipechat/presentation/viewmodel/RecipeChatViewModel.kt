@@ -71,6 +71,7 @@ class RecipeChatViewModel @Inject constructor(
     private var isChatInitFailed: Boolean = false
     private var isChatFromGemini: Boolean = true
     private var entryFrom: String = String.Empty
+    private var openAiModel: String = String.Empty
 
     init {
         initChat()
@@ -78,6 +79,7 @@ class RecipeChatViewModel @Inject constructor(
 
     private fun initChat() = viewModelScope.launch(dispatcher.main) {
         isChatFromGemini = configManager.fetchShouldUseGemini()
+        openAiModel = configManager.getOpenAiModel()
         entryFrom = if (recipeName.isNotEmpty()) {
             EventValues.ENTRY_FROM_DETAILS
         } else {
@@ -141,7 +143,7 @@ class RecipeChatViewModel @Inject constructor(
                 }
                 chatWithOpenAiUseCase(
                     OpenAiChatRequestDto(
-                        model = "gpt-4o-2024-08-06", // to be taken from config
+                        model = openAiModel,
                         messages = chatList
                     )
                 ).fold(
@@ -216,7 +218,7 @@ class RecipeChatViewModel @Inject constructor(
             } else {
                chatWithOpenAiUseCase(
                    param = OpenAiChatRequestDto(
-                       model = "gpt-4o-2024-08-06", // to be taken from config
+                       model = openAiModel,
                        messages = listOf(
                            MessageDto(
                            content = prompt,
