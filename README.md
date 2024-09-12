@@ -1,5 +1,6 @@
 # TODO
 - move the secret key from static to retriving it from secret manager
+- move model name to config
 
 # TODO (Long term)
 - optional login for personalized recommendation
