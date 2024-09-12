@@ -1,6 +1,5 @@
 # TODO
 - add empty/no data found
-- add optional open ai and gemini chat
 - force update
 - auto update
 - filter search
