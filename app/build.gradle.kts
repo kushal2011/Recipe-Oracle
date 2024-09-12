@@ -11,6 +11,7 @@ plugins {
 android {
     namespace = "com.kodedynamic.recipeoracle"
     compileSdk = libs.versions.compile.sdk.get().toInt()
+    val defaultSigningConfig = "recipeOracleKeystore"
 
     defaultConfig {
         applicationId = "com.kodedynamic.recipeoracle"
@@ -30,14 +31,24 @@ android {
         )
     }
 
+    signingConfigs {
+        create(defaultSigningConfig) {
+            storeFile = file("recipe_oracle")
+            storePassword = System.getenv("RO_JKS_PASSWORD")
+            keyPassword = System.getenv("RO_JKS_PASSWORD")
+            keyAlias = "key0"
+        }
+    }
     buildTypes {
         release {
+            isDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName(defaultSigningConfig)
         }
     }
     compileOptions {
