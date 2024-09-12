@@ -1,8 +1,6 @@
 # TODO
-- add empty/no data found
 - force update
-- auto update
-- filter search
+- move the secret key from static to retriving it from secret manager
 
 # TODO (Long term)
 - optional login for personalized recommendation
@@ -25,3 +23,5 @@
 - In details add a component that shows fun fact about that item
 - add ads
 - add option to remove ads if user buys premium
+- filter search
+- auto update
