@@ -19,7 +19,8 @@ class ConfigManager @Inject constructor() {
             setDefaultsAsync(
                 mapOf(
                     KEY_HOME_FEED_VERSION to DEFAULT_HOME_FEED_VERSION,
-                    KEY_CATEGORIES_VERSION to DEFAULT_CATEGORIES_VERSION
+                    KEY_CATEGORIES_VERSION to DEFAULT_CATEGORIES_VERSION,
+                    KEY_SHOULD_USE_GEMINI to DEFAULT_SHOULD_USE_GEMINI
                 )
             )
         }

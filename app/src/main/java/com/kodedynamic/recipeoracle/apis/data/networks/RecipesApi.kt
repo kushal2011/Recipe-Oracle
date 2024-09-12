@@ -3,6 +3,8 @@ package com.kodedynamic.recipeoracle.apis.data.networks
 import com.google.gson.JsonObject
 import com.kodedynamic.recipeoracle.apis.data.models.CategoriesDto
 import com.kodedynamic.recipeoracle.apis.data.models.HomeFeedWidgetsDto
+import com.kodedynamic.recipeoracle.apis.data.models.OpenAiChatDto
+import com.kodedynamic.recipeoracle.apis.data.models.OpenAiChatRequestDto
 import com.kodedynamic.recipeoracle.apis.data.models.RecipeDto
 import com.kodedynamic.recipeoracle.apis.data.models.RecipeListDto
 import retrofit2.Response
@@ -11,6 +13,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Url
 
 interface RecipesApi {
     @GET("/get_widgets")
@@ -41,4 +44,10 @@ interface RecipesApi {
     suspend fun postGeneratedRecipes(
         @Body body: JsonObject
     ): Response<Unit>
+
+    @POST
+    suspend fun openAiChatApi(
+        @Url url: String,
+        @Body body: OpenAiChatRequestDto
+    ): Response<OpenAiChatDto>
 }

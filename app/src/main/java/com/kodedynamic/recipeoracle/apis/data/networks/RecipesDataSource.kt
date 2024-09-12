@@ -2,6 +2,8 @@ package com.kodedynamic.recipeoracle.apis.data.networks
 
 import com.kodedynamic.recipeoracle.apis.data.models.CategoriesDto
 import com.kodedynamic.recipeoracle.apis.data.models.HomeFeedWidgetsDto
+import com.kodedynamic.recipeoracle.apis.data.models.OpenAiChatDto
+import com.kodedynamic.recipeoracle.apis.data.models.OpenAiChatRequestDto
 import com.kodedynamic.recipeoracle.apis.data.models.RecipeDto
 import com.kodedynamic.recipeoracle.apis.data.models.RecipeListDto
 import com.kodedynamic.recipeoracle.apis.domain.models.SeeAllRecipeRequest
@@ -18,4 +20,5 @@ interface RecipesDataSource {
     suspend fun getSeeAllRecipes(seeAllRecipeRequest: SeeAllRecipeRequest): Result<RecipeListDto>
     suspend fun getSearchedRecipes(searchText: String): Result<RecipeListDto>
     suspend fun postGeneratedRecipes(json: String): Result<Unit>
+    suspend fun chatWithOpenAi(chatRequestDto: OpenAiChatRequestDto): Result<OpenAiChatDto>
 }

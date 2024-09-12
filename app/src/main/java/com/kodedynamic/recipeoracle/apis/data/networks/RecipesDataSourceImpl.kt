@@ -7,6 +7,8 @@ import com.kodedynamic.recipeoracle.BuildConfig
 import com.kodedynamic.recipeoracle.apis.data.local.PrefStorageHelper
 import com.kodedynamic.recipeoracle.apis.data.models.CategoriesDto
 import com.kodedynamic.recipeoracle.apis.data.models.HomeFeedWidgetsDto
+import com.kodedynamic.recipeoracle.apis.data.models.OpenAiChatDto
+import com.kodedynamic.recipeoracle.apis.data.models.OpenAiChatRequestDto
 import com.kodedynamic.recipeoracle.apis.data.models.RecipeDto
 import com.kodedynamic.recipeoracle.apis.data.models.RecipeListDto
 import com.kodedynamic.recipeoracle.apis.domain.models.SeeAllRecipeRequest
@@ -154,10 +156,23 @@ class RecipesDataSourceImpl @Inject constructor(
         )
     }
 
+    override suspend fun chatWithOpenAi(chatRequestDto: OpenAiChatRequestDto): Result<OpenAiChatDto> {
+        return safeApiCall(
+            {
+                recipesApi.openAiChatApi(
+                    url = OPEN_AI_CHAT_URL,
+                    body = chatRequestDto
+                )
+            },
+            ::Exception
+        )
+    }
+
     companion object {
         private const val PREF_KEY_FOR_HOME_FEED = "homefeed"
         private const val PREF_KEY_FOR_CATEGORIES = "categories"
         private const val PREF_KEY_FOR_HOME_FEED_VERSION = "homefeed_version"
         private const val PREF_KEY_FOR_CATEGORIES_VERSION = "categories_version"
+        private const val OPEN_AI_CHAT_URL = "https://api.openai.com/v1/chat/completions"
     }
 }

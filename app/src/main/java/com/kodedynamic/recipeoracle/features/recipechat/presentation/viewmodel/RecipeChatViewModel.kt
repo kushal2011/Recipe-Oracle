@@ -12,7 +12,11 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.kodedynamic.recipeoracle.BuildConfig
 import com.kodedynamic.recipeoracle.apis.ConfigManager
+import com.kodedynamic.recipeoracle.apis.data.models.MessageDto
+import com.kodedynamic.recipeoracle.apis.data.models.OpenAiChatRequestDto
 import com.kodedynamic.recipeoracle.apis.data.repositories.NetworkRepository
+import com.kodedynamic.recipeoracle.apis.domain.models.OpenAiChatModel
+import com.kodedynamic.recipeoracle.apis.domain.usecase.ChatWithOpenAiUseCase
 import com.kodedynamic.recipeoracle.common.BundleKeys
 import com.kodedynamic.recipeoracle.common.ConnectivityStatus
 import com.kodedynamic.recipeoracle.common.Empty
@@ -23,6 +27,7 @@ import com.kodedynamic.recipeoracle.common.ResourceProvider
 import com.kodedynamic.recipeoracle.common.ScreenEvent
 import com.kodedynamic.recipeoracle.common.ScreenNames
 import com.kodedynamic.recipeoracle.coroutines.DispatcherProvider
+import com.kodedynamic.recipeoracle.features.recipechat.presentation.mapper.MessageDtoMapper
 import com.kodedynamic.recipeoracle.features.recipechat.presentation.models.MessageModel
 import com.kodedynamic.recipeoracle.features.recipechat.presentation.models.RecipeChatState
 import com.kodedynamic.recipeoracle.navigations.Screen
@@ -41,6 +46,7 @@ import javax.inject.Inject
 
 private const val RETRY_AFTER = 2000L
 private const val GEMINI_1_5_FLASH_MODEL_NAME = "gemini-1.5-flash"
+private const val SYSTEM = "system"
 
 @HiltViewModel
 class RecipeChatViewModel @Inject constructor(
@@ -50,6 +56,7 @@ class RecipeChatViewModel @Inject constructor(
     private val networkRepository: NetworkRepository,
     private val resourcesProvider: ResourceProvider,
     private val configManager: ConfigManager,
+    private val chatWithOpenAiUseCase: ChatWithOpenAiUseCase,
     private val firebaseAnalytics: FirebaseAnalytics,
     private val crashlytics: FirebaseCrashlytics
 ) : ViewModel() {
@@ -70,7 +77,7 @@ class RecipeChatViewModel @Inject constructor(
         viewModelScope.launch(dispatcher.main) {
             isChatFromGemini = configManager.fetchShouldUseGemini()
         }
-        Log.e("aaa", "isChatFromGemini: $isChatFromGemini", )
+        Log.e("aaa", "isChatFromGemini: $isChatFromGemini")
         entryFrom = if (recipeName.isNotEmpty()) {
             EventValues.ENTRY_FROM_DETAILS
         } else {
@@ -105,27 +112,60 @@ class RecipeChatViewModel @Inject constructor(
                     putInt(EventParams.MESSAGE_COUNT, userMessageCount)
                 }
             )
-            userMessageCount +=1
+            userMessageCount += 1
             _state.update {
                 it.copy(
                     chatList = it.chatList.plus(MessageModel(messageText, true)),
                     typingIndicator = true
                 )
             }
-            val response = if (isChatFromGemini) {
-                chat.sendMessage(messageText).text
-                Log.e("aaa", "in gemini send message:" , )
+            if (isChatFromGemini) {
+                val response = chat.sendMessage(messageText).text
+                _state.update {
+                    it.copy(
+                        chatList = it.chatList.plus(MessageModel(response.toString(), false)),
+                        typingIndicator = false
+                    )
+                }
+                Log.e("aaa", "in gemini send message:")
             } else {
-                // add code to send message to openai
-                Log.e("aaa", "in openai send message:" , )
-                String.Empty
-            }
-            _state.update {
-                it.copy(
-                    chatList = it.chatList.plus(MessageModel(response.toString(), false)),
-                    typingIndicator = false
+                val messageDtoMapper = MessageDtoMapper()
+                val chatList = _state.value.chatList.mapIndexed { index, item ->
+                    if (index == 0) {
+                        MessageDto(
+                            content = messageText,
+                            role = SYSTEM
+                        )
+                    } else {
+                        messageDtoMapper.map(item)
+                    }
+                }
+                chatWithOpenAiUseCase(
+                    OpenAiChatRequestDto(
+                        model = "gpt-4o-2024-08-06", // to be taken from config
+                        messages = chatList
+                    )
+                ).fold(
+                    onSuccess = { response ->
+                        openAiSendMsgSuccess(
+                            response = response
+                        )
+                    },
+                    onFailure = { e ->
+                        logCrashlyticsEvent("${ScreenNames.CHAT_SCREEN} sendMessage (open ai) api failed with ${e.message}")
+                        _state.update {
+                            it.copy(
+                                typingIndicator = false,
+                                screenEvent = ScreenEvent.ShowToast(
+                                    message = e.message.orEmpty(),
+                                    resourceId = StringResources.somethingWentWrong
+                                )
+                            )
+                        }
+                    }
                 )
             }
+
         } else {
             _state.update {
                 it.copy(
@@ -149,11 +189,11 @@ class RecipeChatViewModel @Inject constructor(
         }
 
         var currentRetry = 0
+        val prompt = Prompts.getPromptForChat(recipeName)
 
         while (currentRetry < retryCount) {
-            val prompt = Prompts.getPromptForChat(recipeName)
             if (isChatFromGemini) {
-                Log.e("aaa", "in isChatFromGemini: $isChatFromGemini", )
+                Log.e("aaa", "in isChatFromGemini: $isChatFromGemini")
                 val result = runCatching {
                     val generativeModel = GenerativeModel(
                         modelName = GEMINI_1_5_FLASH_MODEL_NAME,
@@ -163,12 +203,12 @@ class RecipeChatViewModel @Inject constructor(
                     chat = generativeModel.startChat()
                     chat.sendMessage(prompt)
                 }
-                result.onSuccess {  firstAiMessage ->
-                    Log.e("aaa", "in isChatFromGemini success: $isChatFromGemini", )
+                result.onSuccess { firstAiMessage ->
+                    Log.e("aaa", "in isChatFromGemini success: $isChatFromGemini")
                     startOnSuccessChatInit(firstAiMessage.text.toString())
                     return@launch
                 }.onFailure { e ->
-                    Log.e("aaa", "in isChatFromGemini failure: $isChatFromGemini", )
+                    Log.e("aaa", "in isChatFromGemini failure: $isChatFromGemini")
                     currentRetry++
                     if (currentRetry >= retryCount) {
                         startOnFailureChatInit(e.message.orEmpty())
@@ -178,7 +218,60 @@ class RecipeChatViewModel @Inject constructor(
                     }
                 }
             } else {
-                Log.e("aaa", "in isChatFromOpenAi:", )
+               chatWithOpenAiUseCase(
+                   param = OpenAiChatRequestDto(
+                       model = "gpt-4o-2024-08-06", // to be taken from config
+                       messages = listOf(
+                           MessageDto(
+                           content = prompt,
+                           role = SYSTEM
+                       )
+                       )
+                   )
+               ).fold(
+                   onSuccess = { response ->
+                       openAiSendMsgSuccess(
+                           response = response,
+                           isFromInit = true
+                       )
+                   },
+                   onFailure = {
+                       isChatFromGemini = true
+                       currentRetry++
+                       delay(RETRY_AFTER)
+                   }
+               )
+            }
+        }
+    }
+
+    private fun openAiSendMsgSuccess(
+        response: OpenAiChatModel,
+        isFromInit: Boolean = false
+    ) {
+        val modelResponse = response.choices[0].messageModel?.content
+        modelResponse?.let { res ->
+            _state.update {
+                it.copy(
+                    chatList = it.chatList.plus(MessageModel(res, false)),
+                    typingIndicator = false
+                )
+            }
+        } ?: {
+            logCrashlyticsEvent("${ScreenNames.CHAT_SCREEN} sendMessage (open ai) isInit: $isFromInit api Success but data empty with $response")
+            if (isFromInit) {
+                isChatFromGemini = true
+                startChat()
+            } else {
+                _state.update {
+                    it.copy(
+                        typingIndicator = false,
+                        screenEvent = ScreenEvent.ShowToast(
+                            message = response.choices[0].finishReason,
+                            resourceId = StringResources.somethingWentWrong
+                        )
+                    )
+                }
             }
         }
     }
@@ -225,10 +318,12 @@ class RecipeChatViewModel @Inject constructor(
                         hasConnectionBeenLost = true
                         StringResources.noInternetConnection to SnackbarDuration.Long
                     }
+
                     ConnectivityStatus.Losing -> {
                         hasConnectionBeenLost = true
                         StringResources.connectionUnstable to SnackbarDuration.Long
                     }
+
                     ConnectivityStatus.Available -> {
                         if (_state.value.chatList.isEmpty() && isChatInitFailed) {
                             startChat()
