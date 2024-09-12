@@ -9,4 +9,4 @@
 .cxx
 local.properties
 secrets.properties
-recipe_oracle
+app/recipe_oracle
