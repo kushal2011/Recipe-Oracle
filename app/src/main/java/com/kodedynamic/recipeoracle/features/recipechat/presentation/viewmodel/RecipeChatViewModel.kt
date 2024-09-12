@@ -1,7 +1,6 @@
 package com.kodedynamic.recipeoracle.features.recipechat.presentation.viewmodel
 
 import android.os.Bundle
-import android.util.Log
 import androidx.compose.material3.SnackbarDuration
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -74,10 +73,11 @@ class RecipeChatViewModel @Inject constructor(
     private var entryFrom: String = String.Empty
 
     init {
-        viewModelScope.launch(dispatcher.main) {
-            isChatFromGemini = configManager.fetchShouldUseGemini()
-        }
-        Log.e("aaa", "isChatFromGemini: $isChatFromGemini")
+        initChat()
+    }
+
+    private fun initChat() = viewModelScope.launch(dispatcher.main) {
+        isChatFromGemini = configManager.fetchShouldUseGemini()
         entryFrom = if (recipeName.isNotEmpty()) {
             EventValues.ENTRY_FROM_DETAILS
         } else {
@@ -127,7 +127,6 @@ class RecipeChatViewModel @Inject constructor(
                         typingIndicator = false
                     )
                 }
-                Log.e("aaa", "in gemini send message:")
             } else {
                 val messageDtoMapper = MessageDtoMapper()
                 val chatList = _state.value.chatList.mapIndexed { index, item ->
@@ -193,7 +192,6 @@ class RecipeChatViewModel @Inject constructor(
 
         while (currentRetry < retryCount) {
             if (isChatFromGemini) {
-                Log.e("aaa", "in isChatFromGemini: $isChatFromGemini")
                 val result = runCatching {
                     val generativeModel = GenerativeModel(
                         modelName = GEMINI_1_5_FLASH_MODEL_NAME,
@@ -204,11 +202,9 @@ class RecipeChatViewModel @Inject constructor(
                     chat.sendMessage(prompt)
                 }
                 result.onSuccess { firstAiMessage ->
-                    Log.e("aaa", "in isChatFromGemini success: $isChatFromGemini")
                     startOnSuccessChatInit(firstAiMessage.text.toString())
                     return@launch
                 }.onFailure { e ->
-                    Log.e("aaa", "in isChatFromGemini failure: $isChatFromGemini")
                     currentRetry++
                     if (currentRetry >= retryCount) {
                         startOnFailureChatInit(e.message.orEmpty())
@@ -234,6 +230,7 @@ class RecipeChatViewModel @Inject constructor(
                            response = response,
                            isFromInit = true
                        )
+                       return@launch
                    },
                    onFailure = {
                        isChatFromGemini = true
@@ -254,9 +251,11 @@ class RecipeChatViewModel @Inject constructor(
             _state.update {
                 it.copy(
                     chatList = it.chatList.plus(MessageModel(res, false)),
-                    typingIndicator = false
+                    typingIndicator = false,
+                    shouldEnableChat = true
                 )
             }
+            isChatInitFailed = false
         } ?: {
             logCrashlyticsEvent("${ScreenNames.CHAT_SCREEN} sendMessage (open ai) isInit: $isFromInit api Success but data empty with $response")
             if (isFromInit) {
