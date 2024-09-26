@@ -1,5 +1,5 @@
 # TODO
-- move the secret key from static to retriving it from secret manager
+- move the secret key from static to retriving it from secret manager (BE)
 
 # TODO (Long term)
 - optional login for personalized recommendation
