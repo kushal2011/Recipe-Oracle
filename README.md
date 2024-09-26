@@ -97,7 +97,13 @@ This Recipe App is a personal project aimed at providing a user-friendly interfa
   OPENAI_API_KEY="KEY_HERE"
 
 ```
-3. Build and run the app on your Android/iOS device or emulator.
+3. Download the `google-services.json` file from your Firebase Console and place it in the `app` directory of the project:
+
+    ```bash
+    /app/google-services.json
+    ```
+4. Build and run the app on your Android/iOS device or emulator.
+
 
 ## Contribution
 This project is open for contributions. Feel free to fork the repository, make changes, and create a pull request. For major changes, please open an issue first to discuss what you would like to change.
